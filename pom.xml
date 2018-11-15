@@ -178,6 +178,7 @@
 		<module>xchange-vaultoro</module>
 		<module>xchange-vircurex</module>
 		<module>xchange-wex</module>
+		<module>xchange-wyre</module>
 		<module>xchange-yobit</module>
 		<module>xchange-zaif</module>
 	</modules>
