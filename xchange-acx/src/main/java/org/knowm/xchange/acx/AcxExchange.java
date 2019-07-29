@@ -22,8 +22,10 @@ public class AcxExchange extends BaseExchange implements Exchange {
     this.marketDataService = new AcxMarketDataService(api, mapper);
     if (spec.getApiKey() != null && spec.getSecretKey() != null) {
       AcxSignatureCreator signatureCreator = new AcxSignatureCreator(spec.getSecretKey());
-      this.accountService = new AcxAccountService(api, mapper, signatureCreator, spec.getApiKey());
-      this.tradeService = new AcxTradeService(api, mapper, signatureCreator, spec.getApiKey());
+      this.accountService =
+          new AcxAccountService(nonceFactory, api, mapper, signatureCreator, spec.getApiKey());
+      this.tradeService =
+          new AcxTradeService(nonceFactory, api, mapper, signatureCreator, spec.getApiKey());
     }
   }
 

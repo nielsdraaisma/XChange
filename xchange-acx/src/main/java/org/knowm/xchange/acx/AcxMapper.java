@@ -10,6 +10,7 @@ import org.knowm.xchange.acx.dto.marketdata.AcxMarket;
 import org.knowm.xchange.acx.dto.marketdata.AcxOrder;
 import org.knowm.xchange.acx.dto.marketdata.AcxOrderBook;
 import org.knowm.xchange.acx.dto.marketdata.AcxTicker;
+import org.knowm.xchange.acx.utils.AcxUtils;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderStatus;
@@ -23,6 +24,7 @@ import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
 import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.UserTrade;
 
 public class AcxMapper {
   public Ticker mapTicker(CurrencyPair currencyPair, AcxMarket tickerData) {
@@ -50,7 +52,7 @@ public class AcxMapper {
   }
 
   public LimitOrder mapOrder(CurrencyPair currencyPair, AcxOrder order) {
-    OrderType type = mapOrderType(order);
+    OrderType type = mapOrderSide(order.side);
     return new LimitOrder.Builder(type, currencyPair)
         .id(order.id)
         .limitPrice(order.price)
@@ -63,8 +65,8 @@ public class AcxMapper {
         .build();
   }
 
-  private OrderType mapOrderType(AcxOrder order) {
-    switch (order.side) {
+  private static OrderType mapOrderSide(String side) {
+    switch (side) {
       case "sell":
         return OrderType.ASK;
       case "buy":
@@ -131,5 +133,16 @@ public class AcxMapper {
         return "sell";
     }
     throw new IllegalArgumentException("Unknown order type: " + type);
+  }
+
+  public static UserTrade mapTrade(AcxTrade trade) {
+    return new UserTrade.Builder()
+        .currencyPair(AcxUtils.getCurrencyPair(trade.market))
+        .id(trade.id)
+        .price(trade.price)
+        .originalAmount(trade.volume)
+        .timestamp(trade.createdAt)
+        .type(mapOrderSide(trade.side))
+        .build();
   }
 }

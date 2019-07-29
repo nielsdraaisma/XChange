@@ -22,6 +22,7 @@ import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurrencyPair;
+import org.knowm.xchange.utils.nonce.CurrentTimeNonceFactory;
 
 public class AcxTradingServiceTest {
 
@@ -36,7 +37,9 @@ public class AcxTradingServiceTest {
     AcxMapper mapper = new AcxMapper();
     api = mock(AcxApi.class);
     accessKey = "access_key";
-    service = new AcxTradeService(api, mapper, mock(AcxSignatureCreator.class), accessKey);
+    service =
+        new AcxTradeService(
+            new CurrentTimeNonceFactory(), api, mapper, mock(AcxSignatureCreator.class), accessKey);
   }
 
   @Test
