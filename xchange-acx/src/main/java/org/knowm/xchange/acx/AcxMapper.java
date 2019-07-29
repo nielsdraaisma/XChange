@@ -67,8 +67,10 @@ public class AcxMapper {
 
   private static OrderType mapOrderSide(String side) {
     switch (side) {
+      case "ask":
       case "sell":
         return OrderType.ASK;
+      case "bid":
       case "buy":
         return OrderType.BID;
     }
