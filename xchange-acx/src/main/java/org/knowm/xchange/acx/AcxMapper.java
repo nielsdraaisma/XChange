@@ -1,5 +1,6 @@
 package org.knowm.xchange.acx;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class AcxMapper {
         .originalAmount(order.volume)
         .remainingAmount(order.remainingVolume)
         .cumulativeAmount(order.executedVolume)
-        .orderStatus(mapOrderStatus(order.state))
+        .orderStatus(mapOrderStatus(order))
         .build();
   }
 
@@ -77,14 +78,18 @@ public class AcxMapper {
     return null;
   }
 
-  private OrderStatus mapOrderStatus(String state) {
-    switch (state) {
+  public OrderStatus mapOrderStatus(AcxOrder order) {
+    switch (order.state) {
       case "wait":
         return OrderStatus.PENDING_NEW;
       case "done":
         return OrderStatus.FILLED;
       case "cancel":
-        return OrderStatus.CANCELED;
+        if ( order.executedVolume.compareTo(BigDecimal.ZERO) > 0){
+          return OrderStatus.PARTIALLY_CANCELED;
+        } else {
+          return OrderStatus.CANCELED;
+        }
     }
     return null;
   }
