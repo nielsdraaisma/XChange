@@ -21,6 +21,7 @@ public class AcxTradeServiceIntegration {
         (AcxTradeService.AcxTradeHistoryParams)
             exchange.getTradeService().createTradeHistoryParams();
     tradeHistoryParams.setCurrencyPair(CurrencyPair.BTC_AUD);
+      tradeHistoryParams.setLimit(50);
     exchange.getTradeService().getTradeHistory(tradeHistoryParams);
   }
 
@@ -30,6 +31,7 @@ public class AcxTradeServiceIntegration {
         (AcxTradeService.AcxTradeHistoryParams)
             exchange.getTradeService().createTradeHistoryParams();
     tradeHistoryParams.setCurrencyPair(CurrencyPair.BTC_AUD);
+    tradeHistoryParams.setLimit(50);
     UserTrades userTrades = exchange.getTradeService().getTradeHistory(tradeHistoryParams);
     tradeHistoryParams.setStartId(userTrades.getUserTrades().get(0).getId());
     exchange.getTradeService().getTradeHistory(tradeHistoryParams);
@@ -41,6 +43,7 @@ public class AcxTradeServiceIntegration {
         (AcxTradeService.AcxTradeHistoryParams)
             exchange.getTradeService().createTradeHistoryParams();
     tradeHistoryParams.setCurrencyPair(CurrencyPair.BTC_AUD);
+      tradeHistoryParams.setLimit(50);
     UserTrades userTrades = exchange.getTradeService().getTradeHistory(tradeHistoryParams);
     tradeHistoryParams.setEndId(userTrades.getUserTrades().get(10).getId());
     exchange.getTradeService().getTradeHistory(tradeHistoryParams);

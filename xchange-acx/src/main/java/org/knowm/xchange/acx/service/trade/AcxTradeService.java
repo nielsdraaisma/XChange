@@ -58,7 +58,7 @@ public class AcxTradeService implements TradeService {
 
   @Override
   public OpenOrders getOpenOrders(OpenOrdersParams params) throws IOException {
-    long tonce = System.currentTimeMillis();
+    long tonce = nonceFactory.createValue();
     OpenOrdersParamCurrencyPair param = ArgUtils.tryCast(params, OpenOrdersParamCurrencyPair.class);
     CurrencyPair currencyPair = param.getCurrencyPair();
     List<AcxOrder> orders =
@@ -113,7 +113,7 @@ public class AcxTradeService implements TradeService {
     if (!(params instanceof AcxTradeHistoryParams)) {
       throw new IllegalArgumentException("Invalid tradehistoryparams given");
     }
-    long tonce = System.currentTimeMillis();
+    long tonce = nonceFactory.createValue();
     AcxTradeHistoryParams acxTradeHistoryParams = (AcxTradeHistoryParams) params;
     if (acxTradeHistoryParams.currencyPair == null) {
       throw new IllegalArgumentException("CurrencyPair cannot be null");
