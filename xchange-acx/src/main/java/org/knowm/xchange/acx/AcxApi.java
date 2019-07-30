@@ -89,7 +89,7 @@ public interface AcxApi {
 
   @GET
   @Path(
-      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}&end={end}")
+      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}&to={to}")
   List<AcxTrade> getMyTradesUntilOrder(
       @PathParam("access_key") String accessKey,
       @PathParam("tonce") long tonce,
@@ -97,7 +97,7 @@ public interface AcxApi {
       @PathParam("market") String market,
       @PathParam("limit") Integer limit,
       @PathParam("order") String order,
-      @PathParam("end") String end)
+      @PathParam("to") String to)
       throws IOException;
 
   /**
