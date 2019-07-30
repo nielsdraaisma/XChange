@@ -146,6 +146,7 @@ public class AcxMapper {
     return new UserTrade.Builder()
         .currencyPair(AcxUtils.getCurrencyPair(trade.market))
         .id(trade.id)
+        .orderId(trade.orderId)
         .price(trade.price)
         .originalAmount(trade.volume)
         .timestamp(trade.createdAt)
