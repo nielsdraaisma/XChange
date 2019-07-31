@@ -2,12 +2,7 @@ package org.knowm.xchange.btcmarkets;
 
 import java.io.IOException;
 import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.knowm.xchange.btcmarkets.dto.BTCMarketsException;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsBalance;
@@ -55,7 +50,7 @@ public interface BTCMarketsAuthenticated {
       @HeaderParam("apikey") String publicKey,
       @HeaderParam("timestamp") SynchronizedValueFactory<Long> nonceFactory,
       @HeaderParam("signature") BTCMarketsDigest signer,
-      BTCMarketsOpenOrdersAndTradeHistoryRequest request)
+      BTCMarketsOpenOrdersRequest request)
       throws BTCMarketsException, IOException;
 
   @POST
@@ -65,17 +60,21 @@ public interface BTCMarketsAuthenticated {
       @HeaderParam("apikey") String publicKey,
       @HeaderParam("timestamp") SynchronizedValueFactory<Long> nonceFactory,
       @HeaderParam("signature") BTCMarketsDigest signer,
-      BTCMarketsOpenOrdersAndTradeHistoryRequest request)
+      BTCMarketsOpenOrdersRequest request)
       throws BTCMarketsException, IOException;
 
-  @POST
-  @Path("order/trade/history")
+  @GET
+  @Path("v2/order/trade/history/{base}/{counter}")
   @Consumes(MediaType.APPLICATION_JSON)
   BTCMarketsTradeHistory getTradeHistory(
       @HeaderParam("apikey") String publicKey,
       @HeaderParam("timestamp") SynchronizedValueFactory<Long> nonceFactory,
       @HeaderParam("signature") BTCMarketsDigest signer,
-      BTCMarketsOpenOrdersAndTradeHistoryRequest request)
+      @PathParam("base") String base,
+      @PathParam("counter") String counter,
+      @QueryParam("indexForward") Boolean indexForward,
+      @QueryParam("limit") Integer limit,
+      @QueryParam("since") Long since)
       throws BTCMarketsException, IOException;
 
   @POST

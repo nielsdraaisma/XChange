@@ -15,16 +15,20 @@ public class BTCMarketsDigest extends BaseParamsDigest {
   @Override
   public String digestParams(RestInvocation inv) {
     final String nonce = inv.getParamValue(HeaderParam.class, "timestamp").toString();
-    return digest(inv.getMethodPath(), nonce, inv.getRequestBody());
+    return digest(inv.getMethodPath(), nonce, inv.getRequestBody(), inv.getQueryString());
   }
 
-  String digest(String url, String nonce, String requestBody) {
+  String digest(String url, String nonce, String requestBody, String queryString) {
     Mac mac = getMac();
     if (!url.startsWith("/")) {
       url = "/" + url;
     }
     mac.update(url.getBytes());
     mac.update("\n".getBytes());
+    if (queryString != null) {
+      mac.update(queryString.getBytes());
+      mac.update("\n".getBytes());
+    }
     mac.update(nonce.getBytes());
     mac.update("\n".getBytes());
     if (requestBody != null && !requestBody.isEmpty()) {

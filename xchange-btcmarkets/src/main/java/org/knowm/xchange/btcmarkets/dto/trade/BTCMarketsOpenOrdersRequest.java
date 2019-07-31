@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /** Used for open orders, order history, trade history. */
 @JsonPropertyOrder({"currency", "instrument", "limit", "since"})
-public class BTCMarketsOpenOrdersAndTradeHistoryRequest {
+public class BTCMarketsOpenOrdersRequest {
 
   public final String currency;
   public final String instrument;
@@ -16,7 +16,7 @@ public class BTCMarketsOpenOrdersAndTradeHistoryRequest {
    * @see https://github.com/BTCMarkets/API/wiki/Trading-API#order-history &
    *     https://github.com/BTCMarkets/API/wiki/Trading-API#open-orders
    */
-  public BTCMarketsOpenOrdersAndTradeHistoryRequest(
+  public BTCMarketsOpenOrdersRequest(
       String currency, String instrument, Integer limit, Long since) {
     this.currency = currency;
     this.instrument = instrument;

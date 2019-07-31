@@ -85,7 +85,7 @@ public class AcxMapper {
       case "done":
         return OrderStatus.FILLED;
       case "cancel":
-        if ( order.executedVolume.compareTo(BigDecimal.ZERO) > 0){
+        if (order.executedVolume.compareTo(BigDecimal.ZERO) > 0) {
           return OrderStatus.PARTIALLY_CANCELED;
         } else {
           return OrderStatus.CANCELED;

@@ -31,7 +31,7 @@ public class AcxTrade {
       @JsonProperty("created_at") Date createdAt,
       @JsonProperty("trend") String trend,
       @JsonProperty("side") String side,
-      @JsonProperty("order_id") String orderId)  {
+      @JsonProperty("order_id") String orderId) {
     this.id = id;
     this.price = price;
     this.volume = volume;

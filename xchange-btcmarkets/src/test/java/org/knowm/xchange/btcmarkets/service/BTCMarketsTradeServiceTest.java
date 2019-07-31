@@ -30,7 +30,7 @@ import si.mazi.rescu.SynchronizedValueFactory;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
   BTCMarketsAuthenticated.class,
-  BTCMarketsOpenOrdersAndTradeHistoryRequest.class,
+  BTCMarketsOpenOrdersRequest.class,
   BTCMarketsCancelOrderRequest.class,
   BTCMarketsOrder.class
 })
