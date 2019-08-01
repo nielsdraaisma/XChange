@@ -192,6 +192,8 @@
         <module>xchange-zaif</module>
         <module>xchange-enigma</module>
         <module>xchange-b2c2</module>
+        <module>xchange-coinjar</module>
+        <module>xchange-wyre</module>
     </modules>
 
     <repositories>
