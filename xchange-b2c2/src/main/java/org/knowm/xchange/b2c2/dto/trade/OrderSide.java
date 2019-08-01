@@ -1,17 +1,19 @@
 package org.knowm.xchange.b2c2.dto.trade;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import org.knowm.xchange.dto.Order;
 
 public enum OrderSide {
   BUY,
   SELL;
 
-  @JsonCreator
-  public static OrderSide getOrderSide(String s) {
-    try {
-      return OrderSide.valueOf(s.toUpperCase());
-    } catch (Exception e) {
-      throw new RuntimeException("Unknown order side " + s + ".");
+  public static OrderSide of(Order.OrderType orderType) {
+    switch (orderType) {
+      case BID:
+        return BUY;
+      case ASK:
+        return SELL;
+      default:
+        return null;
     }
   }
 }
