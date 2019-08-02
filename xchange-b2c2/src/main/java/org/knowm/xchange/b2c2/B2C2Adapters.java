@@ -193,6 +193,7 @@ public class B2C2Adapters {
         .averagePrice(new BigDecimal(trade.price))
         .originalAmount(new BigDecimal(trade.quantity))
         .cumulativeAmount(new BigDecimal(trade.quantity))
+        .orderStatus(Order.OrderStatus.FILLED)
         .fee(BigDecimal.ZERO)
         .id(trade.tradeId)
         .build();
