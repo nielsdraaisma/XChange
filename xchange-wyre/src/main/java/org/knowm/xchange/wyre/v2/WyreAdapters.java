@@ -61,7 +61,7 @@ public class WyreAdapters {
     for (Map.Entry<String, BigDecimal> e : wyreAccount.getTotalBalances().entrySet()) {
       balances.add(new Balance(Currency.getInstance(e.getKey()), e.getValue()));
     }
-    Wallet wallet = new Wallet(balances);
+    Wallet wallet = Wallet.Builder.from(balances).build();
     return new AccountInfo(wyreAccount.getId(), wallet);
   }
 

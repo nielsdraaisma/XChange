@@ -2,10 +2,7 @@ package org.knowm.xchange.b2c2.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.knowm.xchange.b2c2.B2C2Adapters;
 import org.knowm.xchange.b2c2.B2C2Exchange;
 import org.knowm.xchange.b2c2.dto.trade.LedgerItem;
@@ -37,9 +34,11 @@ public class B2C2AccountService extends B2C2AccountServiceRaw implements Account
     List<Wallet> wallets = new ArrayList<>();
     for (Map.Entry<String, String> entry : getAccountBalances().entrySet()) {
       wallets.add(
-          new Wallet(
-              entry.getKey(),
-              new Balance(new Currency(entry.getKey()), new BigDecimal(entry.getValue()))));
+          Wallet.Builder.from(
+                  Collections.singletonList(
+                      new Balance(new Currency(entry.getKey()), new BigDecimal(entry.getValue()))))
+              .id(entry.getKey())
+              .build());
     }
     return new AccountInfo(wallets);
   }

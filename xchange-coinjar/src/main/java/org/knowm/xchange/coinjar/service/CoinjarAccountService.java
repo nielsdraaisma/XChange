@@ -2,6 +2,7 @@ package org.knowm.xchange.coinjar.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.knowm.xchange.coinjar.CoinjarErrorAdapter;
@@ -26,12 +27,14 @@ public class CoinjarAccountService extends CoinjarAccountServiceRaw implements A
           getAccounts().stream()
               .map(
                   wallet ->
-                      new Wallet(
-                          wallet.number,
-                          new Balance(
-                              Currency.getInstance(wallet.assetCode),
-                              new BigDecimal(wallet.balance),
-                              new BigDecimal(wallet.available))))
+                      Wallet.Builder.from(
+                              Collections.singleton(
+                                  new Balance(
+                                      Currency.getInstance(wallet.assetCode),
+                                      new BigDecimal(wallet.balance),
+                                      new BigDecimal(wallet.available))))
+                          .id(wallet.number)
+                          .build())
               .collect(Collectors.toList());
       return new AccountInfo(wallets);
     } catch (CoinjarException e) {
