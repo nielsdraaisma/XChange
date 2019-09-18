@@ -43,8 +43,7 @@ public class WyreMarketDataService extends WyreMarketDataServiceRaw implements M
   public OrderBook getOrderBook(CurrencyPair currencyPair, Object... args) {
     CurrencyPair invertedCurrencyPair = new CurrencyPair(currencyPair.counter, currencyPair.base);
     List<LimitOrder> orders =
-        orderBookQuoteAmounts
-            .stream()
+        orderBookQuoteAmounts.stream()
             .flatMap(
                 amount ->
                     Stream.of(
