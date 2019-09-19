@@ -2,12 +2,7 @@ package org.knowm.xchange.acx;
 
 import java.io.IOException;
 import java.util.List;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.knowm.xchange.acx.dto.AcxTrade;
 import org.knowm.xchange.acx.dto.account.AcxAccountInfo;
@@ -58,6 +53,52 @@ public interface AcxApi {
   @GET
   @Path("/trades.json?market={market}")
   List<AcxTrade> getTrades(@PathParam("market") String market) throws IOException;
+
+  /**
+   * Get recent trades on market, each trade is included only once. Trades are sorted in reverse
+   * creation order.
+   *
+   * @param market Unique market id. It's always in the form of xxxyyy, where xxx is the base
+   *     currency code, yyy is the quote currency code, e.g. 'btcaud'. All available markets c an be
+   *     found at /api/v2/markets.
+   */
+  @GET
+  @Path(
+      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}")
+  List<AcxTrade> getMyTrades(
+      @PathParam("access_key") String accessKey,
+      @PathParam("tonce") long tonce,
+      @PathParam("signature") ParamsDigest signature,
+      @PathParam("market") String market,
+      @PathParam("limit") Integer limit,
+      @PathParam("order") String order)
+      throws IOException;
+
+  @GET
+  @Path(
+      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}&from={from}")
+  List<AcxTrade> getMyTradesSinceOrder(
+      @PathParam("access_key") String accessKey,
+      @PathParam("tonce") long tonce,
+      @PathParam("signature") ParamsDigest signature,
+      @PathParam("market") String market,
+      @PathParam("limit") Integer limit,
+      @PathParam("order") String order,
+      @PathParam("from") String from)
+      throws IOException;
+
+  @GET
+  @Path(
+      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}&to={to}")
+  List<AcxTrade> getMyTradesUntilOrder(
+      @PathParam("access_key") String accessKey,
+      @PathParam("tonce") long tonce,
+      @PathParam("signature") ParamsDigest signature,
+      @PathParam("market") String market,
+      @PathParam("limit") Integer limit,
+      @PathParam("order") String order,
+      @PathParam("to") String to)
+      throws IOException;
 
   /**
    * Get your profile and accounts info.
