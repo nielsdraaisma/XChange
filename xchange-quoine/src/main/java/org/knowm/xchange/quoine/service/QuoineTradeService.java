@@ -1,9 +1,12 @@
 package org.knowm.xchange.quoine.service;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -13,6 +16,7 @@ import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.quoine.QuoineAdapters;
 import org.knowm.xchange.quoine.dto.trade.QuoineExecution;
+import org.knowm.xchange.quoine.dto.trade.QuoineOrderDetailsResponse;
 import org.knowm.xchange.quoine.dto.trade.QuoineOrderResponse;
 import org.knowm.xchange.quoine.dto.trade.QuoineOrdersList;
 import org.knowm.xchange.service.trade.TradeService;
@@ -22,6 +26,7 @@ import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrencyPair;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamPaging;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
+import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
 
 /** @author Matija Mazi */
 public class QuoineTradeService extends QuoineTradeServiceRaw implements TradeService {
@@ -33,6 +38,17 @@ public class QuoineTradeService extends QuoineTradeServiceRaw implements TradeSe
    */
   public QuoineTradeService(Exchange exchange, boolean useMargin) {
     super(exchange, useMargin);
+  }
+
+  @Override
+  public Collection<Order> getOrder(String... orderIds) throws IOException {
+    QuoineOrderDetailsResponse orderDetailsResponse = getQuoineOrderDetails(orderIds[0]);
+    return Collections.singletonList(QuoineAdapters.adaptOrder(orderDetailsResponse));
+  }
+
+  @Override
+  public Collection<Order> getOrder(OrderQueryParams... orderQueryParams) throws IOException {
+    return getOrder(orderQueryParams[0].getOrderId());
   }
 
   @Override

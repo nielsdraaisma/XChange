@@ -14,6 +14,7 @@ public final class QuoineOrderDetailsResponse {
   private final String side;
   private final Integer leverageLevel;
   private final String productCode;
+  private final String fundingCurrency;
   private final BigDecimal filledQuantity;
   private final BigDecimal price;
   private final BigDecimal createdAt;
@@ -50,6 +51,7 @@ public final class QuoineOrderDetailsResponse {
       @JsonProperty("side") String side,
       @JsonProperty("leverage_level") Integer leverageLevel,
       @JsonProperty("product_code") String productCode,
+      @JsonProperty("funding_currency") String fundingCurrency,
       @JsonProperty("filled_quantity") BigDecimal filledQuantity,
       @JsonProperty("price") BigDecimal price,
       @JsonProperty("created_at") BigDecimal createdAt,
@@ -65,6 +67,7 @@ public final class QuoineOrderDetailsResponse {
     this.side = side;
     this.leverageLevel = leverageLevel;
     this.productCode = productCode;
+    this.fundingCurrency = fundingCurrency;
     this.filledQuantity = filledQuantity;
     this.price = price;
     this.createdAt = createdAt;
@@ -101,6 +104,10 @@ public final class QuoineOrderDetailsResponse {
 
   public String getProductCode() {
     return productCode;
+  }
+
+  public String getFundingCurrency() {
+    return fundingCurrency;
   }
 
   public BigDecimal getFilledQuantity() {
@@ -151,6 +158,8 @@ public final class QuoineOrderDetailsResponse {
         + leverageLevel
         + ", productCode="
         + productCode
+        + ", fundingCurrency="
+        + fundingCurrency
         + ", filledQuantity="
         + filledQuantity
         + ", price="

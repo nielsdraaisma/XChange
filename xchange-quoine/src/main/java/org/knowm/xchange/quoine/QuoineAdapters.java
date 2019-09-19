@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
@@ -22,10 +23,7 @@ import org.knowm.xchange.quoine.dto.account.QuoineAccountInfo;
 import org.knowm.xchange.quoine.dto.account.QuoineTradingAccountInfo;
 import org.knowm.xchange.quoine.dto.marketdata.QuoineOrderBook;
 import org.knowm.xchange.quoine.dto.marketdata.QuoineProduct;
-import org.knowm.xchange.quoine.dto.trade.Model;
-import org.knowm.xchange.quoine.dto.trade.QuoineExecution;
-import org.knowm.xchange.quoine.dto.trade.QuoineOrdersList;
-import org.knowm.xchange.quoine.dto.trade.QuoineTransaction;
+import org.knowm.xchange.quoine.dto.trade.*;
 import org.knowm.xchange.utils.DateUtils;
 
 public class QuoineAdapters {
@@ -179,16 +177,6 @@ public class QuoineAdapters {
     return Wallet.Builder.from(balanceList).build();
   }
 
-  //  public static Wallet adapt(BitcoinAccount[] balances) {
-  //    List<Balance> balanceList = new ArrayList<>();
-  //    for (BitcoinAccount nativeBalance : balances) {
-  //     balanceList.add(
-  //          new Balance(
-  //              Currency.getInstance(nativeBalance.getCurrency()), nativeBalance.getBalance()));
-  //    }
-  //    return new Wallet("crypto",balanceList);
-  //  }
-
   public static List<UserTrade> adapt(List<QuoineExecution> executions, CurrencyPair currencyPair) {
     List<UserTrade> res = new ArrayList<>();
     for (QuoineExecution execution : executions) {
@@ -232,5 +220,46 @@ public class QuoineAdapters {
         null,
         fee,
         transaction.notes);
+  }
+
+  public static Order adaptOrder(QuoineOrderDetailsResponse od) {
+    List<LimitOrder> orders = new ArrayList<>();
+    // currencey pair
+    String oppositeCurrency = od.getCurrencyPairCode().replace(od.getFundingCurrency(), "");
+    CurrencyPair currencyPair;
+    if (od.getCurrencyPairCode().startsWith(oppositeCurrency)) {
+      currencyPair = new CurrencyPair(oppositeCurrency, od.getFundingCurrency());
+    } else {
+      currencyPair = new CurrencyPair(od.getFundingCurrency(), oppositeCurrency);
+    }
+
+    Order.OrderStatus orderStatus = Order.OrderStatus.UNKNOWN;
+    switch (od.getStatus()) {
+      case "live":
+        orderStatus = Order.OrderStatus.NEW;
+        break;
+      case "partially_filled":
+        orderStatus = Order.OrderStatus.PARTIALLY_FILLED;
+        break;
+      case "cancelled":
+        if (od.getFilledQuantity().compareTo(BigDecimal.ZERO) != 0) {
+          orderStatus = Order.OrderStatus.PARTIALLY_CANCELED;
+        } else {
+          orderStatus = Order.OrderStatus.CANCELED;
+        }
+        break;
+    }
+
+    // OrderType
+    OrderType orderType = od.getSide().equals("sell") ? OrderType.ASK : OrderType.BID;
+
+    return new LimitOrder.Builder(orderType, currencyPair)
+        .limitPrice(od.getPrice())
+        .orderStatus(orderStatus)
+        .originalAmount(od.getQuantity())
+        .cumulativeAmount(od.getFilledQuantity())
+        .id(od.getId())
+        .timestamp(DateUtils.fromUnixTime(od.getCreatedAt().longValue()))
+        .build();
   }
 }
