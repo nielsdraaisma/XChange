@@ -3,6 +3,8 @@ package org.knowm.xchange.acx;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.knowm.xchange.acx.dto.AcxTrade;
 import org.knowm.xchange.acx.dto.account.AcxAccount;
@@ -11,7 +13,6 @@ import org.knowm.xchange.acx.dto.marketdata.AcxMarket;
 import org.knowm.xchange.acx.dto.marketdata.AcxOrder;
 import org.knowm.xchange.acx.dto.marketdata.AcxOrderBook;
 import org.knowm.xchange.acx.dto.marketdata.AcxTicker;
-import org.knowm.xchange.acx.utils.AcxUtils;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderStatus;
@@ -24,10 +25,24 @@ import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.dto.marketdata.Trades.TradeSortType;
+import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
 
 public class AcxMapper {
+
+  AcxMapper(ExchangeMetaData exchangeMetaData) {
+    exchangeMetaData
+        .getCurrencyPairs()
+        .forEach(
+            (currencyPair, currencyPairMetaData) -> {
+              marketMap.put(
+                  currencyPair.base.toString().toLowerCase()
+                      + currencyPair.counter.toString().toLowerCase(),
+                  currencyPair);
+            });
+  }
+
   public Ticker mapTicker(CurrencyPair currencyPair, AcxMarket tickerData) {
     AcxTicker ticker = tickerData.ticker;
     return new Ticker.Builder()
@@ -143,9 +158,9 @@ public class AcxMapper {
     throw new IllegalArgumentException("Unknown order type: " + type);
   }
 
-  public static UserTrade mapTrade(AcxTrade trade) {
+  public UserTrade mapTrade(AcxTrade trade) {
     return new UserTrade.Builder()
-        .currencyPair(AcxUtils.getCurrencyPair(trade.market))
+        .currencyPair(mapCurrencyPair(trade.market))
         .id(trade.id)
         .orderId(trade.orderId)
         .price(trade.price)
@@ -153,5 +168,17 @@ public class AcxMapper {
         .timestamp(trade.createdAt)
         .type(mapOrderSide(trade.side))
         .build();
+  }
+
+  private Map<String, CurrencyPair> marketMap = new ConcurrentHashMap<>();
+
+  public CurrencyPair mapCurrencyPair(String acxMarket) {
+    if (marketMap.containsKey(acxMarket)) {
+      return marketMap.get(acxMarket);
+    } else {
+      return new CurrencyPair(
+          Currency.getInstance(acxMarket.substring(0, 3)),
+          Currency.getInstance(acxMarket.substring(3, 6)));
+    }
   }
 }

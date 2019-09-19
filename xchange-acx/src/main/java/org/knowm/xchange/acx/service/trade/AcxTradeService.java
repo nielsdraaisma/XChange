@@ -159,7 +159,7 @@ public class AcxTradeService implements TradeService {
               accessKey, tonce, signatureCreator, market, acxTradeHistoryParams.limit, order);
     }
     return new UserTrades(
-        trades.stream().map(AcxMapper::mapTrade).collect(Collectors.toList()),
+        trades.stream().map(mapper::mapTrade).collect(Collectors.toList()),
         Trades.TradeSortType.SortByID);
   }
 

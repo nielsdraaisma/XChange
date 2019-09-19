@@ -17,7 +17,7 @@ public class AcxExchange extends BaseExchange implements Exchange {
   protected void initServices() {
     ExchangeSpecification spec = getExchangeSpecification();
     AcxApi api = RestProxyFactory.createProxy(AcxApi.class, spec.getSslUri());
-    AcxMapper mapper = new AcxMapper();
+    AcxMapper mapper = new AcxMapper(exchangeMetaData);
     this.marketDataService = new AcxMarketDataService(api, mapper);
     if (spec.getApiKey() != null && spec.getSecretKey() != null) {
       AcxSignatureCreator signatureCreator = new AcxSignatureCreator(spec.getSecretKey());
