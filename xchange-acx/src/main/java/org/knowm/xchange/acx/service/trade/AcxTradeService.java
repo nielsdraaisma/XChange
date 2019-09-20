@@ -118,36 +118,6 @@ public class AcxTradeService implements TradeService {
     if (acxTradeHistoryParams.currencyPair == null) {
       throw new IllegalArgumentException("CurrencyPair cannot be null");
     }
-<<<<<<< HEAD
-    Long timestamp = null;
-    Long startId = null;
-    Long endId = null;
-    String order = null;
-    if (acxTradeHistoryParams.endTime != null) {
-      timestamp = acxTradeHistoryParams.endTime.toInstant().getEpochSecond();
-    }
-    String market = getAcxMarket(acxTradeHistoryParams.currencyPair);
-    //    if (acxTradeHistoryParams.endId != null) {
-    //      endId = Long.valueOf(acxTradeHistoryParams.endId);
-    //    }
-    if (acxTradeHistoryParams.order != null) {
-      order = acxTradeHistoryParams.order.name();
-    }
-    List<AcxTrade> trades;
-    if (acxTradeHistoryParams.startId != null) {
-      trades =
-          api.getMyTradesSinceOrder(
-              accessKey,
-              tonce,
-              signatureCreator,
-              market,
-              acxTradeHistoryParams.limit,
-              order,
-              acxTradeHistoryParams.startId);
-    } else if (acxTradeHistoryParams.endId != null) {
-      trades =
-          api.getMyTradesUntilOrder(
-=======
     String timestamp = null;
     String startId = null;
     String endId = null;
@@ -167,33 +137,14 @@ public class AcxTradeService implements TradeService {
     if (acxTradeHistoryParams.order != null) {
       order = acxTradeHistoryParams.order.name();
     }
-    if ( acxTradeHistoryParams.limit != null){
+    if (acxTradeHistoryParams.limit != null) {
       limit = acxTradeHistoryParams.limit.toString();
     }
 
-    List<AcxTrade> trades = api.getMyTrades(
->>>>>>> 5fbc03b7e... [acx] - Updated metadata, implemented getTradeHistory, fixed bug that failed to convert btcusdt to the correct currencypair
-              accessKey,
-              tonce,
-              signatureCreator,
-              market,
-<<<<<<< HEAD
-              acxTradeHistoryParams.limit,
-              order,
-              acxTradeHistoryParams.endId);
-    } else {
-      trades =
-          api.getMyTrades(
-              accessKey, tonce, signatureCreator, market, acxTradeHistoryParams.limit, order);
-    }
-=======
-              limit,
-              order,
-              startId,
-              endId,
-              timestamp);
+    List<AcxTrade> trades =
+        api.getMyTrades(
+            accessKey, tonce, signatureCreator, market, limit, order, startId, endId, timestamp);
 
->>>>>>> 5fbc03b7e... [acx] - Updated metadata, implemented getTradeHistory, fixed bug that failed to convert btcusdt to the correct currencypair
     return new UserTrades(
         trades.stream().map(mapper::mapTrade).collect(Collectors.toList()),
         Trades.TradeSortType.SortByID);

@@ -63,44 +63,7 @@ public interface AcxApi {
    *     found at /api/v2/markets.
    */
   @GET
-  @Path(
-<<<<<<< HEAD
-      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}")
-  List<AcxTrade> getMyTrades(
-      @PathParam("access_key") String accessKey,
-      @PathParam("tonce") long tonce,
-      @PathParam("signature") ParamsDigest signature,
-      @PathParam("market") String market,
-      @PathParam("limit") Integer limit,
-      @PathParam("order") String order)
-      throws IOException;
-
-  @GET
-  @Path(
-      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}&from={from}")
-  List<AcxTrade> getMyTradesSinceOrder(
-      @PathParam("access_key") String accessKey,
-      @PathParam("tonce") long tonce,
-      @PathParam("signature") ParamsDigest signature,
-      @PathParam("market") String market,
-      @PathParam("limit") Integer limit,
-      @PathParam("order") String order,
-      @PathParam("from") String from)
-      throws IOException;
-
-  @GET
-  @Path(
-      "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}&to={to}")
-  List<AcxTrade> getMyTradesUntilOrder(
-      @PathParam("access_key") String accessKey,
-      @PathParam("tonce") long tonce,
-      @PathParam("signature") ParamsDigest signature,
-      @PathParam("market") String market,
-      @PathParam("limit") Integer limit,
-      @PathParam("order") String order,
-      @PathParam("to") String to)
-=======
-      "/trades/my.json")
+  @Path("/trades/my.json")
   List<AcxTrade> getMyTrades(
       @QueryParam("access_key") String accessKey,
       @QueryParam("tonce") long tonce,
@@ -110,9 +73,7 @@ public interface AcxApi {
       @QueryParam("order") String order,
       @QueryParam("from") String from,
       @QueryParam("to") String to,
-      @QueryParam("timestamp") String timestamp
-      )
->>>>>>> 5fbc03b7e... [acx] - Updated metadata, implemented getTradeHistory, fixed bug that failed to convert btcusdt to the correct currencypair
+      @QueryParam("timestamp") String timestamp)
       throws IOException;
 
   /**
