@@ -19,7 +19,7 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
   private static final BigDecimal AMOUNT_MULTIPLICAND = new BigDecimal("100000000");
   private static final int MAX_SCALE = 8;
 
-  private final BTCMarketsDigest signer;
+  private final BTCMarketsDigest signerV1;
   private final BTCMarketsAuthenticated btcm;
   private final SynchronizedValueFactory<Long> nonceFactory;
 
@@ -31,11 +31,11 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
             BTCMarketsAuthenticated.class,
             exchange.getExchangeSpecification().getSslUri(),
             getClientConfig());
-    this.signer = new BTCMarketsDigest(exchange.getExchangeSpecification().getSecretKey());
+    this.signerV1 = new BTCMarketsDigest(exchange.getExchangeSpecification().getSecretKey(), false);
   }
 
   public List<BTCMarketsBalance> getBTCMarketsBalance() throws IOException {
-    return btcm.getBalance(exchange.getExchangeSpecification().getApiKey(), nonceFactory, signer);
+    return btcm.getBalance(exchange.getExchangeSpecification().getApiKey(), nonceFactory, signerV1);
   }
 
   public String withdrawCrypto(String address, BigDecimal amount, Currency currency)
@@ -51,7 +51,7 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
         new BTCMarketsWithdrawCryptoRequest(amountInSatoshis, address, currency.getCurrencyCode());
     BTCMarketsWithdrawCryptoResponse response =
         btcm.withdrawCrypto(
-            exchange.getExchangeSpecification().getApiKey(), nonceFactory, signer, request);
+            exchange.getExchangeSpecification().getApiKey(), nonceFactory, signerV1, request);
 
     if (!response.getSuccess())
       throw new ExchangeException(
@@ -66,7 +66,7 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
   public BTCMarketsFundtransferHistoryResponse fundtransferHistory() throws IOException {
     BTCMarketsFundtransferHistoryResponse response =
         btcm.fundtransferHistory(
-            exchange.getExchangeSpecification().getApiKey(), nonceFactory, signer);
+            exchange.getExchangeSpecification().getApiKey(), nonceFactory, signerV1);
 
     if (!response.getSuccess()) {
       throw new ExchangeException(

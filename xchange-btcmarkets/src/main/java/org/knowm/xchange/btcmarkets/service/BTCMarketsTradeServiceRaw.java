@@ -16,7 +16,7 @@ import si.mazi.rescu.SynchronizedValueFactory;
 public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
 
   private final BTCMarketsAuthenticated btcm;
-  private final BTCMarketsDigest signer;
+  private final BTCMarketsDigest signerV1;
   private final SynchronizedValueFactory<Long> nonceFactory;
 
   public BTCMarketsTradeServiceRaw(Exchange exchange) {
@@ -25,7 +25,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
     this.btcm =
         RestProxyFactory.createProxy(
             BTCMarketsAuthenticated.class, spec.getSslUri(), getClientConfig());
-    this.signer = new BTCMarketsDigest(spec.getSecretKey());
+    this.signerV1 = new BTCMarketsDigest(spec.getSecretKey(), false);
     this.nonceFactory = exchange.getNonceFactory();
   }
 
@@ -39,7 +39,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
     return btcm.placeOrder(
         exchange.getExchangeSpecification().getApiKey(),
         nonceFactory,
-        this.signer,
+        this.signerV1,
         new BTCMarketsOrder(
             amount,
             price,
@@ -59,14 +59,14 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
             limit,
             since);
     return btcm.getOpenOrders(
-        exchange.getExchangeSpecification().getApiKey(), nonceFactory, signer, request);
+        exchange.getExchangeSpecification().getApiKey(), nonceFactory, signerV1, request);
   }
 
   public BTCMarketsBaseResponse cancelBTCMarketsOrder(Long orderId) throws IOException {
     return btcm.cancelOrder(
         exchange.getExchangeSpecification().getApiKey(),
         nonceFactory,
-        signer,
+        signerV1,
         new BTCMarketsCancelOrderRequest(orderId));
   }
 
@@ -75,7 +75,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
     return btcm.getTradeHistory(
         exchange.getExchangeSpecification().getApiKey(),
         nonceFactory,
-        signer,
+        signerV1,
         currencyPair.base.getCurrencyCode(),
         currencyPair.counter.getCurrencyCode(),
         true,
@@ -86,7 +86,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
   public BTCMarketsOrders getOrderDetails(List<Long> orderIds) throws IOException {
     BTCMarketsOrderDetailsRequest request = new BTCMarketsOrderDetailsRequest(orderIds);
     return btcm.getOrderDetails(
-        exchange.getExchangeSpecification().getApiKey(), nonceFactory, signer, request);
+        exchange.getExchangeSpecification().getApiKey(), nonceFactory, signerV1, request);
   }
 
   private String newReqId() {

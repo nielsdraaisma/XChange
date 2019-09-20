@@ -7,9 +7,12 @@ import org.knowm.xchange.service.BaseParamsDigest;
 import si.mazi.rescu.RestInvocation;
 
 public class BTCMarketsDigest extends BaseParamsDigest {
+  /** True for V2 endpoints, false for V1 */
+  private boolean includeQueryString;
 
-  public BTCMarketsDigest(String secretKey) {
+  public BTCMarketsDigest(String secretKey, Boolean includeQueryString) {
     super(decodeBase64(secretKey), HMAC_SHA_512);
+    this.includeQueryString = includeQueryString;
   }
 
   @Override
@@ -25,7 +28,7 @@ public class BTCMarketsDigest extends BaseParamsDigest {
     }
     mac.update(url.getBytes());
     mac.update("\n".getBytes());
-    if (queryString != null) {
+    if (includeQueryString && queryString != null && !queryString.isEmpty()) {
       mac.update(queryString.getBytes());
       mac.update("\n".getBytes());
     }
