@@ -31,6 +31,11 @@ import org.knowm.xchange.dto.trade.UserTrade;
 
 public class AcxMapper {
 
+<<<<<<< HEAD
+=======
+  private Map<String, CurrencyPair> marketMap = new ConcurrentHashMap<>();
+
+>>>>>>> 5fbc03b7e... [acx] - Updated metadata, implemented getTradeHistory, fixed bug that failed to convert btcusdt to the correct currencypair
   AcxMapper(ExchangeMetaData exchangeMetaData) {
     exchangeMetaData
         .getCurrencyPairs()
@@ -170,8 +175,11 @@ public class AcxMapper {
         .build();
   }
 
+<<<<<<< HEAD
   private Map<String, CurrencyPair> marketMap = new ConcurrentHashMap<>();
 
+=======
+>>>>>>> 5fbc03b7e... [acx] - Updated metadata, implemented getTradeHistory, fixed bug that failed to convert btcusdt to the correct currencypair
   public CurrencyPair mapCurrencyPair(String acxMarket) {
     if (marketMap.containsKey(acxMarket)) {
       return marketMap.get(acxMarket);

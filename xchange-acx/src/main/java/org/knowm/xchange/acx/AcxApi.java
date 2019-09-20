@@ -64,6 +64,7 @@ public interface AcxApi {
    */
   @GET
   @Path(
+<<<<<<< HEAD
       "/trades/my.json?market={market}&access_key={access_key}&tonce={tonce}&signature={signature}&limit={limit}&order={order}")
   List<AcxTrade> getMyTrades(
       @PathParam("access_key") String accessKey,
@@ -98,6 +99,20 @@ public interface AcxApi {
       @PathParam("limit") Integer limit,
       @PathParam("order") String order,
       @PathParam("to") String to)
+=======
+      "/trades/my.json")
+  List<AcxTrade> getMyTrades(
+      @QueryParam("access_key") String accessKey,
+      @QueryParam("tonce") long tonce,
+      @QueryParam("signature") ParamsDigest signature,
+      @QueryParam("market") String market,
+      @QueryParam("limit") String limit,
+      @QueryParam("order") String order,
+      @QueryParam("from") String from,
+      @QueryParam("to") String to,
+      @QueryParam("timestamp") String timestamp
+      )
+>>>>>>> 5fbc03b7e... [acx] - Updated metadata, implemented getTradeHistory, fixed bug that failed to convert btcusdt to the correct currencypair
       throws IOException;
 
   /**
