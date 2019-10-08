@@ -12,7 +12,14 @@ public class OrderRequestTest {
   public void testMarshalling() throws JsonProcessingException {
     OrderRequest orderRequest =
         new OrderRequest(
-            "uuid", "2", "buy", "BTCUSD.SPOT", "12333.23", false, "2018-02-06T16:07:50.122206Z");
+            "uuid",
+            "2",
+            "buy",
+            "BTCUSD.SPOT",
+            "FOK",
+            "12333.23",
+            false,
+            "2018-02-06T16:07:50.122206Z");
 
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(orderRequest);
