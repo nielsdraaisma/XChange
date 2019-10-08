@@ -16,7 +16,7 @@ public final class OrderRequest {
   public final String instrument;
 
   @JsonProperty("order_type")
-  public final String orderType = "FOK"; // Only FOK allowed
+  public final String orderType; // Only FOK and MKT allowed
 
   @JsonProperty("price")
   public final String price;
@@ -32,6 +32,7 @@ public final class OrderRequest {
       String quantity,
       String side,
       String instrument,
+      String orderType,
       String price,
       Boolean forceOpen,
       String validUntil) {
@@ -39,6 +40,7 @@ public final class OrderRequest {
     this.quantity = quantity;
     this.side = side;
     this.instrument = instrument;
+    this.orderType = orderType;
     this.price = price;
     this.forceOpen = forceOpen;
     this.validUntil = validUntil;
