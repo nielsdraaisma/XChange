@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import org.knowm.xchange.acx.dto.AcxException;
 import org.knowm.xchange.acx.dto.AcxTrade;
 import org.knowm.xchange.acx.dto.account.AcxAccountInfo;
 import org.knowm.xchange.acx.dto.marketdata.AcxMarket;
@@ -156,7 +157,7 @@ public interface AcxApi {
       @FormParam("price") String price,
       @FormParam("ord_type") String ordType,
       @FormParam("signature") ParamsDigest signature)
-      throws IOException;
+      throws IOException, AcxException;
 
   /**
    * Cancel an order.

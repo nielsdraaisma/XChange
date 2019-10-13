@@ -12,14 +12,19 @@ import java.util.stream.Stream;
 import org.knowm.xchange.acx.AcxApi;
 import org.knowm.xchange.acx.AcxMapper;
 import org.knowm.xchange.acx.AcxSignatureCreator;
+import org.knowm.xchange.acx.dto.AcxException;
 import org.knowm.xchange.acx.dto.AcxTrade;
 import org.knowm.xchange.acx.dto.marketdata.AcxOrder;
+import org.knowm.xchange.acx.service.AcxBaseService;
 import org.knowm.xchange.acx.utils.AcxUtils;
 import org.knowm.xchange.acx.utils.ArgUtils;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.Trades;
-import org.knowm.xchange.dto.trade.*;
+import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.*;
@@ -30,13 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import si.mazi.rescu.SynchronizedValueFactory;
 
-public class AcxTradeService implements TradeService {
+public class AcxTradeService extends AcxBaseService implements TradeService {
   private static final Logger logger = LoggerFactory.getLogger(AcxTradeService.class);
-  private final AcxApi api;
-  private final AcxMapper mapper;
-  private final AcxSignatureCreator signatureCreator;
-  private final String accessKey;
-  private final SynchronizedValueFactory<Long> nonceFactory;
 
   public AcxTradeService(
       SynchronizedValueFactory<Long> nonceFactory,
@@ -44,11 +44,7 @@ public class AcxTradeService implements TradeService {
       AcxMapper mapper,
       AcxSignatureCreator signatureCreator,
       String accessKey) {
-    this.api = api;
-    this.mapper = mapper;
-    this.signatureCreator = signatureCreator;
-    this.accessKey = accessKey;
-    this.nonceFactory = nonceFactory;
+    super(nonceFactory, api, mapper, signatureCreator, accessKey);
   }
 
   @Override
@@ -73,14 +69,18 @@ public class AcxTradeService implements TradeService {
 
   @Override
   public String placeLimitOrder(LimitOrder limitOrder) throws IOException {
-    long tonce = nonceFactory.createValue();
-    String market = getAcxMarket(limitOrder.getCurrencyPair());
-    String side = mapper.getOrderType(limitOrder.getType());
-    String volume = limitOrder.getOriginalAmount().setScale(2, RoundingMode.DOWN).toPlainString();
-    String price = limitOrder.getLimitPrice().setScale(4, RoundingMode.DOWN).toPlainString();
-    AcxOrder order =
-        api.createOrder(accessKey, tonce, market, side, volume, price, "limit", signatureCreator);
-    return order.id;
+    try {
+      long tonce = nonceFactory.createValue();
+      String market = getAcxMarket(limitOrder.getCurrencyPair());
+      String side = mapper.getOrderType(limitOrder.getType());
+      String volume = limitOrder.getOriginalAmount().setScale(2, RoundingMode.DOWN).toPlainString();
+      String price = limitOrder.getLimitPrice().setScale(4, RoundingMode.DOWN).toPlainString();
+      AcxOrder order =
+          api.createOrder(accessKey, tonce, market, side, volume, price, "limit", signatureCreator);
+      return order.id;
+    } catch (AcxException e) {
+      throw handleError(e);
+    }
   }
 
   @Override
