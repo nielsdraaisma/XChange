@@ -29,7 +29,7 @@ public class AcxBaseService {
     this.nonceFactory = nonceFactory;
   }
 
-  protected ExchangeException handleError(AcxException exception) {
+  public static ExchangeException handleError(AcxException exception) {
 
     if (exception.error.code == 2002L) {
       return new FundsExceededException(exception.error.message);
