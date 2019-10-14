@@ -17,6 +17,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
 
   private final BTCMarketsAuthenticated btcm;
   private final BTCMarketsDigest signerV1;
+  private final BTCMarketsDigest signerV2;
   private final SynchronizedValueFactory<Long> nonceFactory;
 
   public BTCMarketsTradeServiceRaw(Exchange exchange) {
@@ -26,6 +27,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
         RestProxyFactory.createProxy(
             BTCMarketsAuthenticated.class, spec.getSslUri(), getClientConfig());
     this.signerV1 = new BTCMarketsDigest(spec.getSecretKey(), false);
+    this.signerV2 = new BTCMarketsDigest(spec.getSecretKey(), true);
     this.nonceFactory = exchange.getNonceFactory();
   }
 
@@ -75,7 +77,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
     return btcm.getTradeHistory(
         exchange.getExchangeSpecification().getApiKey(),
         nonceFactory,
-        signerV1,
+        signerV2,
         currencyPair.base.getCurrencyCode(),
         currencyPair.counter.getCurrencyCode(),
         true,
