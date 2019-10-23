@@ -6,12 +6,13 @@ import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.acx.service.account.AcxAccountService;
 import org.knowm.xchange.acx.service.marketdata.AcxMarketDataService;
 import org.knowm.xchange.acx.service.trade.AcxTradeService;
+import org.knowm.xchange.utils.nonce.CurrentNanosecondTimeIncrementalNonceFactory;
 import org.knowm.xchange.utils.nonce.CurrentTimeNonceFactory;
 import si.mazi.rescu.RestProxyFactory;
 import si.mazi.rescu.SynchronizedValueFactory;
 
 public class AcxExchange extends BaseExchange implements Exchange {
-  private final SynchronizedValueFactory<Long> nonceFactory = new CurrentTimeNonceFactory();
+  private final SynchronizedValueFactory<Long> nonceFactory = new CurrentNanosecondTimeIncrementalNonceFactory();
 
   @Override
   protected void initServices() {
