@@ -96,7 +96,7 @@ public class IndependentReserveTradeServiceRaw extends IndependentReserveBaseSer
             originalAmount.toString());
     independentReservePlaceLimitOrderRequest.setSignature(
         signatureCreator.digestParamsToString(
-            ExchangeEndpoint.PLACE_MARKET_ORDER,
+            ExchangeEndpoint.PLACE_LIMIT_ORDER,
             nonce,
             independentReservePlaceLimitOrderRequest.getParameters()));
 
@@ -129,7 +129,7 @@ public class IndependentReserveTradeServiceRaw extends IndependentReserveBaseSer
             originalAmount.toString());
     independentReservePlaceMarketOrderRequest.setSignature(
         signatureCreator.digestParamsToString(
-            ExchangeEndpoint.PLACE_LIMIT_ORDER,
+            ExchangeEndpoint.PLACE_MARKET_ORDER,
             nonce,
             independentReservePlaceMarketOrderRequest.getParameters()));
 
