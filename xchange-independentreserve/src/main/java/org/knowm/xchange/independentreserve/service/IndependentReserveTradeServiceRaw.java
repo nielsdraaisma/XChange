@@ -7,19 +7,8 @@ import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.independentreserve.IndependentReserveAuthenticated;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveCancelOrderRequest;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveCancelOrderResponse;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOpenOrderRequest;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOpenOrdersResponse;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOrderDetailsRequest;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOrderDetailsResponse;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReservePlaceLimitOrderRequest;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReservePlaceLimitOrderResponse;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTradeHistoryRequest;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTradeHistoryResponse;
+import org.knowm.xchange.independentreserve.dto.trade.*;
 import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransaction.Type;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransactionsRequest;
-import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransactionsResponse;
 import org.knowm.xchange.independentreserve.util.ExchangeEndpoint;
 import si.mazi.rescu.RestProxyFactory;
 
@@ -107,12 +96,45 @@ public class IndependentReserveTradeServiceRaw extends IndependentReserveBaseSer
             originalAmount.toString());
     independentReservePlaceLimitOrderRequest.setSignature(
         signatureCreator.digestParamsToString(
-            ExchangeEndpoint.PLACE_LIMIT_ORDER,
+            ExchangeEndpoint.PLACE_MARKET_ORDER,
             nonce,
             independentReservePlaceLimitOrderRequest.getParameters()));
 
-    IndependentReservePlaceLimitOrderResponse independentReservePlaceLimitOrderResponse =
+    IndependentReservePlaceOrderResponse independentReservePlaceLimitOrderResponse =
         independentReserveAuthenticated.placeLimitOrder(independentReservePlaceLimitOrderRequest);
+
+    return independentReservePlaceLimitOrderResponse.getOrderGuid();
+  }
+
+  public String independentReservePlaceMarketOrder(
+      CurrencyPair currencyPair, Order.OrderType type, BigDecimal originalAmount)
+      throws IOException {
+    Long nonce = exchange.getNonceFactory().createValue();
+    String apiKey = exchange.getExchangeSpecification().getApiKey();
+
+    String orderType = null;
+    if (type == Order.OrderType.ASK) {
+      orderType = "LimitOffer";
+    } else if (type == Order.OrderType.BID) {
+      orderType = "LimitBid";
+    }
+
+    IndependentReservePlaceMarketOrderRequest independentReservePlaceMarketOrderRequest =
+        new IndependentReservePlaceMarketOrderRequest(
+            apiKey,
+            nonce,
+            currencyPair.base.getCurrencyCode(),
+            currencyPair.counter.getCurrencyCode(),
+            orderType,
+            originalAmount.toString());
+    independentReservePlaceMarketOrderRequest.setSignature(
+        signatureCreator.digestParamsToString(
+            ExchangeEndpoint.PLACE_LIMIT_ORDER,
+            nonce,
+            independentReservePlaceMarketOrderRequest.getParameters()));
+
+    IndependentReservePlaceOrderResponse independentReservePlaceLimitOrderResponse =
+        independentReserveAuthenticated.placeMarketOrder(independentReservePlaceMarketOrderRequest);
 
     return independentReservePlaceLimitOrderResponse.getOrderGuid();
   }

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /** Author: Kamil Zbikowski Date: 4/15/15 */
-public class IndependentReservePlaceLimitOrderResponse {
+public class IndependentReservePlaceOrderResponse {
   private final Date createdTimestampUtc;
   private final String orderGuid;
   private final BigDecimal price;
@@ -17,7 +17,7 @@ public class IndependentReservePlaceLimitOrderResponse {
   private final BigDecimal volumeFilled;
   private final BigDecimal volumeOrdered;
 
-  public IndependentReservePlaceLimitOrderResponse(
+  public IndependentReservePlaceOrderResponse(
       @JsonProperty("CreatedTimestampUtc") Date createdTimestampUtc,
       @JsonProperty("OrderGuid") String orderGuid,
       @JsonProperty("Price") BigDecimal price,
