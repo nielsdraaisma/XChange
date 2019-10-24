@@ -194,6 +194,7 @@
         <module>xchange-b2c2</module>
         <module>xchange-coinjar</module>
         <module>xchange-wyre</module>
+        <module>xchange-coinspot</module>
     </modules>
 
     <repositories>
