@@ -114,9 +114,9 @@ public class IndependentReserveTradeServiceRaw extends IndependentReserveBaseSer
 
     String orderType = null;
     if (type == Order.OrderType.ASK) {
-      orderType = "LimitOffer";
+      orderType = "MarketOffer";
     } else if (type == Order.OrderType.BID) {
-      orderType = "LimitBid";
+      orderType = "MarketBid";
     }
 
     IndependentReservePlaceMarketOrderRequest independentReservePlaceMarketOrderRequest =
