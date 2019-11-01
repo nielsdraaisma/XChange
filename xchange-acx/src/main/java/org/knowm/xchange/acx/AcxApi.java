@@ -7,6 +7,7 @@ import javax.ws.rs.core.MediaType;
 import org.knowm.xchange.acx.dto.AcxException;
 import org.knowm.xchange.acx.dto.AcxTrade;
 import org.knowm.xchange.acx.dto.account.AcxAccountInfo;
+import org.knowm.xchange.acx.dto.account.AcxDepositAddress;
 import org.knowm.xchange.acx.dto.marketdata.AcxMarket;
 import org.knowm.xchange.acx.dto.marketdata.AcxOrder;
 import org.knowm.xchange.acx.dto.marketdata.AcxOrderBook;
@@ -174,5 +175,15 @@ public interface AcxApi {
       @FormParam("tonce") long tonce,
       @FormParam("id") String id,
       @FormParam("signature") ParamsDigest signature)
+      throws IOException;
+
+  @GET
+  @Path(
+      "/deposit_address.json?currency={currency}&access_key={access_key}&tonce={tonce}&signature={signature}")
+  AcxDepositAddress getDepositAddress(
+      @PathParam("access_key") String accessKey,
+      @PathParam("tonce") long tonce,
+      @PathParam("signature") ParamsDigest signature,
+      @PathParam("currency") String currency)
       throws IOException;
 }

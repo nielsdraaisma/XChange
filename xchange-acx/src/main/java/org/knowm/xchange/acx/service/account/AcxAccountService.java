@@ -5,7 +5,9 @@ import org.knowm.xchange.acx.AcxApi;
 import org.knowm.xchange.acx.AcxMapper;
 import org.knowm.xchange.acx.AcxSignatureCreator;
 import org.knowm.xchange.acx.dto.account.AcxAccountInfo;
+import org.knowm.xchange.acx.dto.account.AcxDepositAddress;
 import org.knowm.xchange.acx.service.AcxBaseService;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.account.AccountService;
@@ -28,6 +30,19 @@ public class AcxAccountService extends AcxBaseService implements AccountService 
     long tonce = nonceFactory.createValue();
     AcxAccountInfo accountInfo = api.getAccountInfo(accessKey, tonce, signatureCreator);
     return mapper.mapAccountInfo(accountInfo);
+  }
+
+  @Override
+  public String requestDepositAddress(Currency currency, String... args) throws IOException {
+    long tonce = nonceFactory.createValue();
+    AcxDepositAddress response =
+        api.getDepositAddress(
+            accessKey, tonce, signatureCreator, currency.getCurrencyCode().toLowerCase());
+    if (response != null) {
+      return response.address;
+    } else {
+      return null;
+    }
   }
 
   @Override
