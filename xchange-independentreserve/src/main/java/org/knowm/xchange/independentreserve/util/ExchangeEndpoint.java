@@ -14,7 +14,8 @@ public enum ExchangeEndpoint {
   GET_ORDER_DETAILS("GetOrderDetails"),
   SYNCH_DIGITAL_CURRENCY_DEPOSIT_ADDRESS_WITH_BLOCKCHAIN(
       IndependentReserveAuthenticated.SynchDigitalCurrencyDepositAddressWithBlockchain),
-  WITHDRAW_DIGITAL_CURRENCY(IndependentReserveAuthenticated.WithdrawDigitalCurrency);
+  WITHDRAW_DIGITAL_CURRENCY(IndependentReserveAuthenticated.WithdrawDigitalCurrency),
+  GET_DIGITAL_CURRENCY_DEPOSIT_ADDRESS("GetDigitalCurrencyDepositAddress");
 
   private String endpointName;
 

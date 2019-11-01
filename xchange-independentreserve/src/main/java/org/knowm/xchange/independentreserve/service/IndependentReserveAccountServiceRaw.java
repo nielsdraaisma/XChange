@@ -8,6 +8,8 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.independentreserve.IndependentReserveAuthenticated;
 import org.knowm.xchange.independentreserve.dto.IndependentReserveHttpStatusException;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveBalance;
+import org.knowm.xchange.independentreserve.dto.account.IndependentReserveGetDigitalCurrencyDepositAddressRequest;
+import org.knowm.xchange.independentreserve.dto.account.IndependentReserveGetDigitalCurrencyDepositAddressResponse;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveWithdrawDigitalCurrencyRequest;
 import org.knowm.xchange.independentreserve.dto.auth.AuthAggregate;
 import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveSynchDigitalCurrencyDepositAddressWithBlockchainRequest;
@@ -124,5 +126,19 @@ public class IndependentReserveAccountServiceRaw extends IndependentReserveBaseS
             ExchangeEndpoint.GET_TRANSACTIONS, nonce, req.getParameters()));
 
     return independentReserveAuthenticated.getTransactions(req);
+  }
+
+  IndependentReserveGetDigitalCurrencyDepositAddressResponse getDigitalCurrencyDepositAddress(
+      String primaryCurrencyCode) throws IndependentReserveHttpStatusException, IOException {
+    Long nonce = exchange.getNonceFactory().createValue();
+
+    IndependentReserveGetDigitalCurrencyDepositAddressRequest req =
+        new IndependentReserveGetDigitalCurrencyDepositAddressRequest(
+            exchange.getExchangeSpecification().getApiKey(), nonce, primaryCurrencyCode);
+    req.setSignature(
+        signatureCreator.digestParamsToString(
+            ExchangeEndpoint.GET_DIGITAL_CURRENCY_DEPOSIT_ADDRESS, nonce, req.getParameters()));
+
+    return independentReserveAuthenticated.getDigitalCurrencyDepositAddress(req);
   }
 }

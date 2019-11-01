@@ -14,6 +14,7 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.independentreserve.IndependentReserveAdapters;
 import org.knowm.xchange.independentreserve.dto.IndependentReserveHttpStatusException;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveBalance;
+import org.knowm.xchange.independentreserve.dto.account.IndependentReserveGetDigitalCurrencyDepositAddressResponse;
 import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransaction;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.DefaultTradeHistoryParamPaging;
@@ -111,6 +112,17 @@ public class IndependentReserveAccountService extends IndependentReserveAccountS
             })
         .flatMap(Function.identity())
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public String requestDepositAddress(Currency currency, String... args) throws IOException {
+    IndependentReserveGetDigitalCurrencyDepositAddressResponse response =
+        getDigitalCurrencyDepositAddress(currency.toString());
+    if (response != null) {
+      return response.depositAddress;
+    } else {
+      return null;
+    }
   }
 
   public static class IndependentReserveTradeHistoryParams extends DefaultTradeHistoryParamPaging

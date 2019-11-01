@@ -50,4 +50,11 @@ public class IndependentReserveAccountServiceIntegration {
             accountService.createFundingHistoryParams();
     accountService.getFundingHistory(params);
   }
+
+  @Test
+  public void getXbtDepositAddress() throws Exception {
+    Assume.assumeNotNull(exchange.getExchangeSpecification().getApiKey());
+
+    accountService.getDigitalCurrencyDepositAddress("Xbt");
+  }
 }
