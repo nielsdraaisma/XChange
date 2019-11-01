@@ -1,6 +1,7 @@
 package org.knowm.xchange.coinspot.service;
 
 import org.knowm.xchange.Exchange;
+import org.knowm.xchange.coinspot.dto.CoinspotOpenOrdersRequest;
 import org.knowm.xchange.coinspot.dto.CoinspotOrderbook;
 import org.knowm.xchange.coinspot.dto.CoinspotRates;
 import org.knowm.xchange.coinspot.dto.CoinspotRequest;
@@ -23,7 +24,7 @@ class CoinspotMarketDataServiceRaw extends CoinspotBaseService {
     }
 
     CoinspotOrderbook getOrderbook(CurrencyPair currencyPair) throws CoinspotException, IOException {
-        return coinspotPrivate.getOrders(apiKey, digest, new CoinspotRequest(nonceFactory.createValue()));
+        return coinspotPrivate.getOrders(apiKey, digest, new CoinspotOpenOrdersRequest(nonceFactory.createValue(), currencyPair.base.toString()));
     }
 
 }

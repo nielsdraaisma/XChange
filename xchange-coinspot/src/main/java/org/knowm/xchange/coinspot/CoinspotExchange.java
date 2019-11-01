@@ -13,8 +13,7 @@ public class CoinspotExchange extends BaseExchange implements Exchange {
 
     @Override
     protected void initServices() {
-        this.marketDataService = new CoinspotMarketDataService(this, nonceFactory);
-
+        this.marketDataService = new CoinspotMarketDataService(this);
     }
 
     @Override
@@ -26,7 +25,7 @@ public class CoinspotExchange extends BaseExchange implements Exchange {
     public ExchangeSpecification getDefaultExchangeSpecification() {
         ExchangeSpecification exchangeSpecification = new ExchangeSpecification(this.getClass().getCanonicalName());
         exchangeSpecification.setSslUri("https://www.coinspot.com.au");
-        exchangeSpecification.setExchangeName("Coinspot");
+        exchangeSpecification.setExchangeName("coinspot");
         exchangeSpecification.setExchangeDescription("Coinspot");
 
         return exchangeSpecification;

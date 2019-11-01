@@ -26,7 +26,9 @@ public class CoinspotBaseService extends BaseExchangeService implements BaseServ
         this.coinspotPrivate =
                 RestProxyFactory.createProxy(CoinspotPrivate.class, exchange.getExchangeSpecification().getSslUri(), getClientConfig());
         this.apiKey = exchange.getExchangeSpecification().getApiKey();
-        this.digest = new CoinspotDigest(exchange.getExchangeSpecification().getSecretKey());
+        if ( exchange.getExchangeSpecification().getSecretKey() != null) {
+            this.digest = new CoinspotDigest( exchange.getExchangeSpecification().getSecretKey());
+        }
     }
 
     protected ExchangeException handleError(CoinspotException exception) {
