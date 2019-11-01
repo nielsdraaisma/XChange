@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.btcmarkets.BTCMarketsAuthenticated;
+import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsAddressesResponse;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsBalance;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsFundtransferHistoryResponse;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsWithdrawCryptoRequest;
@@ -20,6 +21,8 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
   private static final int MAX_SCALE = 8;
 
   private final BTCMarketsDigest signerV1;
+  private final BTCMarketsDigest signerV2;
+  private final BTCMarketsDigestV3 signerV3;
   private final BTCMarketsAuthenticated btcm;
   private final SynchronizedValueFactory<Long> nonceFactory;
 
@@ -32,6 +35,8 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
             exchange.getExchangeSpecification().getSslUri(),
             getClientConfig());
     this.signerV1 = new BTCMarketsDigest(exchange.getExchangeSpecification().getSecretKey(), false);
+    this.signerV2 = new BTCMarketsDigest(exchange.getExchangeSpecification().getSecretKey(), true);
+    this.signerV3 = new BTCMarketsDigestV3(exchange.getExchangeSpecification().getSecretKey());
   }
 
   public List<BTCMarketsBalance> getBTCMarketsBalance() throws IOException {
@@ -76,5 +81,9 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
               + response.getErrorCode());
     }
     return response;
+  }
+
+  public BTCMarketsAddressesResponse depositAddress(Currency currency) throws IOException {
+      return btcm.depositAddress(exchange.getExchangeSpecification().getApiKey(), nonceFactory, signerV3, currency.getCurrencyCode());
   }
 }
