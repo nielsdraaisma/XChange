@@ -79,7 +79,7 @@ public class WyreAdapters {
     FundingRecord fundingRecord =
         new FundingRecord(
             ts.getDest().replaceAll("bitcoin:", ""),
-            Date.from(Instant.ofEpochSecond(ts.getCreatedAt())),
+            Date.from(Instant.ofEpochMilli(ts.getCreatedAt())),
             Currency.getInstance(ts.getSourceCurrency()),
             ts.getSourceAmount(),
             ts.getId(),
