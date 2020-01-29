@@ -110,10 +110,9 @@ public interface BTCMarketsAuthenticated {
   @GET
   @Path("v3/addresses")
   BTCMarketsAddressesResponse depositAddress(
-          @HeaderParam("BM-AUTH-APIKEY") String publicKey,
-          @HeaderParam("BM-AUTH-TIMESTAMP") SynchronizedValueFactory<Long> nonceFactory,
-          @HeaderParam("BM-AUTH-SIGNATURE") BTCMarketsDigestV3 signer,
-          @QueryParam("assetName") String assetName)
-          throws BTCMarketsException, IOException;
-
+      @HeaderParam("BM-AUTH-APIKEY") String publicKey,
+      @HeaderParam("BM-AUTH-TIMESTAMP") SynchronizedValueFactory<Long> nonceFactory,
+      @HeaderParam("BM-AUTH-SIGNATURE") BTCMarketsDigestV3 signer,
+      @QueryParam("assetName") String assetName)
+      throws BTCMarketsException, IOException;
 }

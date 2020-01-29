@@ -64,7 +64,7 @@ public class BTCMarketsAccountService extends BTCMarketsAccountServiceRaw
   @Override
   public String requestDepositAddress(Currency currency, String... args) throws IOException {
     BTCMarketsAddressesResponse response = depositAddress(currency);
-    if ( response != null){
+    if (response != null) {
       return response.address;
     } else {
       return null;

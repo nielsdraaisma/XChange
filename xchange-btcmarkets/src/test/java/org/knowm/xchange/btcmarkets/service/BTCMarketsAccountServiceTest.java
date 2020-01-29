@@ -1,7 +1,6 @@
 package org.knowm.xchange.btcmarkets.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -20,6 +19,7 @@ import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.btcmarkets.BTCMarketsAuthenticated;
 import org.knowm.xchange.btcmarkets.BTCMarketsExchange;
 import org.knowm.xchange.btcmarkets.BtcMarketsAssert;
+import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsAddressesResponse;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsBalance;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsFundtransfer;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsFundtransferHistoryResponse;
@@ -28,7 +28,6 @@ import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsWithdrawCryptoResponse;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.FundingRecord;
-import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
 import org.knowm.xchange.service.trade.params.RippleWithdrawFundsParams;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -134,14 +133,25 @@ public class BTCMarketsAccountServiceTest extends BTCMarketsTestSupport {
     assertThat(result).isNull();
   }
 
-  @Test(expected = NotYetImplementedForExchangeException.class)
+  @Test
   public void shouldFailWhenRequestDepositAddress() throws IOException {
+    BTCMarketsAddressesResponse response = new BTCMarketsAddressesResponse("address");
+
+    ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+
+    PowerMockito.when(
+            btcm.depositAddress(
+                Mockito.eq(SPECIFICATION_API_KEY),
+                Mockito.any(SynchronizedValueFactory.class),
+                Mockito.any(BTCMarketsDigestV3.class),
+                captor.capture()))
+        .thenReturn(response);
     // when
-    accountService.requestDepositAddress(Currency.BTC);
+    String address = accountService.requestDepositAddress(Currency.BTC);
 
     // then
-    fail(
-        "BTCMarketsAccountService should throw NotYetImplementedForExchangeException when call requestDepositAddress");
+    assertThat(captor.getValue()).isEqualTo("BTC");
+    assertThat(address).isEqualTo("address");
   }
 
   @Test

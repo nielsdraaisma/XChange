@@ -84,6 +84,10 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
   }
 
   public BTCMarketsAddressesResponse depositAddress(Currency currency) throws IOException {
-      return btcm.depositAddress(exchange.getExchangeSpecification().getApiKey(), nonceFactory, signerV3, currency.getCurrencyCode());
+    return btcm.depositAddress(
+        exchange.getExchangeSpecification().getApiKey(),
+        nonceFactory,
+        signerV3,
+        currency.getCurrencyCode());
   }
 }
