@@ -138,7 +138,7 @@ public final class BTCMarketsAdapters {
     final Order.OrderType type = adaptOrderType(trade.getSide());
     final String tradeId = Long.toString(trade.getId());
     final Long orderId = trade.getOrderId();
-    final String feeCurrency = currencyPair.base.getCurrencyCode();
+    final String feeCurrency = currencyPair.counter.getCurrencyCode();
     return new UserTrade.Builder()
         .type(type)
         .originalAmount(trade.getVolume())
