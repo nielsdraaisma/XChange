@@ -2,10 +2,7 @@ package org.knowm.xchange.b2c2.service;
 
 import org.knowm.xchange.b2c2.B2C2;
 import org.knowm.xchange.b2c2.B2C2Exchange;
-import org.knowm.xchange.exceptions.CurrencyPairNotValidException;
-import org.knowm.xchange.exceptions.ExchangeException;
-import org.knowm.xchange.exceptions.ExchangeSecurityException;
-import org.knowm.xchange.exceptions.FundsExceededException;
+import org.knowm.xchange.exceptions.*;
 import org.knowm.xchange.service.BaseExchangeService;
 import org.knowm.xchange.service.BaseService;
 import org.slf4j.Logger;
@@ -45,6 +42,8 @@ public class B2C2BaseService extends BaseExchangeService<B2C2Exchange> implement
           return new FundsExceededException();
         case 1001:
           return new CurrencyPairNotValidException();
+        case 1019:
+          return new OrderAmountUnderMinimumException();
         default:
           log.warn(
               "No exception mapping for B2C2 exception error code {}, throwing ExchangeException",
