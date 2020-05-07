@@ -151,7 +151,10 @@ public class IndependentReserveAdapters {
     List<IndependentReserveOpenOrder> independentReserveOrdersList =
         independentReserveOrders.getIndependentReserveOrders();
     for (IndependentReserveOpenOrder order : independentReserveOrdersList) {
-
+      // Do now include any market orders
+      if ( order.getOrderType().startsWith("Market")){
+        continue;
+      }
       // getting valid order currency pair
       String primaryAlias = order.getPrimaryCurrencyCode();
 
