@@ -33,8 +33,8 @@ public interface CoinjarTrading {
   @GET
   @Path("/orders")
   List<CoinjarOrder> getOpenOrders(
-          @HeaderParam("Authorization") String authHeader, @QueryParam("cursor") Integer cursor)
-          throws CoinjarException, IOException;
+      @HeaderParam("Authorization") String authHeader, @QueryParam("cursor") Integer cursor)
+      throws CoinjarException, IOException;
 
   @GET
   @Path("/orders/all")
