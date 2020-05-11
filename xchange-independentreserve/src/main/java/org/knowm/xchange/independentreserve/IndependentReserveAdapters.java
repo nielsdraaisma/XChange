@@ -62,8 +62,8 @@ public class IndependentReserveAdapters {
         return Order.OrderStatus.PARTIALLY_CANCELED;
       case "Cancelled":
         return Order.OrderStatus.CANCELED;
+      case "PartiallyFilledAndFailed":
       case "PartiallyFilledAndExpired":
-        return Order.OrderStatus.EXPIRED;
       case "Expired":
         return Order.OrderStatus.EXPIRED;
       default:
