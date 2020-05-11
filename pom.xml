@@ -194,6 +194,7 @@
     <module>xchange-yobit</module>
     <module>xchange-zaif</module>
     <module>xchange-enigma</module>
+    <module>xchange-wyre</module>
 
 
     <module>xchange-stream-bankera</module>
