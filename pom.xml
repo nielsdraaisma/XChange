@@ -197,6 +197,7 @@
     <module>xchange-wyre</module>
 
 
+    <module>xchange-stream-b2c2</module>
     <module>xchange-stream-bankera</module>
     <module>xchange-stream-binance</module>
     <module>xchange-stream-bitfinex</module>
@@ -205,10 +206,12 @@
     <module>xchange-stream-bitstamp</module>
     <module>xchange-stream-cexio</module>
     <module>xchange-stream-coinbasepro</module>
+    <module>xchange-stream-coinjar</module>
     <module>xchange-stream-coinmate</module>
     <module>xchange-stream-core</module>
     <module>xchange-stream-gemini</module>
     <module>xchange-stream-hitbtc</module>
+    <module>xchange-stream-independentreserve</module>
     <module>xchange-stream-kraken</module>
     <module>xchange-stream-lgo</module>
     <module>xchange-stream-okcoin</module>
