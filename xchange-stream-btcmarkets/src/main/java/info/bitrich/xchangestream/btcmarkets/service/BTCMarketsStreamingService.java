@@ -12,31 +12,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BTCMarketsStreamingService extends JsonNettyStreamingService {
-  public static final Set<String> AUTHENTICATED_CHANNELS = Sets.newHashSet("orderChange");
   public static final String CHANNEL_ORDERBOOK = "orderbook";
   public static final String CHANNEL_HEARTBEAT = "heartbeat";
   private static final Logger LOG = LoggerFactory.getLogger(BTCMarketsStreamingService.class);
-  private String apiKey;
-  private String apiSecret;
-  private Set<String> subscribedOrderbooks = Sets.newConcurrentHashSet();
+  private final Set<String> subscribedOrderbooks = Sets.newConcurrentHashSet();
 
-  public BTCMarketsStreamingService(String apiUrl, String apiKey, String apiSecret) {
+  public BTCMarketsStreamingService(String apiUrl) {
     super(apiUrl);
-    this.apiKey = apiKey;
-    this.apiSecret = apiSecret;
   }
 
   private BTCMarketsWebSocketSubscribeMessage buildSubscribeMessage() {
-    BTCMarketsWebSocketSubscribeMessage message =
-        new BTCMarketsWebSocketSubscribeMessage(
-            new ArrayList<>(subscribedOrderbooks),
-            Lists.newArrayList(CHANNEL_ORDERBOOK, CHANNEL_HEARTBEAT),
-            null,
-            null,
-            null);
-    // if (AUTHENTICATED_CHANNELS.contains(channelName)) {
-    //    message = message.sign(apiKey, apiSecret);
-    return message;
+      return new BTCMarketsWebSocketSubscribeMessage(
+          new ArrayList<>(subscribedOrderbooks),
+          Lists.newArrayList(CHANNEL_ORDERBOOK, CHANNEL_HEARTBEAT),
+          null,
+          null,
+          null);
   }
 
   @Override
@@ -71,9 +62,6 @@ public class BTCMarketsStreamingService extends JsonNettyStreamingService {
   public String getUnsubscribeMessage(String channelName) throws IOException {
     if (channelName.startsWith(CHANNEL_ORDERBOOK)) {
       final String[] parts = channelName.split(":");
-      final String market = parts[1];
-      //      subscribedOrderbooks.remove(market);
-
       return objectMapper.writeValueAsString(buildSubscribeMessage());
     } else {
       return null;

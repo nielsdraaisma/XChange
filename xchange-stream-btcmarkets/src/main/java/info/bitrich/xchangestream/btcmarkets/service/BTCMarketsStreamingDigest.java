@@ -1,6 +1,7 @@
 package info.bitrich.xchangestream.btcmarkets.service;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -10,7 +11,7 @@ import org.knowm.xchange.utils.Assert;
 
 public class BTCMarketsStreamingDigest {
 
-  private final Charset utf8 = Charset.forName("UTF-8");
+  private final Charset utf8 = StandardCharsets.UTF_8;
   private final Mac mac;
 
   public BTCMarketsStreamingDigest(String algorithm, String secretKey) {

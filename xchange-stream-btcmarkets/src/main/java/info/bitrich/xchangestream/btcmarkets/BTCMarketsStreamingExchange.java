@@ -16,7 +16,6 @@ public class BTCMarketsStreamingExchange extends BTCMarketsExchange implements S
 
   private BTCMarketsStreamingService streamingService;
   private BTCMarketsStreamingMarketDataService streamingMarketDataService;
-  //  private BTCMarketsStreamingTradeService streamingTradeService;
 
   @Override
   protected void initServices() {
@@ -67,11 +66,6 @@ public class BTCMarketsStreamingExchange extends BTCMarketsExchange implements S
   public StreamingMarketDataService getStreamingMarketDataService() {
     return streamingMarketDataService;
   }
-
-  //  @Override
-  //  public StreamingTradeService getStreamingTradeService() {
-  //    return streamingTradeService;
-  //  }
 
   @Override
   public void useCompressedMessages(boolean compressedMessages) {
