@@ -44,6 +44,8 @@ public class B2C2BaseService extends BaseExchangeService<B2C2Exchange> implement
           return new CurrencyPairNotValidException();
         case 1019:
           return new OrderAmountUnderMinimumException();
+        case 1200:
+          return new ExchangeUnavailableException("B2C2 API unavailable due to API maintenance");
         default:
           log.warn(
               "No exception mapping for B2C2 exception error code {}, throwing ExchangeException",
