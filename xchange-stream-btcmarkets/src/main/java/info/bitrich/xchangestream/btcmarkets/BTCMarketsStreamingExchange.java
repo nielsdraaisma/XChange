@@ -1,7 +1,5 @@
 package info.bitrich.xchangestream.btcmarkets;
 
-import info.bitrich.xchangestream.btcmarkets.service.BTCMarketsStreamingMarketDataService;
-import info.bitrich.xchangestream.btcmarkets.service.BTCMarketsStreamingService;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
@@ -26,8 +24,7 @@ public class BTCMarketsStreamingExchange extends BTCMarketsExchange implements S
   }
 
   private BTCMarketsStreamingService createStreamingService() {
-    return new BTCMarketsStreamingService(
-        API_URI, exchangeSpecification.getApiKey(), exchangeSpecification.getSecretKey());
+    return new BTCMarketsStreamingService(API_URI);
   }
 
   @Override
