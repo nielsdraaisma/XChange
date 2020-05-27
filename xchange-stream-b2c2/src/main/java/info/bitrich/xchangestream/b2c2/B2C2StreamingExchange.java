@@ -28,7 +28,7 @@ public class B2C2StreamingExchange extends B2C2Exchange implements StreamingExch
   private B2C2StreamingService createStreamingService() {
     String apiUrl;
     if (exchangeSpecification.getHost() != null
-        && exchangeSpecification.getHost().indexOf("sandbox") > 0) {
+        && exchangeSpecification.getHost().indexOf("uat") > 0) {
       apiUrl = SANDBOX_API_URI;
     } else {
       apiUrl = API_URI;
