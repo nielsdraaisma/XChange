@@ -14,7 +14,7 @@ public class B2C2StreamingExchange extends B2C2Exchange implements StreamingExch
 
   public static final String LEVELS = "levels";
   private static final String API_URI = "wss://socket.b2c2.net/quotes";
-  private static final String SANDBOX_API_URI = "wss://sandboxsocket.b2c2.net/quotes";
+  private static final String SANDBOX_API_URI = "wss://socket.uat.b2c2.net/quotes";
   private B2C2StreamingService streamingService;
   private B2C2StreamingMarketDataService streamingMarketDataService;
 

@@ -174,8 +174,7 @@ public class IndependentReserveAdapters {
               filled,
               null,
               adaptOrderStatus(order.getStatus()),
-              null
-              );
+              null);
       limitOrders.add(limitOrder);
     }
     return new OpenOrders(limitOrders);
