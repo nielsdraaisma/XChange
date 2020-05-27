@@ -151,7 +151,7 @@ public class IndependentReserveAdapters {
     List<IndependentReserveOpenOrder> independentReserveOrdersList =
         independentReserveOrders.getIndependentReserveOrders();
     for (IndependentReserveOpenOrder order : independentReserveOrdersList) {
-      // Do now include any market orders
+      // Do not include any market orders
       if (order.getOrderType().startsWith("Market")) {
         continue;
       }
@@ -161,15 +161,21 @@ public class IndependentReserveAdapters {
       Currency primary = Currency.getInstanceNoCreate(primaryAlias);
       Currency secondary = Currency.getInstanceNoCreate(order.getSecondaryCurrencyCode());
       CurrencyPair currencyPair = new CurrencyPair(primary, secondary);
-
+      BigDecimal filled = order.getVolume().subtract(order.getOutstanding());
       LimitOrder limitOrder =
           new LimitOrder(
               adapeOrderType(order.getOrderType()),
-              order.getOutstanding(),
+              order.getVolume(),
               currencyPair,
               order.getOrderGuid(),
               order.getCreatedTimestamp(),
-              order.getPrice());
+              order.getPrice(),
+              order.getAvgPrice(),
+              filled,
+              null,
+              adaptOrderStatus(order.getStatus()),
+              null
+              );
       limitOrders.add(limitOrder);
     }
     return new OpenOrders(limitOrders);
