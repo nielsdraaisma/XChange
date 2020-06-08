@@ -1,6 +1,5 @@
-package info.bitrich.xchangestream.coinjar.service;
+package info.bitrich.xchangestream.coinjar;
 
-import info.bitrich.xchangestream.coinjar.CoinjarStreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
@@ -9,7 +8,7 @@ import org.junit.Test;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.currency.CurrencyPair;
 
-public class CoinjarStreamingMarketDataServiceTest {
+public class CoinjarStreamingMarketDataServiceintegration {
 
   @Test
   public void runTest() {

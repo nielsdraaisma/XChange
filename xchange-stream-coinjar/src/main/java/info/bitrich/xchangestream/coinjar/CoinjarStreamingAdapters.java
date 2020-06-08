@@ -9,9 +9,9 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
 
-public class CoinjarStreamingAdapters {
+class CoinjarStreamingAdapters {
 
-  public static final CurrencyPair adaptTopicToCurrencyPair(String topic) {
+  public static CurrencyPair adaptTopicToCurrencyPair(String topic) {
     if (topic.startsWith("book")) {
       topic = topic.substring(5);
       Currency base = new Currency(topic.substring(0, 3));
@@ -20,11 +20,11 @@ public class CoinjarStreamingAdapters {
     } else throw new IllegalArgumentException("Cannot determine topic from topic name " + topic);
   }
 
-  public static final String adaptCurrencyPairToBookTopic(CurrencyPair pair) {
+  public static String adaptCurrencyPairToBookTopic(CurrencyPair pair) {
     return "book:" + pair.base.toString() + pair.counter.toString();
   }
 
-  public static final LimitOrder toLimitOrder(
+  public static LimitOrder toLimitOrder(
       CoinjarWebSocketBookEvent.Payload.Order order,
       CurrencyPair currencyPair,
       Order.OrderType orderType) {
@@ -37,7 +37,7 @@ public class CoinjarStreamingAdapters {
         new BigDecimal(order.price));
   }
 
-  public static final List<LimitOrder> toLimitOrders(
+  public static List<LimitOrder> toLimitOrders(
       List<CoinjarWebSocketBookEvent.Payload.Order> orders,
       CurrencyPair currencyPair,
       Order.OrderType orderType) {

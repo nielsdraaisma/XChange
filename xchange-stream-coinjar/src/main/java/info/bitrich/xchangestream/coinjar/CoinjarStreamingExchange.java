@@ -1,6 +1,5 @@
 package info.bitrich.xchangestream.coinjar;
 
-import info.bitrich.xchangestream.coinjar.service.CoinjarStreamingMarketDataService;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import io.reactivex.Completable;

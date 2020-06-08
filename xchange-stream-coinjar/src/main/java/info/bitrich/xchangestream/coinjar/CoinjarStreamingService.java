@@ -9,12 +9,9 @@ import io.reactivex.Observable;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class CoinjarStreamingService extends JsonNettyStreamingService {
+class CoinjarStreamingService extends JsonNettyStreamingService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(CoinjarStreamingService.class);
   private final AtomicInteger refCount = new AtomicInteger();
 
   private String apiKey;

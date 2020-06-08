@@ -1,10 +1,8 @@
-package info.bitrich.xchangestream.coinjar.service;
+package info.bitrich.xchangestream.coinjar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import info.bitrich.xchangestream.coinjar.CoinjarStreamingAdapters;
-import info.bitrich.xchangestream.coinjar.CoinjarStreamingService;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBookEvent;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
@@ -23,7 +21,7 @@ import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CoinjarStreamingMarketDataService implements StreamingMarketDataService {
+class CoinjarStreamingMarketDataService implements StreamingMarketDataService {
 
   private static final Logger logger =
       LoggerFactory.getLogger(CoinjarStreamingMarketDataService.class);
