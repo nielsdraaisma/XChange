@@ -1,4 +1,4 @@
-package org.knowm.xchange.btcmarkets.dto.account;
+package org.knowm.xchange.btcmarkets.dto.v3.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

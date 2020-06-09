@@ -5,12 +5,10 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import org.knowm.xchange.btcmarkets.dto.BTCMarketsException;
-import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsAddressesResponse;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsBalance;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsFundtransferHistoryResponse;
 import org.knowm.xchange.btcmarkets.dto.trade.*;
 import org.knowm.xchange.btcmarkets.service.BTCMarketsDigest;
-import org.knowm.xchange.btcmarkets.service.BTCMarketsDigestV3;
 import si.mazi.rescu.SynchronizedValueFactory;
 
 @Path("/")
@@ -23,16 +21,6 @@ public interface BTCMarketsAuthenticated {
       @HeaderParam("apikey") String publicKey,
       @HeaderParam("timestamp") SynchronizedValueFactory<Long> nonceFactory,
       @HeaderParam("signature") BTCMarketsDigest signer)
-      throws BTCMarketsException, IOException;
-
-  @POST
-  @Path("order/create")
-  @Consumes(MediaType.APPLICATION_JSON)
-  BTCMarketsPlaceOrderResponse placeOrder(
-      @HeaderParam("apikey") String publicKey,
-      @HeaderParam("timestamp") SynchronizedValueFactory<Long> nonceFactory,
-      @HeaderParam("signature") BTCMarketsDigest signer,
-      BTCMarketsOrder order)
       throws BTCMarketsException, IOException;
 
   @POST
@@ -105,14 +93,5 @@ public interface BTCMarketsAuthenticated {
       @HeaderParam("apikey") String publicKey,
       @HeaderParam("timestamp") SynchronizedValueFactory<Long> nonceFactory,
       @HeaderParam("signature") BTCMarketsDigest signer)
-      throws BTCMarketsException, IOException;
-
-  @GET
-  @Path("v3/addresses")
-  BTCMarketsAddressesResponse depositAddress(
-      @HeaderParam("BM-AUTH-APIKEY") String publicKey,
-      @HeaderParam("BM-AUTH-TIMESTAMP") SynchronizedValueFactory<Long> nonceFactory,
-      @HeaderParam("BM-AUTH-SIGNATURE") BTCMarketsDigestV3 signer,
-      @QueryParam("assetName") String assetName)
       throws BTCMarketsException, IOException;
 }

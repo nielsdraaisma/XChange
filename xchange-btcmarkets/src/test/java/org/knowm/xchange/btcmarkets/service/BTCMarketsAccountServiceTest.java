@@ -17,14 +17,15 @@ import org.junit.runner.RunWith;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.btcmarkets.BTCMarketsAuthenticated;
+import org.knowm.xchange.btcmarkets.BTCMarketsAuthenticatedV3;
 import org.knowm.xchange.btcmarkets.BTCMarketsExchange;
 import org.knowm.xchange.btcmarkets.BtcMarketsAssert;
-import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsAddressesResponse;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsBalance;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsFundtransfer;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsFundtransferHistoryResponse;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsWithdrawCryptoRequest;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsWithdrawCryptoResponse;
+import org.knowm.xchange.btcmarkets.dto.v3.account.BTCMarketsAddressesResponse;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.FundingRecord;
@@ -42,14 +43,18 @@ import si.mazi.rescu.SynchronizedValueFactory;
 public class BTCMarketsAccountServiceTest extends BTCMarketsTestSupport {
 
   private BTCMarketsAuthenticated btcm;
+  private BTCMarketsAuthenticatedV3 btcmv3;
   private BTCMarketsAccountService accountService;
 
   @Before
   public void setUp() {
     btcm = mock(BTCMarketsAuthenticated.class);
+    btcmv3 = mock(BTCMarketsAuthenticatedV3.class);
     PowerMockito.mockStatic(RestProxyFactory.class);
     given(RestProxyFactory.createProxy(eq(BTCMarketsAuthenticated.class), any(), any(), any()))
         .willReturn(btcm);
+    given(RestProxyFactory.createProxy(eq(BTCMarketsAuthenticatedV3.class), any(), any(), any()))
+        .willReturn(btcmv3);
     BTCMarketsExchange exchange =
         (BTCMarketsExchange)
             ExchangeFactory.INSTANCE.createExchange(BTCMarketsExchange.class.getCanonicalName());
@@ -134,13 +139,13 @@ public class BTCMarketsAccountServiceTest extends BTCMarketsTestSupport {
   }
 
   @Test
-  public void shouldFailWhenRequestDepositAddress() throws IOException {
+  public void shouldRequestDepositAddress() throws IOException {
     BTCMarketsAddressesResponse response = new BTCMarketsAddressesResponse("address");
 
     ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
 
     PowerMockito.when(
-            btcm.depositAddress(
+            btcmv3.depositAddress(
                 Mockito.eq(SPECIFICATION_API_KEY),
                 Mockito.any(SynchronizedValueFactory.class),
                 Mockito.any(BTCMarketsDigestV3.class),

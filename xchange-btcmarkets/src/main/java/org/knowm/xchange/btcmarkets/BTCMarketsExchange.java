@@ -12,8 +12,6 @@ import si.mazi.rescu.SynchronizedValueFactory;
 /** @author Matija Mazi */
 public class BTCMarketsExchange extends BaseExchange implements Exchange {
 
-  public static final String CURRENCY_PAIR = "CURRENCY_PAIR";
-
   private final SynchronizedValueFactory<Long> nonceFactory =
       new CurrentTimeIncrementalNonceFactory();
 

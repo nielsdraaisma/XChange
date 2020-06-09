@@ -4,39 +4,21 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import org.knowm.xchange.Exchange;
-import org.knowm.xchange.btcmarkets.BTCMarketsAuthenticated;
-import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsAddressesResponse;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsBalance;
 import org.knowm.xchange.btcmarkets.dto.account.BTCMarketsFundtransferHistoryResponse;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsWithdrawCryptoRequest;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsWithdrawCryptoResponse;
+import org.knowm.xchange.btcmarkets.dto.v3.account.BTCMarketsAddressesResponse;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.exceptions.ExchangeException;
-import si.mazi.rescu.RestProxyFactory;
-import si.mazi.rescu.SynchronizedValueFactory;
 
 public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
 
   private static final BigDecimal AMOUNT_MULTIPLICAND = new BigDecimal("100000000");
   private static final int MAX_SCALE = 8;
 
-  private final BTCMarketsDigest signerV1;
-  private final BTCMarketsDigest signerV2;
-  private final BTCMarketsDigestV3 signerV3;
-  private final BTCMarketsAuthenticated btcm;
-  private final SynchronizedValueFactory<Long> nonceFactory;
-
   protected BTCMarketsAccountServiceRaw(Exchange exchange) {
     super(exchange);
-    this.nonceFactory = exchange.getNonceFactory();
-    this.btcm =
-        RestProxyFactory.createProxy(
-            BTCMarketsAuthenticated.class,
-            exchange.getExchangeSpecification().getSslUri(),
-            getClientConfig());
-    this.signerV1 = new BTCMarketsDigest(exchange.getExchangeSpecification().getSecretKey(), false);
-    this.signerV2 = new BTCMarketsDigest(exchange.getExchangeSpecification().getSecretKey(), true);
-    this.signerV3 = new BTCMarketsDigestV3(exchange.getExchangeSpecification().getSecretKey());
   }
 
   public List<BTCMarketsBalance> getBTCMarketsBalance() throws IOException {
@@ -84,7 +66,7 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
   }
 
   public BTCMarketsAddressesResponse depositAddress(Currency currency) throws IOException {
-    return btcm.depositAddress(
+    return btcmv3.depositAddress(
         exchange.getExchangeSpecification().getApiKey(),
         nonceFactory,
         signerV3,

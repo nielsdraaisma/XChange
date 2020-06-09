@@ -5,51 +5,42 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import org.knowm.xchange.Exchange;
-import org.knowm.xchange.ExchangeSpecification;
-import org.knowm.xchange.btcmarkets.BTCMarketsAuthenticated;
 import org.knowm.xchange.btcmarkets.dto.BTCMarketsBaseResponse;
 import org.knowm.xchange.btcmarkets.dto.trade.*;
+import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsPlaceOrderRequest;
+import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsPlaceOrderResponse;
 import org.knowm.xchange.currency.CurrencyPair;
-import si.mazi.rescu.RestProxyFactory;
-import si.mazi.rescu.SynchronizedValueFactory;
 
 public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
 
-  private final BTCMarketsAuthenticated btcm;
-  private final BTCMarketsDigest signerV1;
-  private final BTCMarketsDigest signerV2;
-  private final SynchronizedValueFactory<Long> nonceFactory;
-
   public BTCMarketsTradeServiceRaw(Exchange exchange) {
     super(exchange);
-    final ExchangeSpecification spec = exchange.getExchangeSpecification();
-    this.btcm =
-        RestProxyFactory.createProxy(
-            BTCMarketsAuthenticated.class, spec.getSslUri(), getClientConfig());
-    this.signerV1 = new BTCMarketsDigest(spec.getSecretKey(), false);
-    this.signerV2 = new BTCMarketsDigest(spec.getSecretKey(), true);
-    this.nonceFactory = exchange.getNonceFactory();
   }
 
   public BTCMarketsPlaceOrderResponse placeBTCMarketsOrder(
-      CurrencyPair currencyPair,
+      String marketId,
       BigDecimal amount,
       BigDecimal price,
       BTCMarketsOrder.Side side,
-      BTCMarketsOrder.Type type)
+      BTCMarketsOrder.Type type,
+      String timeInForce)
       throws IOException {
-    return btcm.placeOrder(
+    return btcmv3.placeOrder(
         exchange.getExchangeSpecification().getApiKey(),
         nonceFactory,
-        this.signerV1,
-        new BTCMarketsOrder(
-            amount,
-            price,
-            currencyPair.counter.getCurrencyCode(),
-            currencyPair.base.getCurrencyCode(),
-            side,
-            type,
-            newReqId()));
+        this.signerV3,
+        new BTCMarketsPlaceOrderRequest(
+            marketId,
+            price.toPlainString(),
+            amount.toPlainString(),
+            type.toString(),
+            side.toString(),
+            null,
+            null,
+            timeInForce,
+            null,
+            null,
+            null));
   }
 
   public BTCMarketsOrders getBTCMarketsOpenOrders(

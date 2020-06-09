@@ -7,14 +7,16 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.btcmarkets.BTCMarketsAdapters;
 import org.knowm.xchange.btcmarkets.dto.BTCMarketsException;
+import org.knowm.xchange.btcmarkets.dto.BTCMarketsOrderFlags;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsOrder;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsOrders;
-import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsPlaceOrderResponse;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsTradeHistory;
+import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsPlaceOrderResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -47,7 +49,8 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
         order.getType(),
         order.getOriginalAmount(),
         BigDecimal.ZERO,
-        BTCMarketsOrder.Type.Market);
+        BTCMarketsOrder.Type.Market,
+        order.getOrderFlags());
   }
 
   @Override
@@ -57,7 +60,8 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
         order.getType(),
         order.getOriginalAmount(),
         order.getLimitPrice(),
-        BTCMarketsOrder.Type.Limit);
+        BTCMarketsOrder.Type.Limit,
+        order.getOrderFlags());
   }
 
   private String placeOrder(
@@ -65,13 +69,23 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       Order.OrderType orderSide,
       BigDecimal amount,
       BigDecimal price,
-      BTCMarketsOrder.Type orderType)
+      BTCMarketsOrder.Type orderType,
+      Set<Order.IOrderFlags> flags)
       throws IOException {
     BTCMarketsOrder.Side side =
         orderSide == BID ? BTCMarketsOrder.Side.Bid : BTCMarketsOrder.Side.Ask;
+    final String marketId = currencyPair.base.toString() + "-" + currencyPair.counter.toString();
+    String timeInForce;
+    if (flags.contains(BTCMarketsOrderFlags.FOK)) {
+      timeInForce = "FOK";
+    } else if (flags.contains(BTCMarketsOrderFlags.IOC)) {
+      timeInForce = "IOC";
+    } else {
+      timeInForce = "GTC";
+    }
     final BTCMarketsPlaceOrderResponse orderResponse =
-        placeBTCMarketsOrder(currencyPair, amount, price, side, orderType);
-    return Long.toString(orderResponse.getId());
+        placeBTCMarketsOrder(marketId, amount, price, side, orderType, timeInForce);
+    return orderResponse.orderId;
   }
 
   @Override

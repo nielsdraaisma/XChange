@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.btcmarkets.service.BTCMarketsTestSupport;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.utils.nonce.CurrentTimeIncrementalNonceFactory;
 import org.powermock.reflect.Whitebox;
 import si.mazi.rescu.SynchronizedValueFactory;
@@ -44,9 +43,7 @@ public class BTCMarketsExchangeTest extends BTCMarketsTestSupport {
   public void shouldApplyDefaultSpecificationWithKeys() {
     // given
     exchangeSpecification = exchange.getDefaultExchangeSpecification();
-    exchangeSpecification
-        .getExchangeSpecificParameters()
-        .put(BTCMarketsExchange.CURRENCY_PAIR, CurrencyPair.BTC_AUD);
+    exchangeSpecification.getExchangeSpecificParameters();
     exchangeSpecification.setApiKey(SPECIFICATION_API_KEY);
     exchangeSpecification.setSecretKey(SPECIFICATION_SECRET_KEY);
 
@@ -70,9 +67,7 @@ public class BTCMarketsExchangeTest extends BTCMarketsTestSupport {
   @Test
   public void shouldApplySpecificationWithKeys() {
     // given
-    exchangeSpecification
-        .getExchangeSpecificParameters()
-        .put(BTCMarketsExchange.CURRENCY_PAIR, CurrencyPair.BTC_AUD);
+    exchangeSpecification.getExchangeSpecificParameters();
     exchangeSpecification.setApiKey(SPECIFICATION_API_KEY);
     exchangeSpecification.setSecretKey(SPECIFICATION_SECRET_KEY);
 
