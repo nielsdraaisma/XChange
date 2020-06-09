@@ -39,7 +39,11 @@ public class B2C2BaseService extends BaseExchangeService<B2C2Exchange> implement
         case 1100:
           return new ExchangeSecurityException(error.message);
         case 1011:
-          return new FundsExceededException();
+          return new FundsExceededException("Not enough balance");
+        case 1012:
+          return new FundsExceededException("Max risk exposure reached");
+        case 1013:
+          return new FundsExceededException("Max credit exposure reached");
         case 1001:
           return new CurrencyPairNotValidException();
         case 1019:
