@@ -15,7 +15,7 @@ import si.mazi.rescu.SynchronizedValueFactory;
 public interface BTCMarketsAuthenticatedV3 {
 
   @POST
-  @Path("order/create")
+  @Path("orders")
   @Consumes(MediaType.APPLICATION_JSON)
   BTCMarketsPlaceOrderResponse placeOrder(
       @HeaderParam("BM-AUTH-APIKEY") String publicKey,
