@@ -103,7 +103,7 @@ public class KrakenAdapters {
     BigDecimal originalAmount = krakenOrder.getVolume();
     BigDecimal fee = krakenOrder.getFee();
 
-    if (orderStatus == OrderStatus.NEW
+    if ((orderStatus == OrderStatus.NEW || orderStatus == OrderStatus.CANCELED)
         && filledAmount.compareTo(BigDecimal.ZERO) > 0
         && filledAmount.compareTo(originalAmount) < 0) {
       orderStatus = OrderStatus.PARTIALLY_FILLED;
