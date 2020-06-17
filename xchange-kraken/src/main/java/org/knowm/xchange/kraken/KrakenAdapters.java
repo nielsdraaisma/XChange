@@ -103,10 +103,16 @@ public class KrakenAdapters {
     BigDecimal originalAmount = krakenOrder.getVolume();
     BigDecimal fee = krakenOrder.getFee();
 
-    if ((orderStatus == OrderStatus.NEW || orderStatus == OrderStatus.CANCELED)
+    if (orderStatus == OrderStatus.NEW
         && filledAmount.compareTo(BigDecimal.ZERO) > 0
         && filledAmount.compareTo(originalAmount) < 0) {
       orderStatus = OrderStatus.PARTIALLY_FILLED;
+    }
+
+    if (orderStatus == OrderStatus.CANCELED
+            && filledAmount.compareTo(BigDecimal.ZERO) > 0
+            && filledAmount.compareTo(originalAmount) < 0) {
+      orderStatus = OrderStatus.PARTIALLY_CANCELED;
     }
 
     Double time = krakenOrder.getOpenTimestamp() * 1000; // eg: "opentm":1519731205.9987
