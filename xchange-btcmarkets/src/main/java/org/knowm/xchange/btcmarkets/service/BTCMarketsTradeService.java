@@ -4,10 +4,7 @@ import static org.knowm.xchange.dto.Order.OrderType.BID;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.btcmarkets.BTCMarketsAdapters;
@@ -24,12 +21,7 @@ import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.service.trade.TradeService;
-import org.knowm.xchange.service.trade.params.CancelOrderByIdParams;
-import org.knowm.xchange.service.trade.params.CancelOrderParams;
-import org.knowm.xchange.service.trade.params.TradeHistoryParamCurrencyPair;
-import org.knowm.xchange.service.trade.params.TradeHistoryParamPaging;
-import org.knowm.xchange.service.trade.params.TradeHistoryParams;
-import org.knowm.xchange.service.trade.params.TradeHistoryParamsIdSpan;
+import org.knowm.xchange.service.trade.params.*;
 import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurrencyPair;
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParamCurrencyPair;
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
@@ -122,10 +114,26 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       limit = ((TradeHistoryParamPaging) params).getPageLength();
     }
 
-    Long since = 0L;
+    Long after = null;
+    if (params instanceof TradeHistoryParamsTimeSpan) {
+      TradeHistoryParamsTimeSpan tradeHistoryParamsTimeSpan = (TradeHistoryParamsTimeSpan) params;
+      if ( tradeHistoryParamsTimeSpan.getStartTime() != null){
+        after = tradeHistoryParamsTimeSpan.getStartTime().getTime();
+      }
+    }
+
+    Long before = null;
+    if (params instanceof TradeHistoryParamsTimeSpan) {
+      TradeHistoryParamsTimeSpan tradeHistoryParamsTimeSpan = (TradeHistoryParamsTimeSpan) params;
+      if  (tradeHistoryParamsTimeSpan.getEndTime() != null){
+        before = tradeHistoryParamsTimeSpan.getEndTime().getTime();
+      }
+    }
+
+    String orderId = null;
     if (params instanceof TradeHistoryParamsIdSpan) {
       TradeHistoryParamsIdSpan tradeHistoryParamsIdSpan = (TradeHistoryParamsIdSpan) params;
-      since = Long.valueOf(tradeHistoryParamsIdSpan.getStartId());
+      orderId = tradeHistoryParamsIdSpan.getStartId();
     }
 
     CurrencyPair cp = null;
@@ -136,7 +144,7 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       }
     }
 
-    List<BTCMarketsTradeHistoryResponse> response = getBTCMarketsUserTransactions(cp, limit, since);
+    List<BTCMarketsTradeHistoryResponse> response = getBTCMarketsUserTransactions(cp, orderId, before, after, limit);
     return BTCMarketsAdapters.adaptTradeHistory(response);
   }
 
@@ -162,10 +170,25 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
   }
 
   public static class HistoryParams
-      implements TradeHistoryParamPaging, TradeHistoryParamCurrencyPair, TradeHistoryParamsIdSpan {
+      implements TradeHistoryParamPaging, TradeHistoryParamCurrencyPair, TradeHistoryParamsTimeSpan, TradeHistoryParamsIdSpan {
     private Integer limit = 200;
     private CurrencyPair currencyPair;
+    private Date startTime;
+    private Date endTime;
     private String startId;
+    private String endId;
+
+    @Override
+    public String getStartId() { return startId; }
+
+    @Override
+    public void setStartId(String startId) { this.startId = startId; }
+
+    @Override
+    public String getEndId() { return this.endId; }
+
+    @Override
+    public void setEndId(String endId) { this.endId = endId; }
 
     @Override
     public Integer getPageLength() {
@@ -188,22 +211,16 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
     }
 
     @Override
-    public String getStartId() {
-      return startId;
-    }
+    public Date getStartTime() { return this.startTime; }
 
     @Override
-    public void setStartId(String startId) {
-      this.startId = startId;
-    }
+    public void setStartTime(Date startTime) { this.startTime = startTime; }
 
     @Override
-    public String getEndId() {
-      return null;
-    }
+    public Date getEndTime() { return this.endTime; }
 
     @Override
-    public void setEndId(String endId) {}
+    public void setEndTime(Date endTime) { this.endTime = endTime; }
 
     @Override
     public CurrencyPair getCurrencyPair() {
