@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.btcmarkets.service.BTCMarketsTestSupport;
-import org.knowm.xchange.utils.nonce.CurrentTimeIncrementalNonceFactory;
+import org.knowm.xchange.utils.nonce.CurrentTimeNonceFactory;
 import org.powermock.reflect.Whitebox;
 import si.mazi.rescu.SynchronizedValueFactory;
 
@@ -145,6 +145,6 @@ public class BTCMarketsExchangeTest extends BTCMarketsTestSupport {
 
     // then
     assertThat(factory).isNotNull();
-    assertThat(factory instanceof CurrentTimeIncrementalNonceFactory).isTrue();
+    assertThat(factory instanceof CurrentTimeNonceFactory).isTrue();
   }
 }

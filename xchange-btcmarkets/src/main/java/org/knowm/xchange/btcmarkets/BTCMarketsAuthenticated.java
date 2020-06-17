@@ -53,20 +53,6 @@ public interface BTCMarketsAuthenticated {
       BTCMarketsOpenOrdersRequest request)
       throws BTCMarketsException, IOException;
 
-  @GET
-  @Path("v2/order/trade/history/{base}/{counter}")
-  @Consumes(MediaType.APPLICATION_JSON)
-  BTCMarketsTradeHistory getTradeHistory(
-      @HeaderParam("apikey") String publicKey,
-      @HeaderParam("timestamp") SynchronizedValueFactory<Long> nonceFactory,
-      @HeaderParam("signature") BTCMarketsDigest signer,
-      @PathParam("base") String base,
-      @PathParam("counter") String counter,
-      @QueryParam("indexForward") Boolean indexForward,
-      @QueryParam("limit") Integer limit,
-      @QueryParam("since") Long since)
-      throws BTCMarketsException, IOException;
-
   @POST
   @Path("order/detail")
   @Consumes(MediaType.APPLICATION_JSON)

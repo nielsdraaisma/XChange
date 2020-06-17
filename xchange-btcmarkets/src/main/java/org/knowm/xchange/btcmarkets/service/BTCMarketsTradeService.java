@@ -15,8 +15,8 @@ import org.knowm.xchange.btcmarkets.dto.BTCMarketsException;
 import org.knowm.xchange.btcmarkets.dto.BTCMarketsOrderFlags;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsOrder;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsOrders;
-import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsTradeHistory;
 import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsPlaceOrderResponse;
+import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsTradeHistoryResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -136,8 +136,8 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       }
     }
 
-    BTCMarketsTradeHistory response = getBTCMarketsUserTransactions(cp, limit, since);
-    return BTCMarketsAdapters.adaptTradeHistory(response.getTrades(), cp);
+    List<BTCMarketsTradeHistoryResponse> response = getBTCMarketsUserTransactions(cp, limit, since);
+    return BTCMarketsAdapters.adaptTradeHistory(response);
   }
 
   @Override

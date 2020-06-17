@@ -9,6 +9,7 @@ import org.knowm.xchange.btcmarkets.dto.BTCMarketsBaseResponse;
 import org.knowm.xchange.btcmarkets.dto.trade.*;
 import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsPlaceOrderRequest;
 import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsPlaceOrderResponse;
+import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsTradeHistoryResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 
 public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
@@ -63,17 +64,21 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
         new BTCMarketsCancelOrderRequest(orderId));
   }
 
-  public BTCMarketsTradeHistory getBTCMarketsUserTransactions(
-      CurrencyPair currencyPair, Integer limit, Long since) throws IOException {
-    return btcm.getTradeHistory(
+  public List<BTCMarketsTradeHistoryResponse> getBTCMarketsUserTransactions(
+      CurrencyPair currencyPair, Integer limit, Long after) throws IOException {
+    String marketId = null;
+    if (currencyPair != null) {
+      marketId = currencyPair.base.getCurrencyCode() + "-" + currencyPair.counter.getCurrencyCode();
+    }
+    return btcmv3.trades(
         exchange.getExchangeSpecification().getApiKey(),
         nonceFactory,
-        signerV2,
-        currencyPair.base.getCurrencyCode(),
-        currencyPair.counter.getCurrencyCode(),
-        true,
-        limit,
-        since);
+        signerV3,
+        marketId,
+        null,
+        null,
+        after,
+        limit);
   }
 
   public BTCMarketsOrders getOrderDetails(List<Long> orderIds) throws IOException {
