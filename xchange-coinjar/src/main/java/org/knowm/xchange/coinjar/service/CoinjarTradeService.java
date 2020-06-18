@@ -115,9 +115,8 @@ public class CoinjarTradeService extends CoinjarTradeServiceRaw implements Trade
   public boolean cancelOrder(CancelOrderParams orderParams) throws IOException {
     try {
       if (orderParams instanceof CancelOrderByIdParams) {
-        CoinjarOrder cancelledOrder =
-            cancelOrderById(((CancelOrderByIdParams) orderParams).getOrderId());
-        return cancelledOrder.status == "cancelled";
+        cancelOrderById(((CancelOrderByIdParams) orderParams).getOrderId());
+        return true;
       } else {
         throw new IllegalArgumentException(
             "Unable to extract id from CancelOrderParams" + orderParams);
