@@ -125,13 +125,7 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       TradeHistoryParamsIdSpan tradeHistoryParamsIdSpan = (TradeHistoryParamsIdSpan) params;
       before = tradeHistoryParamsIdSpan.getEndId();
     }
-
-    String orderId = null;
-    if (params instanceof TradeHistoryParamsIdSpan) {
-      TradeHistoryParamsIdSpan tradeHistoryParamsIdSpan = (TradeHistoryParamsIdSpan) params;
-      orderId = tradeHistoryParamsIdSpan.getStartId();
-    }
-
+    
     CurrencyPair cp = null;
     if (params instanceof TradeHistoryParamCurrencyPair) {
       CurrencyPair paramsCp = ((TradeHistoryParamCurrencyPair) params).getCurrencyPair();
@@ -140,7 +134,7 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       }
     }
 
-    List<BTCMarketsTradeHistoryResponse> response = getBTCMarketsUserTransactions(cp, orderId, before, after, limit);
+    List<BTCMarketsTradeHistoryResponse> response = getBTCMarketsUserTransactions(cp, before, after, limit);
     return BTCMarketsAdapters.adaptTradeHistory(response);
   }
 

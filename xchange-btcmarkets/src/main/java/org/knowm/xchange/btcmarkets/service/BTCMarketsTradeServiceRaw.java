@@ -66,7 +66,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
         new BTCMarketsCancelOrderRequest(orderId));
   }
 
-  public List<BTCMarketsTradeHistoryResponse> getBTCMarketsUserTransactions(CurrencyPair currencyPair, String orderId, String before, String after, Integer limit) throws IOException {
+  public List<BTCMarketsTradeHistoryResponse> getBTCMarketsUserTransactions(CurrencyPair currencyPair, String before, String after, Integer limit) throws IOException {
     String marketId = null;
     if (currencyPair != null) {
       marketId = currencyPair.base.getCurrencyCode() + "-" + currencyPair.counter.getCurrencyCode();
@@ -76,7 +76,6 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
         nonceFactory,
         signerV3,
         marketId,
-        orderId,
         before,
         after,
         limit);

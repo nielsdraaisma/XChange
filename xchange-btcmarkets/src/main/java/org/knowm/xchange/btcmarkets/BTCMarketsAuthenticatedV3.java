@@ -42,7 +42,6 @@ public interface BTCMarketsAuthenticatedV3 {
       @HeaderParam("BM-AUTH-TIMESTAMP") SynchronizedValueFactory<Long> nonceFactory,
       @HeaderParam("BM-AUTH-SIGNATURE") BTCMarketsDigestV3 signer,
       @QueryParam("marketId") String marketId,
-      @QueryParam("orderId") String orderId,
       @QueryParam("before") String before,
       @QueryParam("after") String after,
       @QueryParam("limit") Integer limit)
