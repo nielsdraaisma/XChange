@@ -114,20 +114,16 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       limit = ((TradeHistoryParamPaging) params).getPageLength();
     }
 
-    Long after = null;
-    if (params instanceof TradeHistoryParamsTimeSpan) {
-      TradeHistoryParamsTimeSpan tradeHistoryParamsTimeSpan = (TradeHistoryParamsTimeSpan) params;
-      if ( tradeHistoryParamsTimeSpan.getStartTime() != null){
-        after = tradeHistoryParamsTimeSpan.getStartTime().getTime();
-      }
+    String after = null;
+    if (params instanceof TradeHistoryParamsIdSpan) {
+      TradeHistoryParamsIdSpan tradeHistoryParamsIdSpan = (TradeHistoryParamsIdSpan) params;
+        after = tradeHistoryParamsIdSpan.getStartId();
     }
 
-    Long before = null;
-    if (params instanceof TradeHistoryParamsTimeSpan) {
-      TradeHistoryParamsTimeSpan tradeHistoryParamsTimeSpan = (TradeHistoryParamsTimeSpan) params;
-      if  (tradeHistoryParamsTimeSpan.getEndTime() != null){
-        before = tradeHistoryParamsTimeSpan.getEndTime().getTime();
-      }
+    String before = null;
+    if (params instanceof TradeHistoryParamsIdSpan) {
+      TradeHistoryParamsIdSpan tradeHistoryParamsIdSpan = (TradeHistoryParamsIdSpan) params;
+      before = tradeHistoryParamsIdSpan.getEndId();
     }
 
     String orderId = null;
@@ -170,11 +166,9 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
   }
 
   public static class HistoryParams
-      implements TradeHistoryParamPaging, TradeHistoryParamCurrencyPair, TradeHistoryParamsTimeSpan, TradeHistoryParamsIdSpan {
+      implements TradeHistoryParamPaging, TradeHistoryParamCurrencyPair, TradeHistoryParamsIdSpan {
     private Integer limit = 200;
     private CurrencyPair currencyPair;
-    private Date startTime;
-    private Date endTime;
     private String startId;
     private String endId;
 
@@ -209,18 +203,6 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
     public void setPageNumber(Integer pageNumber) {
       throw new UnsupportedOperationException();
     }
-
-    @Override
-    public Date getStartTime() { return this.startTime; }
-
-    @Override
-    public void setStartTime(Date startTime) { this.startTime = startTime; }
-
-    @Override
-    public Date getEndTime() { return this.endTime; }
-
-    @Override
-    public void setEndTime(Date endTime) { this.endTime = endTime; }
 
     @Override
     public CurrencyPair getCurrencyPair() {

@@ -43,8 +43,8 @@ public interface BTCMarketsAuthenticatedV3 {
       @HeaderParam("BM-AUTH-SIGNATURE") BTCMarketsDigestV3 signer,
       @QueryParam("marketId") String marketId,
       @QueryParam("orderId") String orderId,
-      @QueryParam("before") Long before,
-      @QueryParam("after") Long after,
+      @QueryParam("before") String before,
+      @QueryParam("after") String after,
       @QueryParam("limit") Integer limit)
       throws BTCMarketsException, IOException;
 }
