@@ -125,7 +125,7 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       TradeHistoryParamsIdSpan tradeHistoryParamsIdSpan = (TradeHistoryParamsIdSpan) params;
       before = tradeHistoryParamsIdSpan.getEndId();
     }
-    
+
     CurrencyPair cp = null;
     if (params instanceof TradeHistoryParamCurrencyPair) {
       CurrencyPair paramsCp = ((TradeHistoryParamCurrencyPair) params).getCurrencyPair();

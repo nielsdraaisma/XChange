@@ -161,6 +161,7 @@ public class B2C2Adapters {
               .originalAmount(originalAmount)
               .price(price)
               .orderId(reference)
+              .id(reference)
               .type(orderType)
               .build());
     }
