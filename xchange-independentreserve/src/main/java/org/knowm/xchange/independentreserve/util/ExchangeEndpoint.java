@@ -6,6 +6,8 @@ import org.knowm.xchange.independentreserve.IndependentReserveAuthenticated;
 public enum ExchangeEndpoint {
   GET_ACCOUNTS("GetAccounts"),
   GET_OPEN_ORDERS("GetOpenOrders"),
+  GET_DIGITAL_CURRENCY_DEPOSIT_ADDRESS(
+      IndependentReserveAuthenticated.GetDigitalCurrencyDepositAddress),
   PLACE_LIMIT_ORDER("PlaceLimitOrder"),
   PLACE_MARKET_ORDER("PlaceMarketOrder"),
   CANCEL_ORDER("CancelOrder"),
@@ -14,8 +16,7 @@ public enum ExchangeEndpoint {
   GET_ORDER_DETAILS("GetOrderDetails"),
   SYNCH_DIGITAL_CURRENCY_DEPOSIT_ADDRESS_WITH_BLOCKCHAIN(
       IndependentReserveAuthenticated.SynchDigitalCurrencyDepositAddressWithBlockchain),
-  WITHDRAW_DIGITAL_CURRENCY(IndependentReserveAuthenticated.WithdrawDigitalCurrency),
-  GET_DIGITAL_CURRENCY_DEPOSIT_ADDRESS("GetDigitalCurrencyDepositAddress");
+  WITHDRAW_DIGITAL_CURRENCY(IndependentReserveAuthenticated.WithdrawDigitalCurrency);
 
   private String endpointName;
 

@@ -6,10 +6,22 @@ import java.util.Date;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.exceptions.CurrencyPairNotValidException;
 import org.knowm.xchange.independentreserve.IndependentReserveAuthenticated;
 import org.knowm.xchange.independentreserve.dto.trade.*;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveCancelOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveCancelOrderResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOpenOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOpenOrdersResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOrderDetailsRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOrderDetailsResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReservePlaceLimitOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReservePlaceMarketOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTradeHistoryRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTradeHistoryResponse;
 import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransaction.Type;
 import org.knowm.xchange.independentreserve.util.ExchangeEndpoint;
+import org.knowm.xchange.instrument.Instrument;
 import si.mazi.rescu.RestProxyFactory;
 
 /** Author: Kamil Zbikowski Date: 4/13/15 */
@@ -106,9 +118,15 @@ public class IndependentReserveTradeServiceRaw extends IndependentReserveBaseSer
     return independentReservePlaceLimitOrderResponse.getOrderGuid();
   }
 
-  public String independentReservePlaceMarketOrder(
-      CurrencyPair currencyPair, Order.OrderType type, BigDecimal originalAmount)
-      throws IOException {
+  public String independentReservePlaceMarketOrder(Instrument instrument, Order.OrderType type, BigDecimal originalAmount) throws IOException {
+
+    CurrencyPair currencyPair;
+    if (instrument instanceof CurrencyPair) {
+      currencyPair = (CurrencyPair) instrument;
+    } else {
+      throw new CurrencyPairNotValidException(
+          "Given instrument is not an instance of CurrencyPair");
+    }
     Long nonce = exchange.getNonceFactory().createValue();
     String apiKey = exchange.getExchangeSpecification().getApiKey();
 

@@ -83,6 +83,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
   private boolean compressedMessages = false;
   private final PublishSubject<Throwable> reconnFailEmitters = PublishSubject.create();
   private final PublishSubject<Object> connectionSuccessEmitters = PublishSubject.create();
+  private final PublishSubject<Object> disconnectEmitters = PublishSubject.create();
   private final PublishSubject<Object> subjectIdle = PublishSubject.create();
 
   // debugging
@@ -270,7 +271,14 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
       LOG.info("Scheduling reconnection");
       webSocketChannel
           .eventLoop()
-          .schedule(() -> connect().subscribe(), retryDuration.toMillis(), TimeUnit.MILLISECONDS);
+          .schedule(
+              () ->
+                  connect()
+                      .subscribe(
+                          () -> LOG.info("Reconnection complete"),
+                          e -> LOG.error("Reconnection failed: {}", e.getMessage())),
+              retryDuration.toMillis(),
+              TimeUnit.MILLISECONDS);
     }
   }
 
@@ -294,6 +302,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
                           .addListener(
                               f -> {
                                 LOG.info("Disconnected");
+                                disconnectEmitters.onNext(new Object());
                                 completable.onComplete();
                               });
                     });
@@ -354,6 +363,10 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
 
   public Observable<Object> subscribeConnectionSuccess() {
     return connectionSuccessEmitters.share();
+  }
+
+  public Observable<Object> subscribeDisconnect() {
+    return disconnectEmitters.share();
   }
 
   public Observable<T> subscribeChannel(String channelName, Object... args) {
@@ -497,6 +510,7 @@ public abstract class NettyStreamingService<T> extends ConnectableService {
         // Don't attempt to reconnect
       } else {
         super.channelInactive(ctx);
+        disconnectEmitters.onNext(new Object());
         LOG.info("Reopening websocket because it was closed");
         scheduleReconnect();
       }

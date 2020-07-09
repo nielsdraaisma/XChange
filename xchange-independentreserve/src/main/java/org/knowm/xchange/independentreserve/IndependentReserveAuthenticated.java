@@ -13,6 +13,22 @@ import org.knowm.xchange.independentreserve.dto.account.IndependentReserveGetDig
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveWithdrawDigitalCurrencyRequest;
 import org.knowm.xchange.independentreserve.dto.auth.AuthAggregate;
 import org.knowm.xchange.independentreserve.dto.trade.*;
+import org.knowm.xchange.independentreserve.dto.account.IndependentReserveDepositAddressRequest;
+import org.knowm.xchange.independentreserve.dto.account.IndependentReserveDepositAddressResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveCancelOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveCancelOrderResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOpenOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOpenOrdersResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOrderDetailsRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveOrderDetailsResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReservePlaceLimitOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReservePlaceMarketOrderRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveSynchDigitalCurrencyDepositAddressWithBlockchainRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveSynchDigitalCurrencyDepositAddressWithBlockchainResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTradeHistoryRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTradeHistoryResponse;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransactionsRequest;
+import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransactionsResponse;
 
 /** Author: Kamil Zbikowski Date: 4/10/15 */
 @Path("Private")
@@ -22,7 +38,6 @@ public interface IndependentReserveAuthenticated {
   public static final String SynchDigitalCurrencyDepositAddressWithBlockchain =
       "SynchDigitalCurrencyDepositAddressWithBlockchain";
   public static final String WithdrawDigitalCurrency = "WithdrawDigitalCurrency";
-
   public static final String GetDigitalCurrencyDepositAddress = "GetDigitalCurrencyDepositAddress";
 
   @POST
@@ -43,6 +58,13 @@ public interface IndependentReserveAuthenticated {
   @Consumes(MediaType.APPLICATION_JSON)
   IndependentReserveTradeHistoryResponse getTradeHistory(
       IndependentReserveTradeHistoryRequest independentReserveTradeHistoryRequest)
+      throws IndependentReserveHttpStatusException, IOException;
+
+  @POST
+  @Path(GetDigitalCurrencyDepositAddress)
+  @Consumes(MediaType.APPLICATION_JSON)
+  IndependentReserveDepositAddressResponse getDigitalCurrencyDepositAddress(
+      IndependentReserveDepositAddressRequest independentReserveDepositAddressRequest)
       throws IndependentReserveHttpStatusException, IOException;
 
   @POST

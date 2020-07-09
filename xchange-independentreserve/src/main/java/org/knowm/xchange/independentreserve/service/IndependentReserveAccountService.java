@@ -47,6 +47,11 @@ public class IndependentReserveAccountService extends IndependentReserveAccountS
   }
 
   @Override
+  public String requestDepositAddress(Currency currency, String... args) throws IOException {
+    return getDigitalCurrencyDepositAddress(currency.getCurrencyCode());
+  }
+
+  @Override
   public String withdrawFunds(Currency currency, BigDecimal amount, String address)
       throws IOException {
     withdrawDigitalCurrency(amount, address, "", currency.getCurrencyCode(), null);
@@ -93,7 +98,10 @@ public class IndependentReserveAccountService extends IndependentReserveAccountS
     final IndependentReserveBalance bal = getIndependentReserveBalance();
     final Currency currency = historyParams.getCurrency();
     return bal.getIndependentReserveAccounts().stream()
-        .filter(acc -> currency == null || currency.getCurrencyCode().equals(acc.getCurrencyCode()))
+        .filter(
+            acc ->
+                currency == null
+                    || currency.getCurrencyCode().equalsIgnoreCase(acc.getCurrencyCode()))
         .map(
             acc -> {
               try {
@@ -113,17 +121,6 @@ public class IndependentReserveAccountService extends IndependentReserveAccountS
             })
         .flatMap(Function.identity())
         .collect(Collectors.toList());
-  }
-
-  @Override
-  public String requestDepositAddress(Currency currency, String... args) throws IOException {
-    IndependentReserveGetDigitalCurrencyDepositAddressResponse response =
-        getDigitalCurrencyDepositAddress(currency.toString());
-    if (response != null) {
-      return response.depositAddress;
-    } else {
-      return null;
-    }
   }
 
   public static class IndependentReserveTradeHistoryParams extends DefaultTradeHistoryParamPaging
