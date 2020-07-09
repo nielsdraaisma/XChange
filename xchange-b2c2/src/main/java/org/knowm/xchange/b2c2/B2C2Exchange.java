@@ -43,16 +43,4 @@ public class B2C2Exchange extends BaseExchange implements Exchange {
     return marketDataService;
   }
 
-  @Override
-  public void remoteInit() throws IOException, ExchangeException {
-    this.marketDataService.getInstruments().stream()
-        .map(i -> i.name)
-        .map(B2C2Adapters::adaptInstrumentToCurrencyPair)
-        .forEach(
-            currencyPair -> {
-              CurrencyPairMetaData metaData =
-                  new CurrencyPairMetaData(null, null, null, null, null);
-              this.exchangeMetaData.getCurrencyPairs().put(currencyPair, metaData);
-            });
-  }
 }

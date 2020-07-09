@@ -117,7 +117,7 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
     String after = null;
     if (params instanceof TradeHistoryParamsIdSpan) {
       TradeHistoryParamsIdSpan tradeHistoryParamsIdSpan = (TradeHistoryParamsIdSpan) params;
-        after = tradeHistoryParamsIdSpan.getStartId();
+      after = tradeHistoryParamsIdSpan.getStartId();
     }
 
     String before = null;
@@ -134,7 +134,8 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
       }
     }
 
-    List<BTCMarketsTradeHistoryResponse> response = getBTCMarketsUserTransactions(cp, before, after, limit);
+    List<BTCMarketsTradeHistoryResponse> response =
+        getBTCMarketsUserTransactions(cp, before, after, limit);
     return BTCMarketsAdapters.adaptTradeHistory(response);
   }
 
@@ -167,16 +168,24 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
     private String endId;
 
     @Override
-    public String getStartId() { return startId; }
+    public String getStartId() {
+      return startId;
+    }
 
     @Override
-    public void setStartId(String startId) { this.startId = startId; }
+    public void setStartId(String startId) {
+      this.startId = startId;
+    }
 
     @Override
-    public String getEndId() { return this.endId; }
+    public String getEndId() {
+      return this.endId;
+    }
 
     @Override
-    public void setEndId(String endId) { this.endId = endId; }
+    public void setEndId(String endId) {
+      this.endId = endId;
+    }
 
     @Override
     public Integer getPageLength() {

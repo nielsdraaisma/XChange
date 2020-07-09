@@ -118,7 +118,8 @@ public class IndependentReserveTradeServiceRaw extends IndependentReserveBaseSer
     return independentReservePlaceLimitOrderResponse.getOrderGuid();
   }
 
-  public String independentReservePlaceMarketOrder(Instrument instrument, Order.OrderType type, BigDecimal originalAmount) throws IOException {
+  public String independentReservePlaceMarketOrder(
+      Instrument instrument, Order.OrderType type, BigDecimal originalAmount) throws IOException {
 
     CurrencyPair currencyPair;
     if (instrument instanceof CurrencyPair) {

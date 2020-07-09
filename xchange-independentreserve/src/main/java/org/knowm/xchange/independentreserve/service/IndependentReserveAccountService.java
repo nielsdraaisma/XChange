@@ -14,7 +14,6 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.independentreserve.IndependentReserveAdapters;
 import org.knowm.xchange.independentreserve.dto.IndependentReserveHttpStatusException;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveBalance;
-import org.knowm.xchange.independentreserve.dto.account.IndependentReserveGetDigitalCurrencyDepositAddressResponse;
 import org.knowm.xchange.independentreserve.dto.trade.IndependentReserveTransaction;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.DefaultTradeHistoryParamPaging;

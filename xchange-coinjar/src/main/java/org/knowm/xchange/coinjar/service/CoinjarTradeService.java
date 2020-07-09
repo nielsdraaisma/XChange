@@ -105,7 +105,6 @@ public class CoinjarTradeService extends CoinjarTradeServiceRaw implements Trade
     return new CoinjarTradeHistoryParams();
   }
 
-
   @Override
   public boolean cancelOrder(String orderId) throws IOException {
     return cancelOrder(new DefaultCancelOrderParamId(orderId));

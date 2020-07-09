@@ -12,8 +12,6 @@ import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsPlaceOrderResponse;
 import org.knowm.xchange.btcmarkets.dto.v3.trade.BTCMarketsTradeHistoryResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 
-import javax.ws.rs.QueryParam;
-
 public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
 
   public BTCMarketsTradeServiceRaw(Exchange exchange) {
@@ -66,7 +64,8 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
         new BTCMarketsCancelOrderRequest(orderId));
   }
 
-  public List<BTCMarketsTradeHistoryResponse> getBTCMarketsUserTransactions(CurrencyPair currencyPair, String before, String after, Integer limit) throws IOException {
+  public List<BTCMarketsTradeHistoryResponse> getBTCMarketsUserTransactions(
+      CurrencyPair currencyPair, String before, String after, Integer limit) throws IOException {
     String marketId = null;
     if (currencyPair != null) {
       marketId = currencyPair.base.getCurrencyCode() + "-" + currencyPair.counter.getCurrencyCode();

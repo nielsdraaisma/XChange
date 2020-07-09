@@ -65,7 +65,8 @@ public class IndependentReserveTradeService extends IndependentReserveTradeServi
 
   @Override
   public String placeMarketOrder(MarketOrder marketOrder) throws IOException {
-    return independentReservePlaceMarketOrder(marketOrder.getInstrument(), marketOrder.getType(), marketOrder.getOriginalAmount());
+    return independentReservePlaceMarketOrder(
+        marketOrder.getInstrument(), marketOrder.getType(), marketOrder.getOriginalAmount());
   }
 
   @Override

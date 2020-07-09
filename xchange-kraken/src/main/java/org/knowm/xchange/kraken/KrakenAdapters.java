@@ -110,8 +110,8 @@ public class KrakenAdapters {
     }
 
     if (orderStatus == OrderStatus.CANCELED
-            && filledAmount.compareTo(BigDecimal.ZERO) > 0
-            && filledAmount.compareTo(originalAmount) < 0) {
+        && filledAmount.compareTo(BigDecimal.ZERO) > 0
+        && filledAmount.compareTo(originalAmount) < 0) {
       orderStatus = OrderStatus.PARTIALLY_CANCELED;
     }
 

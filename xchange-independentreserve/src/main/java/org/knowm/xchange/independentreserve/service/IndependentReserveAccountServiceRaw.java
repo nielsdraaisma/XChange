@@ -8,8 +8,6 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.independentreserve.IndependentReserveAuthenticated;
 import org.knowm.xchange.independentreserve.dto.IndependentReserveHttpStatusException;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveBalance;
-import org.knowm.xchange.independentreserve.dto.account.IndependentReserveGetDigitalCurrencyDepositAddressRequest;
-import org.knowm.xchange.independentreserve.dto.account.IndependentReserveGetDigitalCurrencyDepositAddressResponse;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveDepositAddressRequest;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveDepositAddressResponse;
 import org.knowm.xchange.independentreserve.dto.account.IndependentReserveWithdrawDigitalCurrencyRequest;

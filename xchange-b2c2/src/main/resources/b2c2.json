@@ -3,92 +3,110 @@
     "BTC/GBP": {
       "min_amount": 0.001,
       "max_amount": 100,
-      "price_scale": 1
+      "price_scale": 1,
+      "base_scale": 4
     },
     "BTC/USD": {
       "min_amount": 0.001,
       "max_amount": 100,
-      "price_scale": 1
+      "price_scale": 1,
+      "base_scale": 4
     },
     "BTC/AUD": {
       "min_amount": 0.001,
       "max_amount": 100,
-      "price_scale": 1
+      "price_scale": 1,
+      "base_scale": 4
     },
     "ETH/USD": {
       "min_amount": 0.01,
       "max_amount": 1000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "ETH/AUD": {
       "min_amount": 0.01,
       "max_amount": 1000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "BCH/USD": {
       "min_amount": 0.01,
       "max_amount": 500,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "BCH/EUR": {
       "min_amount": 0.01,
       "max_amount": 500,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "BCH/BTC": {
       "min_amount": 0.01,
       "max_amount": 1000000,
-      "price_scale": 5
+      "price_scale": 5,
+      "base_scale": 4
     },
     "BTC/EUR": {
       "min_amount": 0.001,
       "max_amount": 10000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "ETH/EUR": {
       "min_amount": 0.01,
       "max_amount": 10000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "ETH/BTC": {
       "min_amount": 0.01,
       "max_amount": 1000000,
-      "price_scale": 5
+      "price_scale": 5,
+      "base_scale": 4
     },
     "LTC/USD": {
       "min_amount": 0.1,
       "max_amount": 1000000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "LTC/BTC": {
       "min_amount": 0.1,
       "max_amount": 1000000,
-      "price_scale": 5
+      "price_scale": 5,
+      "base_scale": 4
     },
     "LTC/EUR": {
       "min_amount": 0.1,
       "max_amount": 10000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "XRP/EUR": {
       "min_amount": 100,
       "max_amount": 1000000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "XRP/GBP": {
       "min_amount": 100,
       "max_amount": 1000000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "XRP/USD": {
       "min_amount": 100,
       "max_amount": 1000000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     },
     "XRP/AUD": {
       "min_amount": 100,
       "max_amount": 1000000,
-      "price_scale": 2
+      "price_scale": 2,
+      "base_scale": 4
     }
   },
   "currencies": {
