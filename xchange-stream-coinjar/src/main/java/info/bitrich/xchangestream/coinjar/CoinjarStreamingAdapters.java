@@ -28,13 +28,7 @@ class CoinjarStreamingAdapters {
       CoinjarWebSocketBookEvent.Payload.Order order,
       CurrencyPair currencyPair,
       Order.OrderType orderType) {
-    return new LimitOrder(
-        orderType,
-        new BigDecimal(order.volume),
-        currencyPair,
-        null,
-        null,
-        new BigDecimal(order.price));
+    return new LimitOrder.Builder(orderType, currencyPair).originalAmount(new BigDecimal(order.volume)).limitPrice(new BigDecimal(order.price)).build();
   }
 
   public static List<LimitOrder> toLimitOrders(

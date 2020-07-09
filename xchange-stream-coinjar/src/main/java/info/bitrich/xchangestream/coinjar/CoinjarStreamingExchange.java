@@ -52,13 +52,6 @@ public class CoinjarStreamingExchange extends CoinjarExchange implements Streami
   }
 
   @Override
-  public ExchangeSpecification getDefaultExchangeSpecification() {
-    ExchangeSpecification spec = super.getDefaultExchangeSpecification();
-    spec.setShouldLoadRemoteMetaData(false);
-    return spec;
-  }
-
-  @Override
   public CoinjarStreamingMarketDataService getStreamingMarketDataService() {
     return streamingMarketDataService;
   }

@@ -18,6 +18,7 @@ import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
+import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,11 +94,11 @@ class CoinjarStreamingMarketDataService implements StreamingMarketDataService {
 
   @Override
   public Observable<Ticker> getTicker(CurrencyPair currencyPair, Object... args) {
-    throw new NotAvailableFromExchangeException();
+    throw new NotYetImplementedForExchangeException();
   }
 
   @Override
   public Observable<Trade> getTrades(CurrencyPair currencyPair, Object... args) {
-    throw new NotAvailableFromExchangeException();
+    throw new NotYetImplementedForExchangeException();
   }
 }
