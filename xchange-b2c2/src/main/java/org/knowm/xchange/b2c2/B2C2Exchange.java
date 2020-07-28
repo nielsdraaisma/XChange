@@ -1,14 +1,11 @@
 package org.knowm.xchange.b2c2;
 
-import java.io.IOException;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.b2c2.service.B2C2AccountService;
 import org.knowm.xchange.b2c2.service.B2C2MarketDataService;
 import org.knowm.xchange.b2c2.service.B2C2TradingService;
-import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
-import org.knowm.xchange.exceptions.ExchangeException;
 import si.mazi.rescu.SynchronizedValueFactory;
 
 public class B2C2Exchange extends BaseExchange implements Exchange {
@@ -42,5 +39,4 @@ public class B2C2Exchange extends BaseExchange implements Exchange {
   public B2C2MarketDataService getMarketDataService() {
     return marketDataService;
   }
-
 }

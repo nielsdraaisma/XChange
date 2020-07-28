@@ -45,7 +45,8 @@ public class B2C2BaseService extends BaseExchangeService<B2C2Exchange> implement
         case 1013:
           return new FundsExceededException("Max credit exposure reached");
         case 1015:
-          return new OrderNotValidException("Too many decimals – We only allow four decimals in quantities.");
+          return new OrderNotValidException(
+              "Too many decimals – We only allow four decimals in quantities.");
         case 1001:
           return new CurrencyPairNotValidException();
         case 1019:
