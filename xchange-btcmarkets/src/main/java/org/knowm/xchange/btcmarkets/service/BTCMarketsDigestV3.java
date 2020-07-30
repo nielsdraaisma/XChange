@@ -20,7 +20,10 @@ public class BTCMarketsDigestV3 extends BaseParamsDigest {
     final String requestBody = inv.getRequestBody();
 
     final String stringToSign = method + path + timestamp + requestBody;
+    return sign(stringToSign);
+  }
 
+  public String sign(String stringToSign) {
     Mac mac = getMac();
     mac.update(stringToSign.getBytes());
     return Base64.getEncoder().encodeToString(mac.doFinal());

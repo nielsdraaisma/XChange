@@ -3,6 +3,7 @@ package info.bitrich.xchangestream.btcmarkets;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
+import info.bitrich.xchangestream.core.StreamingTradeService;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import org.knowm.xchange.ExchangeSpecification;
@@ -10,10 +11,9 @@ import org.knowm.xchange.btcmarkets.BTCMarketsExchange;
 
 public class BTCMarketsStreamingExchange extends BTCMarketsExchange implements StreamingExchange {
 
-  private static final String API_URI = "wss://socket.btcmarkets.net/v2";
-
   private BTCMarketsStreamingService streamingService;
   private BTCMarketsStreamingMarketDataService streamingMarketDataService;
+  private BTCMarketsStreamingTradeService streamingTradeService;
 
   @Override
   protected void initServices() {
@@ -21,10 +21,11 @@ public class BTCMarketsStreamingExchange extends BTCMarketsExchange implements S
 
     this.streamingService = createStreamingService();
     this.streamingMarketDataService = new BTCMarketsStreamingMarketDataService(streamingService);
+    this.streamingTradeService = new BTCMarketsStreamingTradeService(streamingService);
   }
 
   private BTCMarketsStreamingService createStreamingService() {
-    return new BTCMarketsStreamingService(API_URI);
+    return new BTCMarketsStreamingService(this);
   }
 
   @Override
@@ -62,6 +63,11 @@ public class BTCMarketsStreamingExchange extends BTCMarketsExchange implements S
   @Override
   public StreamingMarketDataService getStreamingMarketDataService() {
     return streamingMarketDataService;
+  }
+
+  @Override
+  public StreamingTradeService getStreamingTradeService() {
+    return streamingTradeService;
   }
 
   @Override

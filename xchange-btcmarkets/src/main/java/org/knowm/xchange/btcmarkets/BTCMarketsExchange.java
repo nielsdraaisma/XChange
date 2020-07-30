@@ -15,11 +15,6 @@ public class BTCMarketsExchange extends BaseExchange implements Exchange {
   private final SynchronizedValueFactory<Long> nonceFactory = new CurrentTimeNonceFactory();
 
   @Override
-  public void applySpecification(ExchangeSpecification exchangeSpecification) {
-    super.applySpecification(exchangeSpecification);
-  }
-
-  @Override
   protected void initServices() {
     this.marketDataService = new BTCMarketsMarketDataService(this);
     if (exchangeSpecification.getApiKey() != null && exchangeSpecification.getSecretKey() != null) {

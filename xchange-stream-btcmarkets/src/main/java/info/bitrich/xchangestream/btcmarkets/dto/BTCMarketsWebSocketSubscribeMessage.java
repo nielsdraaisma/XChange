@@ -8,7 +8,7 @@ import java.util.List;
 public class BTCMarketsWebSocketSubscribeMessage {
 
   @JsonProperty("messageType")
-  public final String messageType = "subscribe";
+  public final String messageType;
 
   @JsonProperty("marketIds")
   public final List<String> marketIds;
@@ -25,12 +25,20 @@ public class BTCMarketsWebSocketSubscribeMessage {
   @JsonProperty("signature")
   public final String signature;
 
+  @JsonProperty("clientType")
+  public final String clientType = "api";
   /**
    * @param marketIds All market id's to subscribe on, any current subscriptions will be dropped if
    *     not in the current message.
    */
   public BTCMarketsWebSocketSubscribeMessage(
-      List<String> marketIds, List<String> channels, Long timestamp, String key, String signature) {
+      String messageType,
+      List<String> marketIds,
+      List<String> channels,
+      Long timestamp,
+      String key,
+      String signature) {
+    this.messageType = messageType;
     this.marketIds = marketIds;
     this.channels = channels;
     this.timestamp = timestamp;
