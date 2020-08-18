@@ -22,6 +22,10 @@ public class CoinspotMarketDataService extends CoinspotMarketDataServiceRaw
 
   @Override
   public OrderBook getOrderBook(CurrencyPair currencyPair, Object... args) throws IOException {
-    return CointspotAdapters.adaptOrderbook(super.getOrderbook(currencyPair), currencyPair);
+    try {
+      return CointspotAdapters.adaptOrderbook(super.getOrderbook(currencyPair), currencyPair);
+    } catch (CoinspotException e) {
+      throw CointspotAdapters.adaptError(e);
+    }
   }
 }

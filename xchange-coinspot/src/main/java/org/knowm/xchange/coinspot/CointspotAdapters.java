@@ -1,15 +1,19 @@
 package org.knowm.xchange.coinspot;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.knowm.xchange.coinspot.dto.CoinspotOrderbook;
 import org.knowm.xchange.coinspot.dto.CoinspotRates;
+import org.knowm.xchange.coinspot.service.CoinspotException;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.exceptions.ExchangeException;
+import org.knowm.xchange.exceptions.ExchangeUnavailableException;
 
 public class CointspotAdapters {
 
@@ -65,5 +69,11 @@ public class CointspotAdapters {
         null,
         adaptOrderbookOrdders(orderbook.sellOrders, Order.OrderType.ASK, currencyPair),
         adaptOrderbookOrdders(orderbook.buyOrders, Order.OrderType.BID, currencyPair));
+  }
+
+  public static IOException adaptError(CoinspotException e) {
+    if ( e.getHttpStatusCode() == 502 ) {
+      return new ExchangeUnavailableException(e);
+    } else return e;
   }
 }

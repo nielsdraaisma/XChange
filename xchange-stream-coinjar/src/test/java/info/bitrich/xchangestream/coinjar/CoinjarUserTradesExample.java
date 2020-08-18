@@ -8,8 +8,12 @@ import io.reactivex.observers.BaseTestConsumer;
 import org.junit.Test;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.utils.AuthUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CoinjarUserTradesExample {
+
+  private static final Logger logger = LoggerFactory.getLogger(CoinjarUserTradesExample.class);
 
   @Test
   public void runTest() {
@@ -27,6 +31,10 @@ public class CoinjarUserTradesExample {
       Disposable disposable =
           streamingTradeService
               .getUserTrades(null)
+                  .map(userTrade -> {
+                          logger.info("Received userTrade {}", userTrade);
+                          return userTrade;
+                          })
               .test()
               .awaitCount(1, BaseTestConsumer.TestWaitStrategy.SLEEP_100MS, 1000 * 60 * 10)
               .assertNoErrors();

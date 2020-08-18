@@ -9,33 +9,46 @@ import org.knowm.xchange.btcmarkets.service.BTCMarketsTradeService;
 import org.knowm.xchange.utils.nonce.CurrentTimeNonceFactory;
 import si.mazi.rescu.SynchronizedValueFactory;
 
-/** @author Matija Mazi */
+/**
+ * @author Matija Mazi
+ */
 public class BTCMarketsExchange extends BaseExchange implements Exchange {
 
-  private final SynchronizedValueFactory<Long> nonceFactory = new CurrentTimeNonceFactory();
+    private SynchronizedValueFactory<Long> nonceFactory = new CurrentTimeNonceFactory();
 
-  @Override
-  protected void initServices() {
-    this.marketDataService = new BTCMarketsMarketDataService(this);
-    if (exchangeSpecification.getApiKey() != null && exchangeSpecification.getSecretKey() != null) {
-      this.tradeService = new BTCMarketsTradeService(this);
-      this.accountService = new BTCMarketsAccountService(this);
+    public static final String CURRENCY_PAIR = "CURRENCY_PAIR";
+
+    @Override
+    public void applySpecification(ExchangeSpecification exchangeSpecification) {
+        super.applySpecification(exchangeSpecification);
     }
-  }
 
-  @Override
-  public ExchangeSpecification getDefaultExchangeSpecification() {
-    ExchangeSpecification exchangeSpecification =
-        new ExchangeSpecification(this.getClass().getCanonicalName());
-    exchangeSpecification.setSslUri("https://api.btcmarkets.net");
-    exchangeSpecification.setHost("btcmarkets.net");
-    exchangeSpecification.setPort(80);
-    exchangeSpecification.setExchangeName("BTCMarkets");
-    return exchangeSpecification;
-  }
+    @Override
+    protected void initServices() {
+        this.marketDataService = new BTCMarketsMarketDataService(this);
+        if (exchangeSpecification.getApiKey() != null && exchangeSpecification.getSecretKey() != null) {
+            this.tradeService = new BTCMarketsTradeService(this);
+            this.accountService = new BTCMarketsAccountService(this);
+        }
+    }
 
-  @Override
-  public SynchronizedValueFactory<Long> getNonceFactory() {
-    return nonceFactory;
-  }
+    @Override
+    public ExchangeSpecification getDefaultExchangeSpecification() {
+        ExchangeSpecification exchangeSpecification =
+                new ExchangeSpecification(this.getClass().getCanonicalName());
+        exchangeSpecification.setSslUri("https://api.btcmarkets.net");
+        exchangeSpecification.setHost("btcmarkets.net");
+        exchangeSpecification.setPort(80);
+        exchangeSpecification.setExchangeName("BTCMarkets");
+        return exchangeSpecification;
+    }
+
+    @Override
+    public SynchronizedValueFactory<Long> getNonceFactory() {
+        return nonceFactory;
+    }
+
+    public void setNonceFactory(SynchronizedValueFactory<Long> nonceFactory) {
+        this.nonceFactory = nonceFactory;
+    }
 }
