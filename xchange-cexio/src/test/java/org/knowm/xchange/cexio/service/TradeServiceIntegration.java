@@ -16,7 +16,7 @@ import org.knowm.xchange.cexio.dto.trade.CexIOOrderWithTransactions;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
-import org.knowm.xchange.service.trade.params.CancelOrderByCurrencyPair;
+import org.knowm.xchange.service.trade.params.DefaultCancelOrderParamCurrencyPair;
 
 public class TradeServiceIntegration {
   private CexIOTradeService tradeService;
@@ -95,7 +95,7 @@ public class TradeServiceIntegration {
     String orderId = tradeService.placeLimitOrder(order);
     String orderId2 = tradeService.placeLimitOrder(order);
 
-    tradeService.cancelOrder((CancelOrderByCurrencyPair) () -> new CurrencyPair("BCH/USD"));
+    tradeService.cancelOrder(new DefaultCancelOrderParamCurrencyPair(new CurrencyPair("BCH/USD")));
 
     List<Order> orders = (List<Order>) tradeService.getOrder(orderId, orderId2);
 
@@ -151,7 +151,7 @@ public class TradeServiceIntegration {
         0,
         ((LimitOrder) orders.get(2)).getLimitPrice().compareTo(endPrice));
 
-    tradeService.cancelOrder((CancelOrderByCurrencyPair) () -> new CurrencyPair("BCH/USD"));
+    tradeService.cancelOrder(new DefaultCancelOrderParamCurrencyPair(new CurrencyPair("BCH/USD")));
   }
 
   private LimitOrder buildOrder(

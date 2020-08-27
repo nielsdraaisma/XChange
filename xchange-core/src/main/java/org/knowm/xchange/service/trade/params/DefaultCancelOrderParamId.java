@@ -16,4 +16,9 @@ public class DefaultCancelOrderParamId implements CancelOrderByIdParams {
 
     return orderId;
   }
+
+  @Override
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
+  }
 }

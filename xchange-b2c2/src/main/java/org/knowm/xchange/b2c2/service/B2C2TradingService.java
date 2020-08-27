@@ -20,6 +20,8 @@ import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.*;
+import org.knowm.xchange.service.trade.params.orders.DefaultQueryOrderParam;
+import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
 
 public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeService {
   public B2C2TradingService(B2C2Exchange exchange) {
@@ -114,6 +116,20 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
     }
     final String tradeId = orderIds[0];
     return Collections.singletonList(B2C2Adapters.adoptTradeResponseToOrder(getTrade(tradeId)));
+  }
+
+  @Override
+  public Collection<Order> getOrder(OrderQueryParams... orderQueryParams) throws IOException {
+    List<Order> res = new ArrayList<>();
+    for (OrderQueryParams orderQueryParam : Arrays.asList(orderQueryParams)) {
+      res.addAll(this.getOrder(new String[] {orderQueryParam.getOrderId()}));
+    }
+    return res;
+  }
+
+  @Override
+  public OrderQueryParams createOrdersQueryParams() {
+    return new DefaultQueryOrderParam();
   }
 
   @Override

@@ -350,8 +350,10 @@ public class OkCoinTradeService extends OkCoinTradeServiceRaw implements TradeSe
 
   public static class OkCoinCancelOrderParam
       implements CancelOrderByIdParams, CancelOrderByCurrencyPair {
-    private final CurrencyPair currencyPair;
-    private final String id;
+    private CurrencyPair currencyPair;
+    private String id;
+
+    public OkCoinCancelOrderParam() {}
 
     public OkCoinCancelOrderParam(CurrencyPair currencyPair, String id) {
       this.currencyPair = currencyPair;
@@ -366,6 +368,15 @@ public class OkCoinTradeService extends OkCoinTradeServiceRaw implements TradeSe
     @Override
     public String getOrderId() {
       return id;
+    }
+
+    @Override
+    public void setCurrencyPair(CurrencyPair currencyPair) {
+      this.currencyPair = currencyPair;
+    }
+
+    public void setOrderId(String id) {
+      this.id = id;
     }
   }
 }

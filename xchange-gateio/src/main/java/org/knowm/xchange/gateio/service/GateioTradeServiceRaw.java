@@ -142,8 +142,8 @@ public class GateioTradeServiceRaw extends GateioBaseService {
 
   public static class GateioCancelOrderParams
       implements CancelOrderByIdParams, CancelOrderByCurrencyPair {
-    public final CurrencyPair currencyPair;
-    public final String orderId;
+    public CurrencyPair currencyPair;
+    public String orderId;
 
     public GateioCancelOrderParams(CurrencyPair currencyPair, String orderId) {
       this.currencyPair = currencyPair;
@@ -158,6 +158,16 @@ public class GateioTradeServiceRaw extends GateioBaseService {
     @Override
     public CurrencyPair getCurrencyPair() {
       return currencyPair;
+    }
+
+    @Override
+    public void setCurrencyPair(CurrencyPair currencyPair) {
+      this.currencyPair = currencyPair;
+    }
+
+    @Override
+    public void setOrderId(String orderId) {
+      this.orderId = orderId;
     }
   }
 }

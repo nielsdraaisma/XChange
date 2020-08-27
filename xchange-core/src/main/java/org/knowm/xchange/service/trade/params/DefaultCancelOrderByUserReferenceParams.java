@@ -14,4 +14,9 @@ public class DefaultCancelOrderByUserReferenceParams implements CancelOrderByUse
   public String getUserReference() {
     return userReference;
   }
+
+  @Override
+  public void setUserReference(String reference) {
+    this.userReference = reference;
+  }
 }

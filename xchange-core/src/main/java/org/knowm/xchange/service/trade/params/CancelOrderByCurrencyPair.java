@@ -5,4 +5,6 @@ import org.knowm.xchange.currency.CurrencyPair;
 public interface CancelOrderByCurrencyPair extends CancelOrderParams {
 
   public CurrencyPair getCurrencyPair();
+
+  void setCurrencyPair(CurrencyPair pair);
 }

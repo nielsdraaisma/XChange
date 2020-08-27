@@ -3,6 +3,7 @@ package org.knowm.xchange.service.trade;
 import java.io.IOException;
 import java.util.Collection;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
@@ -16,6 +17,7 @@ import org.knowm.xchange.service.trade.params.CancelOrderParams;
 import org.knowm.xchange.service.trade.params.DefaultCancelOrderParamId;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
+import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParam;
 import org.knowm.xchange.service.trade.params.orders.DefaultQueryOrderParam;
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
 import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
@@ -262,7 +264,27 @@ public interface TradeService extends BaseService {
    * createOpenOrdersParams that created the object.
    */
   default OpenOrdersParams createOpenOrdersParams() {
-    throw new NotYetImplementedForExchangeException();
+    return new DefaultOpenOrdersParam();
+  }
+
+  /**
+   * Create {@link OrderQueryParams} object specific to this exchange. Object created by this method
+   * may be used to discover supported and required {@link #getOrder(OrderQueryParams...)}
+   * parameters and should be passed only to the method in the same class as the
+   * createOrdersQueryParams that created the object.
+   */
+  default OrderQueryParams createOrdersQueryParams() {
+    return new DefaultQueryOrderParam();
+  }
+
+  /**
+   * Create {@link OrderQueryParams} object specific to this exchange. Object created by this method
+   * may be used to discover supported and required {@link #getOrder(OrderQueryParams...)}
+   * parameters and should be passed only to the method in the same class as the
+   * createOrdersQueryParams that created the object.
+   */
+  default CancelOrderParams createCancelOrderParams() {
+    return new DefaultCancelOrderParamId();
   }
 
   /**

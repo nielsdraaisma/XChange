@@ -1,7 +1,10 @@
 package org.knowm.xchange.kraken.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -12,7 +15,10 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.kraken.KrakenAdapters;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.*;
+import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParam;
+import org.knowm.xchange.service.trade.params.orders.DefaultQueryOrderParam;
 import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
+import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
 import org.knowm.xchange.utils.DateUtils;
 
 public class KrakenTradeService extends KrakenTradeServiceRaw implements TradeService {
@@ -98,19 +104,37 @@ public class KrakenTradeService extends KrakenTradeServiceRaw implements TradeSe
 
   @Override
   public TradeHistoryParams createTradeHistoryParams() {
-
     return new KrakenTradeHistoryParams();
   }
 
   @Override
   public OpenOrdersParams createOpenOrdersParams() {
-    return null;
+    return new DefaultOpenOrdersParam();
+  }
+
+  @Override
+  public CancelOrderParams createCancelOrderParams() {
+    return new KrakenCancelOrderParams();
+  }
+
+  @Override
+  public OrderQueryParams createOrdersQueryParams() {
+    return new DefaultQueryOrderParam();
   }
 
   @Override
   public Collection<Order> getOrder(String... orderIds) throws IOException {
 
     return KrakenAdapters.adaptOrders(super.getOrders(orderIds));
+  }
+
+  @Override
+  public Collection<Order> getOrder(OrderQueryParams... orderQueryParams) throws IOException {
+    List<Order> res = new ArrayList<>();
+    for (OrderQueryParams orderQueryParam : Arrays.asList(orderQueryParams)) {
+      res.addAll(this.getOrder(orderQueryParam.getOrderId()));
+    }
+    return res;
   }
 
   public static class KrakenTradeHistoryParams extends DefaultTradeHistoryParamsTimeSpan
@@ -126,6 +150,30 @@ public class KrakenTradeService extends KrakenTradeServiceRaw implements TradeSe
     @Override
     public void setOffset(Long offset) {
       this.offset = offset;
+    }
+  }
+
+  public static class KrakenCancelOrderParams
+      implements CancelOrderByIdParams, CancelOrderByUserReferenceParams {
+    private String orderId;
+    private String userReference;
+
+    @Override
+    public String getOrderId() {
+      return orderId;
+    }
+
+    @Override
+    public String getUserReference() {
+      return userReference;
+    }
+
+    public void setOrderId(String orderId) {
+      this.orderId = orderId;
+    }
+
+    public void setUserReference(String userReference) {
+      this.userReference = userReference;
     }
   }
 }

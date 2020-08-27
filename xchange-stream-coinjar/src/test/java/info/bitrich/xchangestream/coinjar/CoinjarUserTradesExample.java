@@ -31,10 +31,11 @@ public class CoinjarUserTradesExample {
       Disposable disposable =
           streamingTradeService
               .getUserTrades(null)
-                  .map(userTrade -> {
-                          logger.info("Received userTrade {}", userTrade);
-                          return userTrade;
-                          })
+              .map(
+                  userTrade -> {
+                    logger.info("Received userTrade {}", userTrade);
+                    return userTrade;
+                  })
               .test()
               .awaitCount(1, BaseTestConsumer.TestWaitStrategy.SLEEP_100MS, 1000 * 60 * 10)
               .assertNoErrors();

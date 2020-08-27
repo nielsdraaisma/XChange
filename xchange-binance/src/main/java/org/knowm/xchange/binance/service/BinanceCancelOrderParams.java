@@ -5,8 +5,10 @@ import org.knowm.xchange.service.trade.params.CancelOrderByCurrencyPair;
 import org.knowm.xchange.service.trade.params.CancelOrderByIdParams;
 
 public class BinanceCancelOrderParams implements CancelOrderByIdParams, CancelOrderByCurrencyPair {
-  private final String orderId;
-  private final CurrencyPair pair;
+  private String orderId;
+  private CurrencyPair pair;
+
+  public BinanceCancelOrderParams() {}
 
   public BinanceCancelOrderParams(CurrencyPair pair, String orderId) {
     this.pair = pair;
@@ -21,5 +23,15 @@ public class BinanceCancelOrderParams implements CancelOrderByIdParams, CancelOr
   @Override
   public String getOrderId() {
     return orderId;
+  }
+
+  @Override
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
+  }
+
+  @Override
+  public void setCurrencyPair(CurrencyPair pair) {
+    this.pair = pair;
   }
 }

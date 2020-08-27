@@ -22,10 +22,7 @@ import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.*;
-import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurrencyPair;
-import org.knowm.xchange.service.trade.params.orders.OpenOrdersParamCurrencyPair;
-import org.knowm.xchange.service.trade.params.orders.OpenOrdersParams;
-import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
+import org.knowm.xchange.service.trade.params.orders.*;
 
 /** @author Matija Mazi */
 public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements TradeService {
@@ -156,8 +153,13 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
   }
 
   @Override
+  public OrderQueryParams createOrdersQueryParams() {
+    return new DefaultQueryOrderParam();
+  }
+
+  @Override
   public OpenOrdersParams createOpenOrdersParams() {
-    return new DefaultOpenOrdersParamCurrencyPair(null);
+    return new DefaultOpenOrdersParamCurrencyPair();
   }
 
   public static class HistoryParams

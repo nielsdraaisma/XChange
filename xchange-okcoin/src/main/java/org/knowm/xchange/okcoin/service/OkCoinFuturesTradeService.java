@@ -536,5 +536,10 @@ public class OkCoinFuturesTradeService extends OkCoinTradeServiceRaw implements 
     public void setOrderId(String orderId) {
       this.orderId = orderId;
     }
+
+    @Override
+    public void setCurrencyPair(CurrencyPair pair) {
+      this.currencyPair = pair;
+    }
   }
 }

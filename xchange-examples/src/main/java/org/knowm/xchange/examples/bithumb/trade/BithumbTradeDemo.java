@@ -13,7 +13,7 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.examples.bithumb.BithumbDemoUtils;
 import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.service.trade.TradeService;
-import org.knowm.xchange.service.trade.params.CancelOrderByPairAndIdParams;
+import org.knowm.xchange.service.trade.params.DefaultCancelOrderByCurrencyPairAndIdParams;
 import org.knowm.xchange.service.trade.params.DefaultTradeHistoryParamCurrencyPair;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurrencyPair;
@@ -70,19 +70,7 @@ public class BithumbTradeDemo {
 
     tradeService.getOpenOrders(openOrders).getOpenOrders().stream()
         .map(Order::getId)
-        .map(
-            orderId ->
-                new CancelOrderByPairAndIdParams() {
-                  @Override
-                  public String getOrderId() {
-                    return orderId;
-                  }
-
-                  @Override
-                  public CurrencyPair getCurrencyPair() {
-                    return CURRENCY_PAIR;
-                  }
-                })
+        .map(orderId -> new DefaultCancelOrderByCurrencyPairAndIdParams(CURRENCY_PAIR, orderId))
         .forEach(
             param -> {
               try {

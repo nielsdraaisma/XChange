@@ -137,6 +137,21 @@ public class SimulatedExchangeExample {
     public CurrencyPair getCurrencyPair() {
       return currencyPair;
     }
+
+    @Override
+    public void setCurrencyPair(CurrencyPair currencyPair) {
+      this.currencyPair = currencyPair;
+    }
+
+    @Override
+    public void setOrderId(String orderId) {
+      this.orderId = orderId;
+    }
+
+    @Override
+    public void setOrderType(Order.OrderType orderType) {
+      this.orderType = orderType;
+    }
   }
 
   /** Demonstrates advanced features. */

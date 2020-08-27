@@ -1,6 +1,5 @@
 package org.knowm.xchange.coinspot;
 
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,9 +70,11 @@ public class CointspotAdapters {
         adaptOrderbookOrdders(orderbook.buyOrders, Order.OrderType.BID, currencyPair));
   }
 
-  public static IOException adaptError(CoinspotException e) {
-    if ( e.getHttpStatusCode() == 502 ) {
+  public static ExchangeException adaptError(CoinspotException e) {
+    if (e.getHttpStatusCode() == 502) {
       return new ExchangeUnavailableException(e);
-    } else return e;
+    } else {
+      return new ExchangeException(e);
+    }
   }
 }

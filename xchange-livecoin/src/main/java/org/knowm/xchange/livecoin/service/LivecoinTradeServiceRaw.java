@@ -172,8 +172,10 @@ public class LivecoinTradeServiceRaw extends LivecoinBaseService {
 
   public static class LiveCoinCancelOrderParams
       implements CancelOrderByIdParams, CancelOrderByCurrencyPair {
-    public final CurrencyPair currencyPair;
-    public final String orderId;
+    public CurrencyPair currencyPair;
+    public String orderId;
+
+    public LiveCoinCancelOrderParams() {}
 
     public LiveCoinCancelOrderParams(CurrencyPair currencyPair, String orderId) {
       this.currencyPair = currencyPair;
@@ -188,6 +190,16 @@ public class LivecoinTradeServiceRaw extends LivecoinBaseService {
     @Override
     public CurrencyPair getCurrencyPair() {
       return currencyPair;
+    }
+
+    @Override
+    public void setCurrencyPair(CurrencyPair pair) {
+      this.currencyPair = pair;
+    }
+
+    @Override
+    public void setOrderId(String orderId) {
+      this.orderId = orderId;
     }
   }
 }

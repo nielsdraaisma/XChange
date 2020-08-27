@@ -4,4 +4,6 @@ import org.knowm.xchange.dto.Order.OrderType;
 
 public interface CancelOrderByOrderTypeParams extends CancelOrderParams {
   OrderType getOrderType();
+
+  void setOrderType(OrderType orderType);
 }

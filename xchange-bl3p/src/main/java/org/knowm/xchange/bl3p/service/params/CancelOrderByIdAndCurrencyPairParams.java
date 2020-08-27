@@ -23,4 +23,14 @@ public class CancelOrderByIdAndCurrencyPairParams
   public String getOrderId() {
     return orderId;
   }
+
+  @Override
+  public void setCurrencyPair(CurrencyPair pair) {
+    this.currencyPair = pair;
+  }
+
+  @Override
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
+  }
 }

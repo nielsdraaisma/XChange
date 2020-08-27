@@ -204,12 +204,18 @@ public class BinanceTradeService extends BinanceTradeServiceRaw implements Trade
   public boolean cancelOrder(CancelOrderParams params) throws IOException {
     try {
       if (!(params instanceof CancelOrderByCurrencyPair)
-          && !(params instanceof CancelOrderByIdParams)) {
+          || !(params instanceof CancelOrderByIdParams)) {
         throw new ExchangeException(
-            "You need to provide the currency pair and the order id to cancel an order.");
+            "params should implement both CancelOrderByCurrencyPair and CancelOrderByIdParams");
       }
       CancelOrderByCurrencyPair paramCurrencyPair = (CancelOrderByCurrencyPair) params;
+      if (paramCurrencyPair.getCurrencyPair() == null) {
+        throw new ExchangeException("You need to provide the currency pair to cancel an order.");
+      }
       CancelOrderByIdParams paramId = (CancelOrderByIdParams) params;
+      if (paramId.getOrderId() == null) {
+        throw new ExchangeException("You need to provide the order id to cancel an order.");
+      }
       super.cancelOrder(
           paramCurrencyPair.getCurrencyPair(),
           BinanceAdapters.id(paramId.getOrderId()),
@@ -219,6 +225,11 @@ public class BinanceTradeService extends BinanceTradeServiceRaw implements Trade
     } catch (BinanceException e) {
       throw BinanceErrorAdapter.adapt(e);
     }
+  }
+
+  @Override
+  public CancelOrderParams createCancelOrderParams() {
+    return new BinanceCancelOrderParams();
   }
 
   @Override
@@ -332,6 +343,11 @@ public class BinanceTradeService extends BinanceTradeServiceRaw implements Trade
     } catch (BinanceException e) {
       throw BinanceErrorAdapter.adapt(e);
     }
+  }
+
+  @Override
+  public OrderQueryParams createOrdersQueryParams() {
+    return new BinanceQueryOrderParams();
   }
 
   public interface BinanceOrderFlags extends IOrderFlags {
