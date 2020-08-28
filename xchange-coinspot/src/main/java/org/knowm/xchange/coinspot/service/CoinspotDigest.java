@@ -15,7 +15,9 @@ public class CoinspotDigest extends BaseParamsDigest {
   public String digestParams(RestInvocation inv) {
     String requestBody = inv.getRequestBody();
     Mac mac = getMac();
-    mac.update(requestBody.getBytes());
+    if (requestBody != null) {
+      mac.update(requestBody.getBytes());
+    }
     return DigestUtils.bytesToHex(mac.doFinal());
   }
 }

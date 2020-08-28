@@ -22,7 +22,7 @@ class CoinspotMarketDataServiceRaw extends CoinspotBaseService {
   }
 
   CoinspotOrderbook getOrderbook(CurrencyPair currencyPair) throws CoinspotException, IOException {
-    return coinspotPrivate.getOrders(
+    return coinspotPrivate.getOpenOrders(
         apiKey,
         digest,
         new CoinspotOpenOrdersRequest(nonceFactory.createValue(), currencyPair.base.toString()));

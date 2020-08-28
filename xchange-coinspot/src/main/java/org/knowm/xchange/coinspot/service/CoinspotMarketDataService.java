@@ -2,7 +2,7 @@ package org.knowm.xchange.coinspot.service;
 
 import java.io.IOException;
 import org.knowm.xchange.Exchange;
-import org.knowm.xchange.coinspot.CointspotAdapters;
+import org.knowm.xchange.coinspot.CoinspotAdapters;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;
@@ -17,15 +17,15 @@ public class CoinspotMarketDataService extends CoinspotMarketDataServiceRaw
 
   @Override
   public Ticker getTicker(CurrencyPair currencyPair, Object... args) throws IOException {
-    return CointspotAdapters.adaptTicker(super.getRates(), currencyPair);
+    return CoinspotAdapters.adaptTicker(super.getRates(), currencyPair);
   }
 
   @Override
   public OrderBook getOrderBook(CurrencyPair currencyPair, Object... args) throws IOException {
     try {
-      return CointspotAdapters.adaptOrderbook(super.getOrderbook(currencyPair), currencyPair);
+      return CoinspotAdapters.adaptOrderbook(super.getOrderbook(currencyPair), currencyPair);
     } catch (CoinspotException e) {
-      throw CointspotAdapters.adaptError(e);
+      throw CoinspotAdapters.adaptError(e);
     }
   }
 }

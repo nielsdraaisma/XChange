@@ -3,7 +3,9 @@ package org.knowm.xchange.coinspot;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
+import org.knowm.xchange.coinspot.service.CoinspotAccountService;
 import org.knowm.xchange.coinspot.service.CoinspotMarketDataService;
+import org.knowm.xchange.coinspot.service.CoinspotTradeService;
 import org.knowm.xchange.utils.nonce.CurrentTimeNonceFactory;
 import si.mazi.rescu.SynchronizedValueFactory;
 
@@ -14,6 +16,8 @@ public class CoinspotExchange extends BaseExchange implements Exchange {
   @Override
   protected void initServices() {
     this.marketDataService = new CoinspotMarketDataService(this);
+    this.tradeService = new CoinspotTradeService(this);
+    this.accountService = new CoinspotAccountService(this);
   }
 
   @Override
