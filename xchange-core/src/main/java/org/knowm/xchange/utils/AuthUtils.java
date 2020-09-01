@@ -29,6 +29,15 @@ public class AuthUtils {
   }
 
   /**
+   * Read the username and password from a resource called {@code secret.keys}. NOTE: This file MUST
+   * NEVER be commited to source control. It is therefore added to .gitignore.
+   */
+  public static void setUsernameAndPassword(ExchangeSpecification exchangeSpec) {
+
+    setUsernameAndPassword(exchangeSpec, null);
+  }
+
+  /**
    * Read the API & Secret key from a resource called {@code prefix}-{@code secret.keys}. NOTE: This
    * file MUST NEVER be commited to source control. It is therefore added to .gitignore.
    */
@@ -39,6 +48,20 @@ public class AuthUtils {
     if (props != null) {
       exchangeSpec.setApiKey(props.getProperty("apiKey"));
       exchangeSpec.setSecretKey(props.getProperty("secretKey"));
+    }
+  }
+
+  /**
+   * Read the username and password from a resource called {@code prefix}-{@code secret.keys}. NOTE:
+   * This file MUST NEVER be commited to source control. It is therefore added to .gitignore.
+   */
+  public static void setUsernameAndPassword(ExchangeSpecification exchangeSpec, String prefix) {
+
+    Properties props = getSecretProperties(prefix);
+
+    if (props != null) {
+      exchangeSpec.setUserName(props.getProperty("userName"));
+      exchangeSpec.setPassword(props.getProperty("password"));
     }
   }
 
