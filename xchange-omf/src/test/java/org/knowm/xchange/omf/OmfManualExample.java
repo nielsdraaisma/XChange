@@ -18,12 +18,11 @@ import org.knowm.xchange.utils.AuthUtils;
 
 public class OmfManualExample {
 
-  private Exchange exchange;
   private OMFTradeService tradeService;
 
   @Before
   public void before() {
-    exchange = ExchangeFactory.INSTANCE.createExchange(OMFExchange.class.getName());
+    Exchange exchange = ExchangeFactory.INSTANCE.createExchange(OMFExchange.class.getName());
     AuthUtils.setUsernameAndPassword(exchange.getExchangeSpecification());
     exchange = ExchangeFactory.INSTANCE.createExchange(exchange.getExchangeSpecification());
     tradeService = (OMFTradeService) exchange.getTradeService();
