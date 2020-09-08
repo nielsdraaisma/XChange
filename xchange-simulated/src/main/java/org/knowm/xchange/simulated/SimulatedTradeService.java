@@ -87,6 +87,12 @@ public class SimulatedTradeService extends BaseExchangeService<SimulatedExchange
     return new DefaultTradeHistoryParamCurrencyPair();
   }
 
+  @Override
+  public OrderQueryParams createOrdersQueryParams() { return new DefaultQueryOrderParamCurrencyPair(); }
+
+  @Override
+  public CancelOrderParams createCancelOrderParams() { return new DefaultCancelOrderByCurrencyPairAndIdParams(); }
+
   private String getApiKey() {
     String apiKey = exchange.getExchangeSpecification().getApiKey();
     if (StringUtils.isEmpty(apiKey)) {
