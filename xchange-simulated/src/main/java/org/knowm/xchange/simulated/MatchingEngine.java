@@ -3,7 +3,6 @@ package org.knowm.xchange.simulated;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 import static org.knowm.xchange.dto.Order.OrderType.ASK;
 import static org.knowm.xchange.dto.Order.OrderType.BID;
 
@@ -47,6 +46,7 @@ final class MatchingEngine {
   private final List<BookLevel> bids = new LinkedList<>();
   private final Deque<Trade> publicTrades = new ConcurrentLinkedDeque<>();
   private final Multimap<String, UserTrade> userTrades = LinkedListMultimap.create();
+  private final Multimap<String, Order> closedOrders = LinkedListMultimap.create();
 
   private volatile Ticker ticker = new Ticker.Builder().build();
 
@@ -248,12 +248,16 @@ final class MatchingEngine {
 
         if (makerOrder.isDone()) {
           LOGGER.debug("Maker order removed from book");
+          closedOrders.put(makerOrder.getApiKey(), makerOrder.toOrder(currencyPair));
           orderIter.remove();
           if (level.getOrders().isEmpty()) {
             levelIter.remove();
           }
         }
       }
+    }
+    if (takerOrder.isDone()) {
+      closedOrders.put(takerOrder.getApiKey(), takerOrder.toOrder(currencyPair));
     }
   }
 
@@ -297,7 +301,7 @@ final class MatchingEngine {
             .feeCurrency(makerType == ASK ? currencyPair.counter : currencyPair.base)
             .build();
 
-    LOGGER.debug("Created maker trade: {}", makerOrder);
+    LOGGER.debug("Created maker trade: {}", makerTrade);
     accumulate(makerOrder, makerTrade);
 
     recordFill(new Fill(takerOrder.getApiKey(), takerTrade, true));
@@ -326,20 +330,23 @@ final class MatchingEngine {
     bookOrder.setFee(bookOrder.getFee().add(trade.getFeeAmount()));
   }
 
-  public synchronized List<LimitOrder> openOrders(String apiKey) {
-    return Stream.concat(asks.stream(), bids.stream())
-        .flatMap(v -> v.getOrders().stream())
-        .filter(o -> o.getApiKey().equals(apiKey))
-        .sorted(Ordering.natural().onResultOf(BookOrder::getTimestamp).reversed())
-        .map(o -> o.toOrder(currencyPair))
-        .collect(toList());
+  public synchronized Stream<Order> getOrders(String apiKey) {
+    Stream<Order> openOrder =
+        Stream.concat(asks.stream(), bids.stream())
+            .flatMap(v -> v.getOrders().stream())
+            .filter(o -> o.getApiKey().equals(apiKey))
+            .sorted(Ordering.natural().onResultOf(BookOrder::getTimestamp).reversed())
+            .map(o -> o.toOrder(currencyPair));
+
+    Stream<Order> closedOrders = this.closedOrders.get(apiKey).stream();
+    return Stream.concat(openOrder, closedOrders);
   }
 
   public synchronized OrderBook level2() {
-    return new OrderBook(new Date(), accumulateBookSide(asks), accumulateBookSide(bids));
+    return new OrderBook(new Date(), accumulateBookSide(ASK, asks), accumulateBookSide(BID, bids));
   }
 
-  private List<LimitOrder> accumulateBookSide(List<BookLevel> book) {
+  private List<LimitOrder> accumulateBookSide(Order.OrderType orderType, List<BookLevel> book) {
     BigDecimal price = null;
     BigDecimal amount = ZERO;
     List<LimitOrder> result = new ArrayList<>();
@@ -349,7 +356,7 @@ final class MatchingEngine {
       amount = amount.add(bookOrder.getRemainingAmount());
       if (price != null && bookOrder.getLimitPrice().compareTo(price) != 0) {
         result.add(
-            new LimitOrder.Builder(ASK, currencyPair)
+            new LimitOrder.Builder(orderType, currencyPair)
                 .originalAmount(amount)
                 .limitPrice(price)
                 .build());
@@ -359,7 +366,7 @@ final class MatchingEngine {
     }
     if (price != null) {
       result.add(
-          new LimitOrder.Builder(ASK, currencyPair)
+          new LimitOrder.Builder(orderType, currencyPair)
               .originalAmount(amount)
               .limitPrice(price)
               .build());
@@ -406,7 +413,16 @@ final class MatchingEngine {
                     bookOrder -> {
                       final boolean remove = bookOrder.getId().equals(orderId);
                       if (remove) {
-                        account.release(bookOrder.toOrder(currencyPair));
+                        LimitOrder beforeCancel = bookOrder.toOrder(currencyPair);
+                        LimitOrder.Builder builder = LimitOrder.Builder.from(beforeCancel);
+                        if (beforeCancel.getStatus() == Order.OrderStatus.NEW) {
+                          builder = builder.orderStatus(Order.OrderStatus.CANCELED);
+                        } else {
+                          builder = builder.orderStatus(Order.OrderStatus.PARTIALLY_CANCELED);
+                        }
+                        LimitOrder afterCancel = builder.build();
+                        account.release(afterCancel);
+                        closedOrders.put(apiKey, afterCancel);
                       }
                       return remove;
                     }));

@@ -459,6 +459,16 @@ public abstract class Order implements Serializable {
           return false;
       }
     }
+
+    public boolean isCancelled() {
+      switch (this) {
+        case CANCELED:
+        case PARTIALLY_CANCELED:
+          return true;
+        default:
+          return false;
+      }
+    }
   }
 
   @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.WRAPPER_OBJECT)

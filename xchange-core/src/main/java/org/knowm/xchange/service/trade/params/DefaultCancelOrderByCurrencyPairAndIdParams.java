@@ -8,7 +8,7 @@ public class DefaultCancelOrderByCurrencyPairAndIdParams
   private CurrencyPair currencyPair;
   private String orderId;
 
-  public DefaultCancelOrderByCurrencyPairAndIdParams() { }
+  public DefaultCancelOrderByCurrencyPairAndIdParams() {}
 
   public DefaultCancelOrderByCurrencyPairAndIdParams(CurrencyPair currencyPair, String orderId) {
     this.currencyPair = currencyPair;

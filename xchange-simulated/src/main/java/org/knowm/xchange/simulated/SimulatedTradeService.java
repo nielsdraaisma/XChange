@@ -57,11 +57,18 @@ public class SimulatedTradeService extends BaseExchangeService<SimulatedExchange
       MatchingEngine engine =
           exchange.getEngine(((OpenOrdersParamCurrencyPair) params).getCurrencyPair());
       exchange.maybeThrow();
-      return new OpenOrders(engine.openOrders(getApiKey()));
+      return new OpenOrders(
+          engine
+              .getOrders(getApiKey())
+              .filter(order -> order instanceof LimitOrder)
+              .map(order -> (LimitOrder) order)
+              .collect(Collectors.toList()));
     } else {
       return new OpenOrders(
           exchange.getEngines().stream()
-              .flatMap(e -> e.openOrders(getApiKey()).stream())
+              .flatMap(e -> e.getOrders(getApiKey()))
+              .filter(order -> order instanceof LimitOrder)
+              .map(order -> (LimitOrder) order)
               .collect(Collectors.toList()));
     }
   }
@@ -88,10 +95,14 @@ public class SimulatedTradeService extends BaseExchangeService<SimulatedExchange
   }
 
   @Override
-  public OrderQueryParams createOrdersQueryParams() { return new DefaultQueryOrderParamCurrencyPair(); }
+  public OrderQueryParams createOrdersQueryParams() {
+    return new DefaultQueryOrderParamCurrencyPair();
+  }
 
   @Override
-  public CancelOrderParams createCancelOrderParams() { return new DefaultCancelOrderParamId(); }
+  public CancelOrderParams createCancelOrderParams() {
+    return new DefaultCancelOrderParamId();
+  }
 
   private String getApiKey() {
     String apiKey = exchange.getExchangeSpecification().getApiKey();
@@ -139,12 +150,11 @@ public class SimulatedTradeService extends BaseExchangeService<SimulatedExchange
               if (p instanceof OrderQueryParamCurrencyPair) {
                 return exchange
                     .getEngine(((OrderQueryParamCurrencyPair) p).getCurrencyPair())
-                    .openOrders(getApiKey())
-                    .stream()
+                    .getOrders(getApiKey())
                     .filter(o -> o.getId().equals(p.getOrderId()));
               } else if (p instanceof DefaultQueryOrderParam) {
                 return exchange.getEngines().stream()
-                    .flatMap(e -> e.openOrders(getApiKey()).stream())
+                    .flatMap(e -> e.getOrders(getApiKey()))
                     .filter(o -> o.getId().equals(p.getOrderId()));
               } else {
                 throw new NotYetImplementedForExchangeException();

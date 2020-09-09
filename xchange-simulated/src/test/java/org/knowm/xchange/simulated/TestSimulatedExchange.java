@@ -14,6 +14,7 @@ import static org.knowm.xchange.simulated.SimulatedExchange.ENGINE_FACTORY_PARAM
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
@@ -358,6 +359,55 @@ public class TestSimulatedExchange {
     assertThat(baseBalance.getTotal()).isEqualTo(INITIAL_BALANCE);
     assertThat(baseBalance.getFrozen()).isEqualTo(ZERO);
     assertThat(baseBalance.getAvailable()).isEqualTo(INITIAL_BALANCE);
+  }
+
+  @Test
+  public void testOrderStatusIsPartialCancelAfterCancel() throws IOException {
+    // When
+    exchange
+        .getTradeService()
+        .placeLimitOrder(
+            new LimitOrder.Builder(BID, BTC_USD)
+                .limitPrice(new BigDecimal(10))
+                .originalAmount(new BigDecimal("0.7"))
+                .build());
+
+    String askOrderId =
+        exchange
+            .getTradeService()
+            .placeLimitOrder(
+                new LimitOrder.Builder(ASK, BTC_USD)
+                    .limitPrice(new BigDecimal(10))
+                    .originalAmount(new BigDecimal("100"))
+                    .build());
+
+    exchange.getTradeService().cancelOrder(askOrderId);
+    Collection<Order> orders = exchange.getTradeService().getOrder(askOrderId);
+
+    // Then
+    assertThat(orders.size()).isEqualTo(1);
+    assertThat(orders.iterator().next().getStatus())
+        .isEqualTo(Order.OrderStatus.PARTIALLY_CANCELED);
+  }
+
+  @Test
+  public void testOrderStatusIsCancelAfterCancel() throws IOException {
+    // When
+    String bidOrderId =
+        exchange
+            .getTradeService()
+            .placeLimitOrder(
+                new LimitOrder.Builder(BID, BTC_USD)
+                    .limitPrice(new BigDecimal(1))
+                    .originalAmount(new BigDecimal("0.7"))
+                    .build());
+
+    exchange.getTradeService().cancelOrder(bidOrderId);
+    Collection<Order> orders = exchange.getTradeService().getOrder(bidOrderId);
+
+    // Then
+    assertThat(orders.size()).isEqualTo(1);
+    assertThat(orders.iterator().next().getStatus()).isEqualTo(Order.OrderStatus.CANCELED);
   }
 
   private OpenOrders getOpenOrders() throws IOException {
