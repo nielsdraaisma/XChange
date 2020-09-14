@@ -368,7 +368,7 @@ public class TestSimulatedExchange {
         .getTradeService()
         .placeLimitOrder(
             new LimitOrder.Builder(BID, BTC_USD)
-                .limitPrice(new BigDecimal(10))
+                .limitPrice(new BigDecimal("97.5"))
                 .originalAmount(new BigDecimal("0.7"))
                 .build());
 
@@ -377,7 +377,7 @@ public class TestSimulatedExchange {
             .getTradeService()
             .placeLimitOrder(
                 new LimitOrder.Builder(ASK, BTC_USD)
-                    .limitPrice(new BigDecimal(10))
+                        .limitPrice(new BigDecimal("97.5"))
                     .originalAmount(new BigDecimal("100"))
                     .build());
 
@@ -388,6 +388,7 @@ public class TestSimulatedExchange {
     assertThat(orders.size()).isEqualTo(1);
     assertThat(orders.iterator().next().getStatus())
         .isEqualTo(Order.OrderStatus.PARTIALLY_CANCELED);
+    assertThat(orders.iterator().next().getCumulativeAmount()).isEqualByComparingTo(new BigDecimal("0.7"));
   }
 
   @Test
@@ -408,6 +409,8 @@ public class TestSimulatedExchange {
     // Then
     assertThat(orders.size()).isEqualTo(1);
     assertThat(orders.iterator().next().getStatus()).isEqualTo(Order.OrderStatus.CANCELED);
+    assertThat(orders.iterator().next().getCumulativeAmount()).isEqualByComparingTo(BigDecimal.ZERO);
+
   }
 
   private OpenOrders getOpenOrders() throws IOException {
