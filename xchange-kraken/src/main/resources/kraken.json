@@ -35,6 +35,11 @@
       "min_amount": 1,
       "trading_fee": 0.0026
     },
+      "BCH/AUD": {
+      "price_scale": 2,
+      "min_amount": 0.000002,
+      "trading_fee": 0.0026
+    },
    	"BCH/BTC": {
       "price_scale": 5,
       "min_amount": 0.000002,
@@ -48,6 +53,11 @@
     "BCH/USD": {
       "price_scale": 1,
       "min_amount": 0.000002,
+      "trading_fee": 0.0026
+    },
+    "BTC/AUD": {
+      "price_scale": 2,
+      "min_amount": 0.002,
       "trading_fee": 0.0026
     },
     "BTC/GBP": {
@@ -123,6 +133,11 @@
       "min_amount": 0.300,
       "trading_fee": 0.0026
     },
+    "ETH/AUD": {
+      "price_scale": 2,
+      "min_amount": 0.020,
+      "trading_fee": 0.0026
+    },
     "ETH/BTC": {
       "price_scale": 5,
       "min_amount": 0.020,
@@ -156,6 +171,11 @@
     "GNO/BTC": {
       "price_scale": 5,
       "min_amount": 0.030,
+      "trading_fee": 0.0026
+    },
+    "LTC/AUD": {
+      "price_scale": 2,
+      "min_amount": 0.100,
       "trading_fee": 0.0026
     },
     "LTC/EUR": {
@@ -203,6 +223,11 @@
       "min_amount": 5.000,
       "trading_fee": 0.0026
     },
+    "USDT/AUD": {
+      "price_scale": 4,
+      "min_amount": 5.000,
+      "trading_fee": 0.0026
+    },
     "XLM/BTC": {
       "price_scale": 8,
       "min_amount": 30.000,
@@ -231,6 +256,11 @@
     "XMR/USD": {
       "price_scale": 2,
       "min_amount": 0.100,
+      "trading_fee": 0.0026
+    },
+    "XRP/AUD": {
+      "price_scale": 4,
+      "min_amount": 30.000,
       "trading_fee": 0.0026
     },
     "XRP/BTC": {
@@ -284,6 +314,10 @@
     "JPY": {
       "scale": 2,
       "withdrawal_fee": 300.0
+    },
+    "AUD": {
+      "scale": 2,
+      "withdrawal_fee": 0
     },
     "BTC": {
       "scale": 10,
