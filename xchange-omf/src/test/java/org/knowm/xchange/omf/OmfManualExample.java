@@ -34,15 +34,15 @@ public class OmfManualExample {
     assertThat(result.customers.size()).isGreaterThan(0);
   }
 
-  @Test
-  public void getSpot() throws Exception {
-    tradeService.signIn();
-    MarketOrder marketOrder =
-        new MarketOrder.Builder(Order.OrderType.ASK, new CurrencyPair(Currency.AUD, Currency.USD))
-            .originalAmount(new BigDecimal(5))
-            .build();
-    tradeService.placeMarketOrder(marketOrder);
-  }
+//  @Test
+//  public void getSpot() throws Exception {
+//    tradeService.signIn();
+//    MarketOrder marketOrder =
+//        new MarketOrder.Builder(Order.OrderType.ASK, new CurrencyPair(Currency.AUD, Currency.USD))
+//            .originalAmount(new BigDecimal(5))
+//            .build();
+//    tradeService.placeMarketOrder(marketOrder);
+//  }
 
   @Test
   public void searchOrder() throws Exception {

@@ -17,6 +17,8 @@ import org.knowm.xchange.service.BaseService;
 
 public class OMFBaseService extends BaseExchangeService<OMFExchange> implements BaseService {
   protected final String signOnUrl = "https://www.omfx24.co.nz/?Hive=base&Method=signon";
+
+  private final String accountId;
   protected HttpClient httpClient;
   protected ObjectMapper objectMapper;
   protected HttpClientContext context;
@@ -28,6 +30,12 @@ public class OMFBaseService extends BaseExchangeService<OMFExchange> implements 
     this.context = HttpClientContext.create();
     context.setRequestConfig(RequestConfig.custom().setExpectContinueEnabled(true).build());
     context.setCookieStore(exchange.getCookieStore());
+    if ( exchange.getExchangeSpecification().getExchangeSpecificParameters().containsKey(OMFExchange.OMF_ACCOUNT_ID) ){
+      accountId =  exchange.getExchangeSpecification().getExchangeSpecificParametersItem(OMFExchange.OMF_ACCOUNT_ID).toString();
+    } else {
+      accountId = null;
+    }
+
   }
 
   public SignOnResponse signIn() throws IOException {
@@ -41,8 +49,13 @@ public class OMFBaseService extends BaseExchangeService<OMFExchange> implements 
     HttpResponse response = httpClient.execute(request);
     SignOnResponse signOnResponse =
         objectMapper.readValue(response.getEntity().getContent(), SignOnResponse.class);
-    exchange.setCustomerId(signOnResponse.customers.get(0).customerId);
-    exchange.setCustomerMnemonic(signOnResponse.customers.get(0).customerMnemonic);
-    return signOnResponse;
+    for ( SignOnResponse.Customer customer : signOnResponse.customers){
+      if ( accountId == null || customer.customerId.equals(accountId)){
+        exchange.setCustomerId(signOnResponse.customers.get(0).customerId);
+        exchange.setCustomerMnemonic(signOnResponse.customers.get(0).customerMnemonic);
+        return signOnResponse;
+      }
+    }
+    return null;
   }
 }

@@ -10,6 +10,8 @@ import si.mazi.rescu.SynchronizedValueFactory;
 
 public class OMFExchange extends BaseExchange implements Exchange {
 
+  public static final String OMF_ACCOUNT_ID = "OMF_ACCOUNT_ID";
+
   protected CookieStore cookieStore;
 
   protected String customerId;
