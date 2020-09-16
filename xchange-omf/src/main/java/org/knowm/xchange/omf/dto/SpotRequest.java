@@ -32,6 +32,7 @@ public class SpotRequest {
   @JsonProperty("VALUEDATE")
   public final String valueDate = "SPOT";
 
+  /** Quantity is expressed in CCYID1 */
   @JsonProperty("QUANTITY")
   public final String quantity;
 
@@ -41,6 +42,9 @@ public class SpotRequest {
   @JsonProperty("CUSTOMERMNEMONIC")
   public final String customerMNemonic;
 
+  @JsonProperty("EXTERNALREFERENCEID")
+  public final String externalReferenceId;
+
   public SpotRequest(
       String ccyid1,
       String ccyid2,
@@ -48,7 +52,8 @@ public class SpotRequest {
       String direction,
       String quantity,
       String customerId,
-      String customerMNemonic) {
+      String customerMNemonic,
+      String externalReferenceId) {
     this.ccyid1 = ccyid1;
     this.ccyid2 = ccyid2;
     this.customerDirection = customerDirection;
@@ -56,6 +61,7 @@ public class SpotRequest {
     this.quantity = quantity;
     this.customerId = customerId;
     this.customerMNemonic = customerMNemonic;
+    this.externalReferenceId = externalReferenceId;
   }
 
   @Override
@@ -73,6 +79,7 @@ public class SpotRequest {
         .append("quantity", quantity)
         .append("customerId", customerId)
         .append("customerMNemonic", customerMNemonic)
+        .append("externalReferenceId", externalReferenceId)
         .toString();
   }
 }

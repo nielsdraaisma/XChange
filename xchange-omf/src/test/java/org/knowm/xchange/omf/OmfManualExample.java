@@ -34,15 +34,30 @@ public class OmfManualExample {
     assertThat(result.customers.size()).isGreaterThan(0);
   }
 
-//  @Test
-//  public void getSpot() throws Exception {
-//    tradeService.signIn();
-//    MarketOrder marketOrder =
-//        new MarketOrder.Builder(Order.OrderType.ASK, new CurrencyPair(Currency.AUD, Currency.USD))
-//            .originalAmount(new BigDecimal(5))
-//            .build();
-//    tradeService.placeMarketOrder(marketOrder);
-//  }
+  @Test
+  public void getSpotBuy11AudWithAudVolume() throws Exception {
+    tradeService.signIn();
+    MarketOrder marketOrder =
+        new MarketOrder.Builder(Order.OrderType.BID, new CurrencyPair(Currency.AUD, Currency.USD))
+            .flag(OMFOrderFlags.SKIP_ACCEPT_SPOT_REQUEST)
+            .userReference("11Aud to USD")
+            .originalAmount(new BigDecimal(11))
+            .build();
+    tradeService.placeMarketOrder(marketOrder);
+  }
+
+  @Test
+  public void getSpotBuy12UsdWithUsdVolume() throws Exception {
+    tradeService.signIn();
+    MarketOrder marketOrder =
+        new MarketOrder.Builder(Order.OrderType.BID, new CurrencyPair(Currency.AUD, Currency.USD))
+            .flag(OMFOrderFlags.SKIP_ACCEPT_SPOT_REQUEST)
+            .flag(OMFOrderFlags.VOLUME_IN_COUNTER_CURRENCY)
+            .userReference("Aud to 12 USD")
+            .originalAmount(new BigDecimal(12))
+            .build();
+    tradeService.placeMarketOrder(marketOrder);
+  }
 
   @Test
   public void searchOrder() throws Exception {

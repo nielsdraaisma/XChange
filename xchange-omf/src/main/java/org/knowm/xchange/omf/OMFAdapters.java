@@ -13,6 +13,9 @@ import org.knowm.xchange.dto.trade.MarketOrder;
 public class OMFAdapters {
 
   public static List<Order> adaptSearchResult(String payload) {
+    if (payload == null) {
+      return new ArrayList<>();
+    }
     String[] parts = payload.split("\\|");
     String[] schemaParts = parts[0].split("~");
     Map<String, Integer> indexes = Maps.newHashMap();

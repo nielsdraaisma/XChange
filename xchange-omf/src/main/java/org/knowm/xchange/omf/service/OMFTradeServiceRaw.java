@@ -43,11 +43,11 @@ public class OMFTradeServiceRaw extends OMFBaseService {
   }
 
   public SpotResponse requestSpot(
-      CurrencyPair currencyPair, Order.OrderType orderType, BigDecimal quantity)
+      CurrencyPair currencyPair, Order.OrderType orderType, BigDecimal quantity, String reference)
       throws IOException {
     String customerDirection;
     String direction;
-    if (orderType == Order.OrderType.ASK) {
+    if (orderType == Order.OrderType.BID) {
       customerDirection = "BUY";
       direction = "SELL";
     } else {
@@ -62,7 +62,9 @@ public class OMFTradeServiceRaw extends OMFBaseService {
             direction,
             quantity.toPlainString(),
             exchange.getCustomerMnemonic(),
-            exchange.getCustomerMnemonic());
+            exchange.getCustomerMnemonic(),
+            reference);
+
     HttpPost request = new HttpPost(spotUrl);
     request.setConfig(RequestConfig.custom().setExpectContinueEnabled(true).build());
     request.setEntity(new ByteArrayEntity(objectMapper.writeValueAsBytes(spotRequest)));
