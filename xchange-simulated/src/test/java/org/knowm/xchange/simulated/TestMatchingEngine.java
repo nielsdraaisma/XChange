@@ -714,6 +714,60 @@ public class TestMatchingEngine {
     assertThat(book.getAsks()).isEmpty();
   }
 
+  @Test
+  public void testSimpleMarketFillWithVolumeInCounterCurrency() {
+
+    // Given
+    LimitOrder maker =
+        matchingEngine.postOrder(
+            MAKER,
+            new LimitOrder.Builder(BID, BTC_USD)
+                .limitPrice(new BigDecimal(100))
+                .originalAmount(new BigDecimal(5))
+                .build());
+
+    verify(account, never()).fill(any(UserTrade.class), any(Boolean.class));
+    verify(account, times(1)).reserve(any(LimitOrder.class));
+    verify(account, never()).release(any(LimitOrder.class));
+    reset(account);
+
+    // When
+    LimitOrder taker =
+        matchingEngine.postOrder(
+            TAKER,
+            new MarketOrder.Builder(ASK, BTC_USD)
+                .flag(SimulatedOrderFlags.VOLUME_IN_COUNTER_CURRENCY)
+                .originalAmount(new BigDecimal(250))
+                .build());
+
+    verify(account, times(2)).fill(any(UserTrade.class), any(Boolean.class));
+    verify(account, never()).reserve(any(LimitOrder.class));
+    verify(account, never()).release(any(LimitOrder.class));
+
+    // Then
+    assertThat(taker.getStatus()).isEqualTo(FILLED);
+
+    verify(onFill, atLeastOnce()).accept(fillCaptor1.capture());
+
+    assertThat(fillCaptor1.getAllValues()).hasSize(2);
+    assertFill(
+        fillCaptor1.getAllValues().get(0),
+        TAKER,
+        taker,
+        new BigDecimal("2.50"),
+        maker.getLimitPrice());
+    assertFill(
+        fillCaptor1.getAllValues().get(1),
+        MAKER,
+        maker,
+        new BigDecimal("2.50"),
+        maker.getLimitPrice());
+
+    Level3OrderBook book = matchingEngine.book();
+    assertThat(book.getBids()).hasSize(1);
+    assertThat(book.getAsks()).isEmpty();
+  }
+
   private AssertionMatcher<Fill> useAmount(String apiKey, LimitOrder order, BigDecimal amount) {
     return new AssertionMatcher<Fill>() {
       @Override
