@@ -11,6 +11,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
@@ -354,7 +355,7 @@ final class MatchingEngine {
               .divide(newTotal, priceScale, HALF_UP));
     }
 
-    bookOrder.setCumulativeAmount(newTotal);
+    bookOrder.setCumulativeAmount(newTotal.setScale(priceScale, HALF_UP));
     bookOrder.setFee(bookOrder.getFee().add(trade.getFeeAmount()));
   }
 
