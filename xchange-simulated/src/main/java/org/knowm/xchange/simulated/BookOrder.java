@@ -23,7 +23,7 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 @Builder
 final class BookOrder {
 
-  private static final BigDecimal INF = BigDecimal.valueOf(Long.MAX_VALUE);
+  public static final BigDecimal INF = BigDecimal.valueOf(Long.MAX_VALUE);
 
   static BookOrder fromOrder(Order original, String apiKey) {
     return BookOrder.builder()

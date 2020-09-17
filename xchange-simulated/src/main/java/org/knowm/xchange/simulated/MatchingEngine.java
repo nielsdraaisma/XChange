@@ -256,7 +256,7 @@ final class MatchingEngine {
         BigDecimal tradeAmount;
         if (takerOrder.getVolumeInCounterCurrency()) {
           BigDecimal price = takerOrder.getLimitPrice();
-          if (price.equals(ZERO)) {
+          if (price.compareTo(BookOrder.INF) == 0 || price.compareTo(ZERO) == 0) {
             price = makerOrder.getLimitPrice();
           }
           BigDecimal amountAtMakerPrice =
