@@ -700,13 +700,13 @@ public class TestMatchingEngine {
         fillCaptor1.getAllValues().get(0),
         TAKER,
         taker,
-        new BigDecimal("2.5"),
+        new BigDecimal("2.50"),
         maker.getLimitPrice());
     assertFill(
         fillCaptor1.getAllValues().get(1),
         MAKER,
         maker,
-        new BigDecimal("2.5"),
+        new BigDecimal("2.50"),
         maker.getLimitPrice());
 
     Level3OrderBook book = matchingEngine.book();

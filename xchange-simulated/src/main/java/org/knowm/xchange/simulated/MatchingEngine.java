@@ -241,7 +241,9 @@ final class MatchingEngine {
         BigDecimal tradeAmount;
         if (takerOrder.getVolumeInCounterCurrency()) {
           BigDecimal amountAtMakerPrice =
-              takerOrder.getRemainingAmount().divide(takerOrder.getLimitPrice());
+              takerOrder
+                  .getRemainingAmount()
+                  .divide(takerOrder.getLimitPrice(), priceScale, HALF_UP);
           tradeAmount = amountAtMakerPrice.min(makerOrder.getRemainingAmount());
         } else {
           tradeAmount = takerOrder.getRemainingAmount().min(makerOrder.getRemainingAmount());
