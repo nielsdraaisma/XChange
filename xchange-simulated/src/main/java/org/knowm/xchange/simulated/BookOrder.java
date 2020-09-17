@@ -36,6 +36,7 @@ final class BookOrder {
         .originalAmount(original.getOriginalAmount())
         .timestamp(new Date())
         .type(original.getType())
+        .volumeInCounterCurrency(original.hasFlag(SimulatedOrderFlags.VOLUME_IN_COUNTER_CURRENCY))
         .build();
   }
 
@@ -48,9 +49,14 @@ final class BookOrder {
   @Builder.Default private volatile BigDecimal cumulativeAmount = ZERO;
   private volatile BigDecimal averagePrice;
   @Builder.Default private volatile BigDecimal fee = ZERO;
+  private final Boolean volumeInCounterCurrency;
 
   BigDecimal getRemainingAmount() {
     return originalAmount.subtract(cumulativeAmount);
+  }
+
+  boolean volumeInCounterCurrency() {
+    return volumeInCounterCurrency;
   }
 
   boolean isDone() {

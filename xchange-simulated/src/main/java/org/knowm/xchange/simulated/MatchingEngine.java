@@ -77,6 +77,8 @@ final class MatchingEngine {
     Account account = accountFactory.get(apiKey);
     checkBalance(original, account);
     BookOrder takerOrder = BookOrder.fromOrder(original, apiKey);
+    Boolean volumeInCounterCurrency =
+        original.hasFlag(SimulatedOrderFlags.VOLUME_IN_COUNTER_CURRENCY);
     switch (takerOrder.getType()) {
       case ASK:
         LOGGER.debug("Matching against bids");
@@ -226,23 +228,24 @@ final class MatchingEngine {
 
   private void chewBook(Iterable<BookLevel> makerOrders, BookOrder takerOrder) {
     Iterator<BookLevel> levelIter = makerOrders.iterator();
-    while (levelIter.hasNext()) {
+    while (levelIter.hasNext() && !takerOrder.isDone()) {
       BookLevel level = levelIter.next();
       Iterator<BookOrder> orderIter = level.getOrders().iterator();
       while (orderIter.hasNext() && !takerOrder.isDone()) {
         BookOrder makerOrder = orderIter.next();
-
         LOGGER.debug("Matching against maker order {}", makerOrder);
         if (!makerOrder.matches(takerOrder)) {
           LOGGER.debug("Ran out of maker orders at this price");
           return;
         }
-
-        BigDecimal tradeAmount =
-            takerOrder.getRemainingAmount().compareTo(makerOrder.getRemainingAmount()) > 0
-                ? makerOrder.getRemainingAmount()
-                : takerOrder.getRemainingAmount();
-
+        BigDecimal tradeAmount;
+        if (takerOrder.getVolumeInCounterCurrency()) {
+          BigDecimal amountAtMakerPrice =
+              takerOrder.getRemainingAmount().divide(takerOrder.getLimitPrice());
+          tradeAmount = amountAtMakerPrice.min(makerOrder.getRemainingAmount());
+        } else {
+          tradeAmount = takerOrder.getRemainingAmount().min(makerOrder.getRemainingAmount());
+        }
         LOGGER.debug("Matches for {}", tradeAmount);
         matchOff(takerOrder, makerOrder, tradeAmount);
 
@@ -256,6 +259,7 @@ final class MatchingEngine {
         }
       }
     }
+
     if (takerOrder.isDone()) {
       closedOrders.put(takerOrder.getApiKey(), takerOrder.toOrder(currencyPair));
     }
@@ -313,7 +317,12 @@ final class MatchingEngine {
   private void accumulate(BookOrder bookOrder, UserTrade trade) {
     BigDecimal amount = trade.getOriginalAmount();
     BigDecimal price = trade.getPrice();
-    BigDecimal newTotal = bookOrder.getCumulativeAmount().add(amount);
+    BigDecimal newTotal;
+    if (bookOrder.getVolumeInCounterCurrency()) {
+      newTotal = bookOrder.getCumulativeAmount().add(amount.multiply(price));
+    } else {
+      newTotal = bookOrder.getCumulativeAmount().add(amount);
+    }
 
     if (bookOrder.getCumulativeAmount().compareTo(ZERO) == 0) {
       bookOrder.setAveragePrice(price);
