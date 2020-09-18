@@ -313,9 +313,9 @@ public class TestSimulatedExchange {
             .filter(o -> o.getId().equals(orderId2))
             .findFirst()
             .get();
-    assertThat(order1.getRemainingAmount()).isEqualTo(new BigDecimal("0.10"));
-    assertThat(order1.getCumulativeAmount()).isEqualTo(new BigDecimal("0.60"));
-    assertThat(order1.getAveragePrice()).isEqualTo(new BigDecimal("98.50"));
+    assertThat(order1.getRemainingAmount()).isEqualTo(new BigDecimal("0.1"));
+    assertThat(order1.getCumulativeAmount()).isEqualTo(new BigDecimal("0.6"));
+    assertThat(order1.getAveragePrice()).isEqualTo(new BigDecimal("98.5"));
     assertThat(order1.getStatus()).isEqualTo(PARTIALLY_FILLED);
     assertThat(order2.getRemainingAmount()).isEqualTo(new BigDecimal(1));
     assertThat(order2.getCumulativeAmount()).isEqualTo(ZERO);
@@ -330,7 +330,7 @@ public class TestSimulatedExchange {
             .add(new BigDecimal(99).multiply(new BigDecimal("0.30")));
     BigDecimal expectedUsdReserved =
         new BigDecimal(99)
-            .multiply(new BigDecimal("0.10"))
+            .multiply(new BigDecimal("0.1"))
             .add(new BigDecimal(90).multiply(new BigDecimal(1)));
     assertThat(baseBalance.getTotal()).isEqualTo(INITIAL_BALANCE.add(new BigDecimal("0.60")));
     assertThat(baseBalance.getFrozen()).isEqualTo(ZERO);

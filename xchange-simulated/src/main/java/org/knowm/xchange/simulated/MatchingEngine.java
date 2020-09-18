@@ -11,7 +11,6 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
@@ -81,7 +80,7 @@ final class MatchingEngine {
     validate(original);
     Account account = accountFactory.get(apiKey);
     checkBalance(original, account);
-    BookOrder takerOrder = BookOrder.fromOrder(original, apiKey);
+    BookOrder takerOrder = BookOrder.fromOrder(original, apiKey, priceScale);
     switch (takerOrder.getType()) {
       case ASK:
         LOGGER.debug("Matching against bids");
@@ -198,19 +197,22 @@ final class MatchingEngine {
         orderbookSide.stream()
             .flatMap(level -> level.getOrders().stream())
             .collect(Collectors.toList())) {
+      BigDecimal tradeAmount;
       if (volumeInCounterCurrency) {
         BigDecimal amountAvailableOnBookOrder =
             bookOrder.getRemainingAmount().multiply(bookOrder.getLimitPrice());
-        BigDecimal tradeAmount = remainingAmount.min(amountAvailableOnBookOrder);
-        cost = cost.add(tradeAmount);
+        tradeAmount = remainingAmount.min(amountAvailableOnBookOrder);
         remainingAmount = remainingAmount.subtract(tradeAmount);
       } else {
         BigDecimal amountAvailableOnBookOrder = bookOrder.getRemainingAmount();
-        BigDecimal tradeAmount = remainingAmount.min(amountAvailableOnBookOrder);
-        cost = cost.add(tradeAmount);
+        tradeAmount = remainingAmount.min(amountAvailableOnBookOrder);
         remainingAmount = remainingAmount.subtract(tradeAmount);
       }
-
+      if (order.getType().equals(BID)) {
+        cost = tradeAmount.multiply(bookOrder.getLimitPrice());
+      } else {
+        cost = cost.add(tradeAmount);
+      }
       if (remainingAmount.compareTo(ZERO) == 0) return cost;
     }
     throw new ExchangeException("Insufficient liquidity in book");
@@ -261,10 +263,17 @@ final class MatchingEngine {
             price = makerOrder.getLimitPrice();
           }
           BigDecimal amountAtMakerPrice =
-              takerOrder.getRemainingAmount().divide(price, priceScale, HALF_UP);
+              takerOrder
+                  .getRemainingAmount()
+                  .divide(price, priceScale, HALF_UP)
+                  .stripTrailingZeros();
           tradeAmount = amountAtMakerPrice.min(makerOrder.getRemainingAmount());
         } else {
-          tradeAmount = takerOrder.getRemainingAmount().min(makerOrder.getRemainingAmount());
+          tradeAmount =
+              takerOrder
+                  .getRemainingAmount()
+                  .min(makerOrder.getRemainingAmount())
+                  .stripTrailingZeros();
         }
         LOGGER.debug("Matches for {}", tradeAmount);
         matchOff(takerOrder, makerOrder, tradeAmount);

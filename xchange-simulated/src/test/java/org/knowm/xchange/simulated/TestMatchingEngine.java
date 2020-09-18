@@ -692,6 +692,8 @@ public class TestMatchingEngine {
 
     // Then
     assertThat(taker.getStatus()).isEqualTo(FILLED);
+    assertThat(taker.getCumulativeAmount()).isEqualByComparingTo(new BigDecimal("2.5"));
+    assertThat(taker.getCumulativeCounterAmount()).isEqualByComparingTo(new BigDecimal("250"));
 
     verify(onFill, atLeastOnce()).accept(fillCaptor1.capture());
 
@@ -700,13 +702,13 @@ public class TestMatchingEngine {
         fillCaptor1.getAllValues().get(0),
         TAKER,
         taker,
-        new BigDecimal("2.50"),
+        new BigDecimal("2.5"),
         maker.getLimitPrice());
     assertFill(
         fillCaptor1.getAllValues().get(1),
         MAKER,
         maker,
-        new BigDecimal("2.50"),
+        new BigDecimal("2.5"),
         maker.getLimitPrice());
 
     Level3OrderBook book = matchingEngine.book();
@@ -746,6 +748,8 @@ public class TestMatchingEngine {
 
     // Then
     assertThat(taker.getStatus()).isEqualTo(FILLED);
+    assertThat(taker.getCumulativeAmount()).isEqualByComparingTo(new BigDecimal("2.5"));
+    assertThat(taker.getCumulativeCounterAmount()).isEqualByComparingTo(new BigDecimal("250"));
 
     verify(onFill, atLeastOnce()).accept(fillCaptor1.capture());
 
@@ -754,13 +758,13 @@ public class TestMatchingEngine {
         fillCaptor1.getAllValues().get(0),
         TAKER,
         taker,
-        new BigDecimal("2.50"),
+        new BigDecimal("2.5"),
         maker.getLimitPrice());
     assertFill(
         fillCaptor1.getAllValues().get(1),
         MAKER,
         maker,
-        new BigDecimal("2.50"),
+        new BigDecimal("2.5"),
         maker.getLimitPrice());
 
     Level3OrderBook book = matchingEngine.book();

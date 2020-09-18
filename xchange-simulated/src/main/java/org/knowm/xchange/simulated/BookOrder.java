@@ -5,6 +5,7 @@ import static java.util.UUID.randomUUID;
 import static org.knowm.xchange.dto.Order.OrderType.ASK;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
@@ -25,9 +26,10 @@ final class BookOrder {
 
   public static final BigDecimal INF = BigDecimal.valueOf(Long.MAX_VALUE);
 
-  static BookOrder fromOrder(Order original, String apiKey) {
+  static BookOrder fromOrder(Order original, String apiKey, int priceScale) {
     return BookOrder.builder()
         .apiKey(apiKey)
+        .priceScale(priceScale)
         .id(randomUUID().toString())
         .limitPrice(
             original instanceof LimitOrder
@@ -40,6 +42,7 @@ final class BookOrder {
         .build();
   }
 
+  private final int priceScale;
   private final String apiKey;
   private final BigDecimal originalAmount;
   private final String id;
@@ -70,10 +73,21 @@ final class BookOrder {
   }
 
   LimitOrder toOrder(CurrencyPair currencyPair) {
+    if (averagePrice != null) {
+      averagePrice = averagePrice.setScale(priceScale, RoundingMode.HALF_UP).stripTrailingZeros();
+    }
+    if (cumulativeAmount != null) {
+      cumulativeAmount =
+          cumulativeAmount.setScale(priceScale, RoundingMode.HALF_UP).stripTrailingZeros();
+    }
+    BigDecimal cumulativeAmountInBaseCurrency =
+        volumeInCounterCurrency
+            ? cumulativeAmount.divide(averagePrice, priceScale, RoundingMode.HALF_UP)
+            : cumulativeAmount;
     return new LimitOrder.Builder(type, currencyPair)
         .id(id)
         .averagePrice(averagePrice)
-        .cumulativeAmount(cumulativeAmount)
+        .cumulativeAmount(cumulativeAmountInBaseCurrency)
         .fee(fee)
         .limitPrice(limitPrice)
         .orderStatus(
@@ -82,7 +96,7 @@ final class BookOrder {
                 : cumulativeAmount.compareTo(originalAmount) == 0
                     ? OrderStatus.FILLED
                     : OrderStatus.PARTIALLY_FILLED)
-        .originalAmount(originalAmount)
+        .originalAmount(originalAmount.stripTrailingZeros())
         .timestamp(timestamp)
         .build();
   }
