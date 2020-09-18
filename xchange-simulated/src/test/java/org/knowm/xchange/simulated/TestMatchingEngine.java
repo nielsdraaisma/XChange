@@ -358,7 +358,7 @@ public class TestMatchingEngine {
     Level3OrderBook book = matchingEngine.book();
     assertThat(book.getBids()).isEmpty();
     assertThat(book.getAsks()).hasSize(1);
-    assertThat(book.getAsks().get(0).getCumulativeAmount()).isEqualTo(new BigDecimal(5));
+    assertThat(book.getAsks().get(0).getCumulativeAmount()).isEqualTo(new BigDecimal("5.00"));
   }
 
   @Test
@@ -392,7 +392,7 @@ public class TestMatchingEngine {
     Level3OrderBook book = matchingEngine.book();
     assertThat(book.getBids()).hasSize(1);
     assertThat(book.getAsks()).isEmpty();
-    assertThat(book.getBids().get(0).getCumulativeAmount()).isEqualTo(new BigDecimal(5));
+    assertThat(book.getBids().get(0).getCumulativeAmount()).isEqualTo(new BigDecimal("5.00"));
   }
 
   @SuppressWarnings("unchecked")

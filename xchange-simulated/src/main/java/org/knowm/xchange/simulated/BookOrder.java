@@ -73,13 +73,6 @@ final class BookOrder {
   }
 
   LimitOrder toOrder(CurrencyPair currencyPair) {
-    if (averagePrice != null) {
-      averagePrice = averagePrice.setScale(priceScale, RoundingMode.HALF_UP).stripTrailingZeros();
-    }
-    if (cumulativeAmount != null) {
-      cumulativeAmount =
-          cumulativeAmount.setScale(priceScale, RoundingMode.HALF_UP).stripTrailingZeros();
-    }
     BigDecimal cumulativeAmountInBaseCurrency =
         volumeInCounterCurrency
             ? cumulativeAmount.divide(averagePrice, priceScale, RoundingMode.HALF_UP)
@@ -96,7 +89,7 @@ final class BookOrder {
                 : cumulativeAmount.compareTo(originalAmount) == 0
                     ? OrderStatus.FILLED
                     : OrderStatus.PARTIALLY_FILLED)
-        .originalAmount(originalAmount.stripTrailingZeros())
+        .originalAmount(originalAmount)
         .timestamp(timestamp)
         .build();
   }
