@@ -2,12 +2,12 @@ package org.knowm.xchange.b2c2.service;
 
 import org.knowm.xchange.b2c2.B2C2;
 import org.knowm.xchange.b2c2.B2C2Exchange;
+import org.knowm.xchange.client.ExchangeRestProxyBuilder;
 import org.knowm.xchange.exceptions.*;
 import org.knowm.xchange.service.BaseExchangeService;
 import org.knowm.xchange.service.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import si.mazi.rescu.RestProxyFactory;
 
 public class B2C2BaseService extends BaseExchangeService<B2C2Exchange> implements BaseService {
 
@@ -25,8 +25,8 @@ public class B2C2BaseService extends BaseExchangeService<B2C2Exchange> implement
       this.authorizationHeader = null;
     }
     this.b2c2 =
-        RestProxyFactory.createProxy(
-            B2C2.class, exchange.getExchangeSpecification().getSslUri(), getClientConfig());
+        ExchangeRestProxyBuilder.forInterface(B2C2.class, exchange.getExchangeSpecification())
+            .build();
   }
 
   ExchangeException handleException(final B2C2Exception exception) {

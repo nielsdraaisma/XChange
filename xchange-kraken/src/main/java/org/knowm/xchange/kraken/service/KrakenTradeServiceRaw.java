@@ -210,9 +210,10 @@ public class KrakenTradeServiceRaw extends KrakenBaseService {
   }
 
   public KrakenOrderResponse placeKrakenLimitOrder(LimitOrder limitOrder) throws IOException {
-    CurrencyPairMetaData metaData = exchange.getExchangeMetaData().getCurrencyPairs().get(limitOrder.getCurrencyPair());
+    CurrencyPairMetaData metaData =
+        exchange.getExchangeMetaData().getCurrencyPairs().get(limitOrder.getCurrencyPair());
     int priceScale = limitOrder.getLimitPrice().scale();
-    if ( metaData != null){
+    if (metaData != null) {
       priceScale = metaData.getPriceScale();
     }
     KrakenType type = KrakenType.fromOrderType(limitOrder.getType());
@@ -220,7 +221,10 @@ public class KrakenTradeServiceRaw extends KrakenBaseService {
         KrakenStandardOrder.getLimitOrderBuilder(
                 limitOrder.getCurrencyPair(),
                 type,
-                limitOrder.getLimitPrice().setScale(priceScale, RoundingMode.HALF_UP).toPlainString(),
+                limitOrder
+                    .getLimitPrice()
+                    .setScale(priceScale, RoundingMode.HALF_UP)
+                    .toPlainString(),
                 limitOrder.getOriginalAmount())
             .withUserRefId(limitOrder.getUserReference())
             .withOrderFlags(limitOrder.getOrderFlags())

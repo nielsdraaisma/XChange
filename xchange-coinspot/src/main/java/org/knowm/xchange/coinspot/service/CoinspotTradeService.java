@@ -3,8 +3,8 @@ package org.knowm.xchange.coinspot.service;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
-import org.knowm.xchange.Exchange;
 import org.knowm.xchange.coinspot.CoinspotAdapters;
+import org.knowm.xchange.coinspot.CoinspotExchange;
 import org.knowm.xchange.coinspot.dto.CoinspotPlaceOrderResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -19,7 +19,7 @@ import org.knowm.xchange.service.trade.params.orders.OrderQueryParams;
 
 public class CoinspotTradeService extends CoinspotTradeServiceRaw implements TradeService {
 
-  public CoinspotTradeService(Exchange exchange) {
+  public CoinspotTradeService(CoinspotExchange exchange) {
     super(exchange);
   }
 

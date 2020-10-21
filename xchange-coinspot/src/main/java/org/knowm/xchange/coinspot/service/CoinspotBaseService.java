@@ -1,6 +1,7 @@
 package org.knowm.xchange.coinspot.service;
 
-import org.knowm.xchange.Exchange;
+import org.knowm.xchange.client.ExchangeRestProxyBuilder;
+import org.knowm.xchange.coinspot.CoinspotExchange;
 import org.knowm.xchange.coinspot.CoinspotPrivate;
 import org.knowm.xchange.coinspot.CoinspotPublic;
 import org.knowm.xchange.exceptions.ExchangeException;
@@ -9,27 +10,25 @@ import org.knowm.xchange.exceptions.InternalServerException;
 import org.knowm.xchange.exceptions.RateLimitExceededException;
 import org.knowm.xchange.service.BaseExchangeService;
 import org.knowm.xchange.service.BaseService;
-import si.mazi.rescu.RestProxyFactory;
 
-public class CoinspotBaseService extends BaseExchangeService implements BaseService {
+public class CoinspotBaseService extends BaseExchangeService<CoinspotExchange>
+    implements BaseService {
 
   protected CoinspotPublic coinspotPublic;
   protected CoinspotPrivate coinspotPrivate;
   protected String apiKey;
   protected CoinspotDigest digest;
 
-  public CoinspotBaseService(Exchange exchange) {
+  public CoinspotBaseService(CoinspotExchange exchange) {
     super(exchange);
     this.coinspotPublic =
-        RestProxyFactory.createProxy(
-            CoinspotPublic.class,
-            exchange.getExchangeSpecification().getSslUri(),
-            getClientConfig());
+        ExchangeRestProxyBuilder.forInterface(
+                CoinspotPublic.class, exchange.getExchangeSpecification())
+            .build();
     this.coinspotPrivate =
-        RestProxyFactory.createProxy(
-            CoinspotPrivate.class,
-            exchange.getExchangeSpecification().getSslUri(),
-            getClientConfig());
+        ExchangeRestProxyBuilder.forInterface(
+                CoinspotPrivate.class, exchange.getExchangeSpecification())
+            .build();
     this.apiKey = exchange.getExchangeSpecification().getApiKey();
     if (exchange.getExchangeSpecification().getSecretKey() != null) {
       this.digest = new CoinspotDigest(exchange.getExchangeSpecification().getSecretKey());

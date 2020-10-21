@@ -1,10 +1,10 @@
 package org.knowm.xchange.wyre.v2.service;
 
 import org.knowm.xchange.Exchange;
+import org.knowm.xchange.client.ExchangeRestProxyBuilder;
 import org.knowm.xchange.service.BaseExchangeService;
 import org.knowm.xchange.service.BaseService;
 import org.knowm.xchange.wyre.v2.Wyre;
-import si.mazi.rescu.RestProxyFactory;
 
 public class WyreBaseService extends BaseExchangeService implements BaseService {
 
@@ -18,8 +18,8 @@ public class WyreBaseService extends BaseExchangeService implements BaseService 
   public WyreBaseService(Exchange exchange) {
     super(exchange);
     this.wyre =
-        RestProxyFactory.createProxy(
-            Wyre.class, exchange.getExchangeSpecification().getSslUri(), getClientConfig());
+        ExchangeRestProxyBuilder.forInterface(Wyre.class, exchange.getExchangeSpecification())
+            .build();
     this.digest = new WyreDigest(exchange.getExchangeSpecification().getSecretKey());
     this.apiKey = exchange.getExchangeSpecification().getApiKey();
     this.apiSecret =

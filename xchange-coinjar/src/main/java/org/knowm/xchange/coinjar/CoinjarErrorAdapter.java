@@ -8,7 +8,7 @@ public class CoinjarErrorAdapter {
   private CoinjarErrorAdapter() {}
 
   public static ExchangeException adaptCoinjarException(CoinjarException e) {
-    if ( e.errorType == null){
+    if (e.errorType == null) {
       throw new ExchangeException("Unknown error");
     }
     switch (e.errorType) {

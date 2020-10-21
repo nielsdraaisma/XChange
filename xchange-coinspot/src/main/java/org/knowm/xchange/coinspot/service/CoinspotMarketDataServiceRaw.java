@@ -1,7 +1,7 @@
 package org.knowm.xchange.coinspot.service;
 
 import java.io.IOException;
-import org.knowm.xchange.Exchange;
+import org.knowm.xchange.coinspot.CoinspotExchange;
 import org.knowm.xchange.coinspot.dto.CoinspotOpenOrdersRequest;
 import org.knowm.xchange.coinspot.dto.CoinspotOrderbook;
 import org.knowm.xchange.coinspot.dto.CoinspotRates;
@@ -12,7 +12,7 @@ class CoinspotMarketDataServiceRaw extends CoinspotBaseService {
 
   private SynchronizedValueFactory<Long> nonceFactory;
 
-  public CoinspotMarketDataServiceRaw(Exchange exchange) {
+  public CoinspotMarketDataServiceRaw(CoinspotExchange exchange) {
     super(exchange);
     this.nonceFactory = exchange.getNonceFactory();
   }

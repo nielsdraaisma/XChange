@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import org.junit.Test;
 import org.knowm.xchange.coinjar.dto.CoinjarOrder;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.UserTrade;
@@ -27,6 +28,18 @@ public class CoinjarAdaptersTest {
   @Test
   public void testCurrencyPairToProduct() {
     assertThat(CoinjarAdapters.currencyPairToProduct(CurrencyPair.BTC_AUD)).isEqualTo("BTCAUD");
+  }
+
+  @Test
+  public void testProductToCurrencyPairWithFourDigitCurrency() {
+    assertThat(CoinjarAdapters.productToCurrencyPair("USDC-AUD"))
+        .isEqualTo(new CurrencyPair(Currency.USDC, Currency.AUD));
+  }
+
+  @Test
+  public void testCurrencyPairToProductWithFourDigitCurrency() {
+    assertThat(CoinjarAdapters.currencyPairToProduct(new CurrencyPair(Currency.USDC, Currency.AUD)))
+        .isEqualTo("USDC-AUD");
   }
 
   @Test

@@ -215,7 +215,8 @@ public class TestSimulatedExchange {
 
     OpenOrders orders = getOpenOrders();
     assertThat(orders.getOpenOrders()).hasSize(1);
-    assertThat(orders.getOpenOrders().get(0).getRemainingAmount()).isEqualTo(new BigDecimal("0.30"));
+    assertThat(orders.getOpenOrders().get(0).getRemainingAmount())
+        .isEqualTo(new BigDecimal("0.30"));
     assertThat(orders.getOpenOrders().get(0).getCumulativeAmount())
         .isEqualTo(new BigDecimal("0.40"));
     assertThat(orders.getOpenOrders().get(0).getAveragePrice()).isEqualTo(new BigDecimal(97));
