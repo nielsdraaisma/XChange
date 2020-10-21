@@ -1,0 +1,90 @@
+{
+  "currency_pairs": {
+    "BTC/AUD": {
+      "min_amount": 0.001,
+      "max_amount": 1000000,
+      "price_scale": 0,
+      "base_scale": 3,
+      "trading_fee": 0.005
+    },
+    "ETH/AUD": {
+      "min_amount": 0.1,
+      "max_amount": 1000000,
+      "price_scale": 2,
+      "base_scale": 3,
+      "trading_fee": 0.005
+    },
+    "ETH/BTC": {
+      "min_amount": 0.01,
+      "max_amount": 1000000,
+      "price_scale": 5,
+      "base_scale": 2,
+      "trading_fee": 0.001
+    },
+    "XRP/AUD": {
+      "min_amount": 100,
+      "max_amount": 1000000,
+      "price_scale": 4,
+      "base_scale": 0,
+      "trading_fee": 0.005
+    },
+    "XRP/BTC": {
+      "min_amount": 100,
+      "max_amount": 1000000,
+      "price_scale": 8,
+      "base_scale": 0,
+      "trading_fee": 0.001
+    },
+    "LTC/AUD": {
+      "min_amount": 1,
+      "max_amount": 1000000,
+      "price_scale": 2,
+      "base_scale": 0,
+      "trading_fee": 0.005
+    },
+    "LTC/BTC": {
+      "min_amount": 1,
+      "max_amount": 1000000,
+      "price_scale": 5,
+      "base_scale": 0,
+      "trading_fee": 0.001
+    },
+    "ZEC/AUD": {
+      "min_amount": 1,
+      "max_amount": 1000000,
+      "price_scale": 2,
+      "base_scale": 0,
+      "trading_fee": 0.005
+    },
+    "ZEC/BTC": {
+      "min_amount": 1,
+      "max_amount": 1000000,
+      "price_scale": 5,
+      "base_scale": 0,
+      "trading_fee": 0.001
+    },
+    "BTC/USDC": {
+      "min_amount": 0.01,
+      "max_amount": 1000000,
+      "price_scale": 0.01,
+      "base_scale": 2,
+      "trading_fee": 0.001
+    },
+    "USDC/AUD": {
+      "min_amount":  	0.001,
+      "max_amount": 1000000,
+      "price_scale":  	10,
+      "base_scale": 3,
+      "trading_fee": 0.001
+    },
+    "USDC/GBP": {
+      "min_amount":  	0.001,
+      "max_amount": 1000000,
+      "price_scale":  	10,
+      "base_scale": 3,
+      "trading_fee": 0.001
+    }
+  },
+  "public_rate_limits": [],
+  "private_rate_limits": []
+}

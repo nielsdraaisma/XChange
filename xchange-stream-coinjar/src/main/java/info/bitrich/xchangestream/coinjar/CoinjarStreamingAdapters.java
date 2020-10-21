@@ -21,14 +21,16 @@ class CoinjarStreamingAdapters {
   public static CurrencyPair adaptTopicToCurrencyPair(String topic) {
     if (topic.startsWith("book")) {
       topic = topic.substring(5);
-      Currency base = new Currency(topic.substring(0, 3));
-      Currency counter = new Currency(topic.substring(3, 6));
-      return new CurrencyPair(base, counter);
+      return CoinjarAdapters.productToCurrencyPair(topic);
     } else throw new IllegalArgumentException("Cannot determine topic from topic name " + topic);
   }
 
   public static String adaptCurrencyPairToBookTopic(CurrencyPair pair) {
-    return "book:" + pair.base.toString() + pair.counter.toString();
+    if (pair.base.getCurrencyCode().length() > 3 || pair.counter.getCurrencyCode().length() > 3) {
+      return "book:" + pair.base.getCurrencyCode() + "-" + pair.counter.getCurrencyCode();
+    } else {
+      return "book:" + pair.base.getCurrencyCode() + pair.counter.getCurrencyCode();
+    }
   }
 
   public static LimitOrder toLimitOrder(

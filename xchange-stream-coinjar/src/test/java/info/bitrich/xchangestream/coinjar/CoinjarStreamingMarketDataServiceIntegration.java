@@ -6,6 +6,7 @@ import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import io.reactivex.disposables.Disposable;
 import org.junit.Test;
 import org.knowm.xchange.ExchangeSpecification;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 
 public class CoinjarStreamingMarketDataServiceIntegration {
@@ -28,14 +29,15 @@ public class CoinjarStreamingMarketDataServiceIntegration {
             .awaitCount(10)
             .assertNoErrors();
 
-    btcOrderBookDisposable.dispose();
 
     Disposable ethOrderBookDisposable =
         streamingMarketDataService
-            .getOrderBook(CurrencyPair.ETH_AUD)
+            .getOrderBook(new CurrencyPair(Currency.USDC, Currency.AUD))
             .test()
             .awaitCount(10)
             .assertNoErrors();
+
+    btcOrderBookDisposable.dispose();
     ethOrderBookDisposable.dispose();
   }
 }
