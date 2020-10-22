@@ -190,7 +190,7 @@ public class KrakenStreamingTradeService implements StreamingTradeService {
         CurrencyPair currencyPair = new CurrencyPair(dto.pair);
         result.add(
             new UserTrade.Builder()
-                .id(dto.postxid)
+                .id(tradeId)
                 .orderId(dto.ordertxid)
                 .currencyPair(currencyPair)
                 .timestamp(dto.time == null ? null : new Date((long) (dto.time * 1000L)))

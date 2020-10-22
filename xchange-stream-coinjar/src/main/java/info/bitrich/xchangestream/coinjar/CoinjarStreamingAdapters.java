@@ -9,7 +9,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.knowm.xchange.coinjar.CoinjarAdapters;
-import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;

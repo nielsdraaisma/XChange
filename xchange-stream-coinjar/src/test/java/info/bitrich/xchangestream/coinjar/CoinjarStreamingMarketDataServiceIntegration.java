@@ -29,7 +29,6 @@ public class CoinjarStreamingMarketDataServiceIntegration {
             .awaitCount(10)
             .assertNoErrors();
 
-
     Disposable ethOrderBookDisposable =
         streamingMarketDataService
             .getOrderBook(new CurrencyPair(Currency.USDC, Currency.AUD))
