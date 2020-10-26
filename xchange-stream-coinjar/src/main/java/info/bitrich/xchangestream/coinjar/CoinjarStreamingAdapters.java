@@ -1,5 +1,6 @@
 package info.bitrich.xchangestream.coinjar;
 
+import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBalanceEvent;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBookEvent;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketOrderEvent;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketUserTradeEvent;
@@ -9,8 +10,10 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.knowm.xchange.coinjar.CoinjarAdapters;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
@@ -87,5 +90,14 @@ class CoinjarStreamingAdapters {
           .cumulativeAmount(new BigDecimal(event.payload.order.filled))
           .build();
     }
+  }
+
+  public static Balance adaptBalance(CoinjarWebSocketBalanceEvent event) {
+    return new Balance.Builder()
+        .available(new BigDecimal(event.payload.account.available))
+        .currency(Currency.getInstance(event.payload.account.assetCode))
+        .total(new BigDecimal(event.payload.account.balance))
+        .frozen(new BigDecimal(event.payload.account.hold))
+        .build();
   }
 }
