@@ -7,6 +7,7 @@ import org.knowm.xchange.b2c2.dto.trade.OrderRequest;
 import org.knowm.xchange.b2c2.dto.trade.OrderResponse;
 import org.knowm.xchange.b2c2.dto.trade.TradeRequest;
 import org.knowm.xchange.b2c2.dto.trade.TradeResponse;
+import si.mazi.rescu.HttpStatusIOException;
 
 public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
 
@@ -35,11 +36,12 @@ public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
       return this.b2c2.getTrade(this.authorizationHeader, id);
     } catch (B2C2Exception e) {
       throw handleException(e);
-    } catch (JsonParseException e) {
-      if (e.getRequestPayloadAsString().contains("Not Found")) {
+    } catch (HttpStatusIOException e) {
+      if ( e.getHttpStatusCode() == 404){
         return null;
+      } else {
+        throw e;
       }
-      throw e;
     }
   }
 
