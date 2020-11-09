@@ -10,6 +10,7 @@ import org.knowm.xchange.b2c2.B2C2Adapters;
 import org.knowm.xchange.b2c2.B2C2Exchange;
 import org.knowm.xchange.b2c2.dto.trade.OrderRequest;
 import org.knowm.xchange.b2c2.dto.trade.OrderResponse;
+import org.knowm.xchange.b2c2.dto.trade.TradeResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.Trades;
@@ -115,7 +116,12 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
       throw new IllegalArgumentException("Multiple orderIds not supported");
     }
     final String tradeId = orderIds[0];
-    return Collections.singletonList(B2C2Adapters.adoptTradeResponseToOrder(getTrade(tradeId)));
+    final TradeResponse tradeResponse = getTrade(tradeId);
+    if (tradeResponse == null) {
+      return Collections.emptyList();
+    } else {
+      return Collections.singletonList(B2C2Adapters.adoptTradeResponseToOrder(tradeResponse));
+    }
   }
 
   @Override

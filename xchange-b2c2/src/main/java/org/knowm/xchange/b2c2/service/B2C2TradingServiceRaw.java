@@ -1,5 +1,6 @@
 package org.knowm.xchange.b2c2.service;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import java.io.IOException;
 import org.knowm.xchange.b2c2.B2C2Exchange;
 import org.knowm.xchange.b2c2.dto.trade.OrderRequest;
@@ -34,6 +35,11 @@ public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
       return this.b2c2.getTrade(this.authorizationHeader, id);
     } catch (B2C2Exception e) {
       throw handleException(e);
+    } catch (JsonParseException e) {
+      if (e.getRequestPayloadAsString().contains("Not Found")) {
+        return null;
+      }
+      throw e;
     }
   }
 
