@@ -10,13 +10,14 @@ import org.knowm.xchange.kraken.service.KrakenAccountService;
 import org.knowm.xchange.kraken.service.KrakenMarketDataService;
 import org.knowm.xchange.kraken.service.KrakenMarketDataServiceRaw;
 import org.knowm.xchange.kraken.service.KrakenTradeService;
+import org.knowm.xchange.utils.nonce.CurrentTimeIncrementalNonceFactory;
 import org.knowm.xchange.utils.nonce.CurrentTimeNonceFactory;
 import si.mazi.rescu.SynchronizedValueFactory;
 
 /** @author Benedikt Bünz */
 public class KrakenExchange extends BaseExchange implements Exchange {
 
-  private final SynchronizedValueFactory<Long> nonceFactory = new CurrentTimeNonceFactory();
+  private final SynchronizedValueFactory<Long> nonceFactory = new CurrentTimeIncrementalNonceFactory();
 
   @Override
   protected void initServices() {
