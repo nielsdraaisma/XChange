@@ -22,7 +22,7 @@ public class CoinjarStreamingAdaptersTest {
   }
 
   @Test
-  public void testAdaptTopicToCurrencyPairForUsdc() {
+  public void testAdaptTopicToCurrencyPairFourChars() {
     String topic = "book:USDC-AUD";
     assertThat(CoinjarStreamingAdapters.adaptTopicToCurrencyPair(topic))
         .isEqualTo(new CurrencyPair(Currency.USDC, Currency.AUD));
@@ -52,38 +52,6 @@ public class CoinjarStreamingAdaptersTest {
             .id("9130900")
             .orderId("280117631")
             .currencyPair(CurrencyPair.BTC_AUD)
-            .originalAmount(new BigDecimal("0.01000000"))
-            .timestamp(Date.from(ZonedDateTime.parse("2018-08-28T05:16:37.405702Z").toInstant()))
-            .price(new BigDecimal("9382.00000000"))
-            .type(Order.OrderType.BID)
-            .build();
-    assertThat(userTrade).isEqualTo(expected);
-  }
-
-  @Test
-  public void testAdaptUserTradeForUsdc() {
-    CoinjarWebSocketUserTradeEvent.Payload.Fill fill =
-        new CoinjarWebSocketUserTradeEvent.Payload.Fill(
-            "93.82",
-            "2018-08-28T05:16:37.405702Z",
-            9130900,
-            "0.01000000",
-            "buy",
-            "USDC-AUD",
-            "9382.00000000",
-            280117631,
-            "taker");
-    CoinjarWebSocketUserTradeEvent.Payload payload =
-        new CoinjarWebSocketUserTradeEvent.Payload(fill);
-    CoinjarWebSocketUserTradeEvent event =
-        new CoinjarWebSocketUserTradeEvent("private", "private:fill", null, payload);
-    UserTrade userTrade = CoinjarStreamingAdapters.adaptUserTrade(event);
-
-    UserTrade expected =
-        new UserTrade.Builder()
-            .id("9130900")
-            .orderId("280117631")
-            .currencyPair(new CurrencyPair(Currency.USDC, Currency.AUD))
             .originalAmount(new BigDecimal("0.01000000"))
             .timestamp(Date.from(ZonedDateTime.parse("2018-08-28T05:16:37.405702Z").toInstant()))
             .price(new BigDecimal("9382.00000000"))

@@ -1,6 +1,5 @@
 package info.bitrich.xchangestream.coinjar;
 
-import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBalanceEvent;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBookEvent;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketOrderEvent;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketUserTradeEvent;
@@ -13,7 +12,6 @@ import org.knowm.xchange.coinjar.CoinjarAdapters;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
-import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
@@ -22,17 +20,17 @@ class CoinjarStreamingAdapters {
 
   public static CurrencyPair adaptTopicToCurrencyPair(String topic) {
     if (topic.startsWith("book")) {
-      topic = topic.substring(5);
-      return CoinjarAdapters.productToCurrencyPair(topic);
+      String product = topic.substring(5);
+      return CoinjarAdapters.productToCurrencyPair(product);
     } else throw new IllegalArgumentException("Cannot determine topic from topic name " + topic);
   }
 
   public static String adaptCurrencyPairToBookTopic(CurrencyPair pair) {
-    if (pair.base.getCurrencyCode().length() > 3 || pair.counter.getCurrencyCode().length() > 3) {
-      return "book:" + pair.base.getCurrencyCode() + "-" + pair.counter.getCurrencyCode();
-    } else {
-      return "book:" + pair.base.getCurrencyCode() + pair.counter.getCurrencyCode();
+    String sep = "";
+    if ( pair.base.getCurrencyCode().length() > 3 || pair.counter.getCurrencyCode().length() > 3){
+      sep = "-";
     }
+    return "book:" + pair.base.toString() + sep + pair.counter.toString();
   }
 
   public static LimitOrder toLimitOrder(
@@ -90,14 +88,5 @@ class CoinjarStreamingAdapters {
           .cumulativeAmount(new BigDecimal(event.payload.order.filled))
           .build();
     }
-  }
-
-  public static Balance adaptBalance(CoinjarWebSocketBalanceEvent event) {
-    return new Balance.Builder()
-        .available(new BigDecimal(event.payload.account.available))
-        .currency(Currency.getInstance(event.payload.account.assetCode))
-        .total(new BigDecimal(event.payload.account.balance))
-        .frozen(new BigDecimal(event.payload.account.hold))
-        .build();
   }
 }

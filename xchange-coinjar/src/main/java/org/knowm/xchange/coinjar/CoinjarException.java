@@ -12,7 +12,7 @@ public class CoinjarException extends HttpStatusExceptionSupport {
   public CoinjarException(
       @JsonProperty("error_type") String errorType,
       @JsonProperty("error_messages") List<String> errorMessages) {
-    super(errorType);
+    super(errorType + " : " + errorMessages.stream().findFirst().orElse(""));
     this.errorType = errorType;
     this.errorMessages = errorMessages;
   }

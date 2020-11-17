@@ -1,7 +1,6 @@
 package info.bitrich.xchangestream.coinjar;
 
 import info.bitrich.xchangestream.core.ProductSubscription;
-import info.bitrich.xchangestream.core.StreamingAccountService;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingTradeService;
 import io.reactivex.Completable;
@@ -15,20 +14,14 @@ public class CoinjarStreamingExchange extends CoinjarExchange implements Streami
   private CoinjarStreamingService streamingService;
   private CoinjarStreamingMarketDataService streamingMarketDataService;
   private CoinjarStreamingTradeService streamingTradeService;
-  private CoinjarStreamingAccountService streamingAccountService;
 
   @Override
   protected void initServices() {
     super.initServices();
 
-    this.streamingService = createStreamingService();
+    this.streamingService = new CoinjarStreamingService(API_URI, this.exchangeSpecification.getApiKey());
     this.streamingMarketDataService = new CoinjarStreamingMarketDataService(streamingService);
     this.streamingTradeService = new CoinjarStreamingTradeService(streamingService);
-    this.streamingAccountService = new CoinjarStreamingAccountService(this, streamingService);
-  }
-
-  private CoinjarStreamingService createStreamingService() {
-    return new CoinjarStreamingService(API_URI, this.exchangeSpecification.getApiKey());
   }
 
   @Override
@@ -64,11 +57,6 @@ public class CoinjarStreamingExchange extends CoinjarExchange implements Streami
   @Override
   public StreamingTradeService getStreamingTradeService() {
     return streamingTradeService;
-  }
-
-  @Override
-  public StreamingAccountService getStreamingAccountService() {
-    return streamingAccountService;
   }
 
   @Override

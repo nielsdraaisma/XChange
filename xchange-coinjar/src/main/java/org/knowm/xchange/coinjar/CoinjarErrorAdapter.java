@@ -8,9 +8,6 @@ public class CoinjarErrorAdapter {
   private CoinjarErrorAdapter() {}
 
   public static ExchangeException adaptCoinjarException(CoinjarException e) {
-    if (e.errorType == null) {
-      throw new ExchangeException("Unknown error");
-    }
     switch (e.errorType) {
       case "NOT_FOUND":
         throw new CurrencyPairNotValidException(e.getFirstMessage(), e);
