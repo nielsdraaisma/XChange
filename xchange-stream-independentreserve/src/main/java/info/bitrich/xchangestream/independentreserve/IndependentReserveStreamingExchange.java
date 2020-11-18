@@ -19,14 +19,10 @@ public class IndependentReserveStreamingExchange extends IndependentReserveExcha
   protected void initServices() {
     super.initServices();
 
-    this.streamingService = createStreamingService();
+    this.streamingService = new IndependentReserveStreamingService(API_URI);
     this.streamingMarketDataService =
         new IndependentReserveStreamingMarketDataService(
             this.getMarketDataService(), streamingService);
-  }
-
-  private IndependentReserveStreamingService createStreamingService() {
-    return new IndependentReserveStreamingService(API_URI);
   }
 
   @Override
