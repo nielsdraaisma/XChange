@@ -1,6 +1,5 @@
 package org.knowm.xchange.b2c2.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import java.io.IOException;
 import org.knowm.xchange.b2c2.B2C2Exchange;
 import org.knowm.xchange.b2c2.dto.trade.OrderRequest;
@@ -37,7 +36,7 @@ public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
     } catch (B2C2Exception e) {
       throw handleException(e);
     } catch (HttpStatusIOException e) {
-      if ( e.getHttpStatusCode() == 404){
+      if (e.getHttpStatusCode() == 404) {
         return null;
       } else {
         throw e;

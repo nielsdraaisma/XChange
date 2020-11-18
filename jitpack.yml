@@ -1,3 +1,2 @@
 jdk:
-  # See travis.yml for mainline dev jdk version
   - openjdk11
