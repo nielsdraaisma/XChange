@@ -19,12 +19,13 @@ public class OrderRequestTest {
             "FOK",
             "12333.23",
             false,
-            "2018-02-06T16:07:50.122206Z");
+            "2018-02-06T16:07:50.122206Z",
+                "testUnit");
 
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(orderRequest);
     assertThat(json)
         .isEqualToIgnoringNewLines(
-            "{\"client_order_id\":\"uuid\",\"quantity\":\"2\",\"side\":\"buy\",\"instrument\":\"BTCUSD.SPOT\",\"order_type\":\"FOK\",\"price\":\"12333.23\",\"force_open\":false,\"valid_until\":\"2018-02-06T16:07:50.122206Z\"}");
+            "{\"client_order_id\":\"uuid\",\"quantity\":\"2\",\"side\":\"buy\",\"instrument\":\"BTCUSD.SPOT\",\"order_type\":\"FOK\",\"price\":\"12333.23\",\"force_open\":false,\"valid_until\":\"2018-02-06T16:07:50.122206Z\",\"executing_unit\":\"testUnit\"}");
   }
 }

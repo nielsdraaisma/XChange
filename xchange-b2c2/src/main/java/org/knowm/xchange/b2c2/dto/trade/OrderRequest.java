@@ -27,6 +27,9 @@ public final class OrderRequest {
   @JsonProperty("valid_until")
   public final String validUntil;
 
+  @JsonProperty("executing_unit")
+  public final String executingUnit;
+
   public OrderRequest(
       String clientOrderId,
       String quantity,
@@ -35,7 +38,8 @@ public final class OrderRequest {
       String orderType,
       String price,
       Boolean forceOpen,
-      String validUntil) {
+      String validUntil,
+      String executingUnit) {
     this.clientOrderId = clientOrderId;
     this.quantity = quantity;
     this.side = side;
@@ -44,5 +48,6 @@ public final class OrderRequest {
     this.price = price;
     this.forceOpen = forceOpen;
     this.validUntil = validUntil;
+    this.executingUnit = executingUnit;
   }
 }
