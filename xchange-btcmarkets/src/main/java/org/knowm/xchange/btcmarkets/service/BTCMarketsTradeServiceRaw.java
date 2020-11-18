@@ -24,7 +24,8 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
       BigDecimal price,
       BTCMarketsOrder.Side side,
       BTCMarketsOrder.Type type,
-      String timeInForce)
+      String timeInForce,
+      String clientOrderId)
       throws IOException {
     return btcmv3.placeOrder(
         exchange.getExchangeSpecification().getApiKey(),
@@ -41,7 +42,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
             timeInForce,
             null,
             null,
-            null));
+            clientOrderId));
   }
 
   public BTCMarketsOrders getBTCMarketsOpenOrders(
