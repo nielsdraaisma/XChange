@@ -20,7 +20,7 @@ public class OrderRequestTest {
             "12333.23",
             false,
             "2018-02-06T16:07:50.122206Z",
-                "testUnit");
+            "testUnit");
 
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(orderRequest);

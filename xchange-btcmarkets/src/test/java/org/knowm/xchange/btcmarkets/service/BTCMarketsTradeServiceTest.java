@@ -61,11 +61,24 @@ public class BTCMarketsTradeServiceTest extends BTCMarketsTestSupport {
   public void shouldPlaceMarketOrder() throws IOException {
     // given
     MarketOrder marketOrder =
-        new MarketOrder(Order.OrderType.BID, new BigDecimal("10.00000000"), CurrencyPair.BTC_AUD);
+        new MarketOrder.Builder(Order.OrderType.BID, CurrencyPair.BTC_AUD)
+            .originalAmount(new BigDecimal("10.00000000"))
+            .userReference("testReference")
+            .build();
 
     BTCMarketsPlaceOrderRequest btcMarketsOrder =
         new BTCMarketsPlaceOrderRequest(
-            "BTC-AUD", "0", "10.00000000", "Market", "Bid", null, null, "GTC", null, null, null);
+            "BTC-AUD",
+            "0",
+            "10.00000000",
+            "Market",
+            "Bid",
+            null,
+            null,
+            "GTC",
+            null,
+            null,
+            "testReference");
 
     BTCMarketsPlaceOrderResponse orderResponse = new BTCMarketsPlaceOrderResponse("11111");
 
@@ -91,13 +104,13 @@ public class BTCMarketsTradeServiceTest extends BTCMarketsTestSupport {
   public void shouldPlaceLimitOrder() throws IOException {
     // given
     LimitOrder limitOrder =
-        new LimitOrder(
-            Order.OrderType.ASK,
-            new BigDecimal("10.00000000"),
-            CurrencyPair.BTC_AUD,
-            "11111",
-            new Date(1234567890L),
-            new BigDecimal("20.00000000"));
+        new LimitOrder.Builder(Order.OrderType.ASK, CurrencyPair.BTC_AUD)
+            .originalAmount(new BigDecimal("10.00000000"))
+            .id("11111")
+            .timestamp(new Date(1234567890L))
+            .limitPrice(new BigDecimal("20.00000000"))
+            .userReference("testReference")
+            .build();
 
     BTCMarketsPlaceOrderRequest request =
         new BTCMarketsPlaceOrderRequest(
@@ -111,7 +124,7 @@ public class BTCMarketsTradeServiceTest extends BTCMarketsTestSupport {
             "GTC",
             null,
             null,
-            null);
+            "testReference");
 
     BTCMarketsPlaceOrderResponse orderResponse = new BTCMarketsPlaceOrderResponse("11111");
 

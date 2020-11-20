@@ -55,8 +55,7 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
             false,
             DateTimeFormatter.ISO_DATE_TIME.format(
                 ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(15)),
-                limitOrder.getUserReference()
-                );
+            limitOrder.getUserReference());
 
     return placeOrderRequest(orderRequest);
   }
@@ -74,8 +73,7 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
             false,
             DateTimeFormatter.ISO_DATE_TIME.format(
                 ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(15)),
-                marketOrder.getUserReference()
-        );
+            marketOrder.getUserReference());
 
     return placeOrderRequest(orderRequest);
   }
