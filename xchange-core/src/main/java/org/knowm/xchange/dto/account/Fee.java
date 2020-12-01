@@ -14,7 +14,7 @@ public final class Fee implements Serializable {
   @JsonProperty("taker_fee")
   private final BigDecimal takerFee;
 
-  public Fee(BigDecimal makerFee, BigDecimal takerFee) {
+  public Fee(@JsonProperty("maker_fee") BigDecimal makerFee, @JsonProperty("taker_fee") BigDecimal takerFee) {
     this.makerFee = makerFee;
     this.takerFee = takerFee;
   }
