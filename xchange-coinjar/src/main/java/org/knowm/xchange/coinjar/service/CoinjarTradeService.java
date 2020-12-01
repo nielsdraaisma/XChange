@@ -44,7 +44,8 @@ public class CoinjarTradeService extends CoinjarTradeServiceRaw implements Trade
               orderTypeToBuySell(limitOrder.getType()),
               limitOrder.getLimitPrice().stripTrailingZeros().toPlainString(),
               limitOrder.getOriginalAmount().stripTrailingZeros().toPlainString(),
-              "GTC");
+              "GTC",
+              limitOrder.getUserReference());
       CoinjarOrder coinjarOrder = placeOrder(request);
       return coinjarOrder.oid.toString();
     } catch (CoinjarException e) {

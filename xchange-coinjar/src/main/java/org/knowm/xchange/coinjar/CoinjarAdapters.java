@@ -123,6 +123,7 @@ public class CoinjarAdapters {
                 ZonedDateTime.parse(coinjarOrder.timestamp, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                     .toInstant()))
         .orderStatus(orderStatus)
+        .userReference(coinjarOrder.ref)
         .build();
   }
 
