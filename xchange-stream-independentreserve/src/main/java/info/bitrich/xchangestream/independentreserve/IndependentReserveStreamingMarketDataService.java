@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.independentreserve.dto.IndependentReserveWebSocketOrderEvent;
-import info.bitrich.xchangestream.independentreserve.dto.IndependentReserveWebSocketSubscribtionEvent;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.Observable;
 import java.io.IOException;
@@ -33,52 +32,33 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
   private final IndependentReserveStreamingService service;
   private final MarketDataService marketDataService;
 
-  private final Map<String, AtomicLong> noncesPerChannel = Maps.newConcurrentMap();
-
-  private final Map<CurrencyPair, Map<String, LimitOrder>> bids = Maps.newHashMap();
-  private final Map<CurrencyPair, Map<String, LimitOrder>> asks = Maps.newHashMap();
-
   public IndependentReserveStreamingMarketDataService(
       MarketDataService marketDataService, IndependentReserveStreamingService service) {
     this.service = service;
     this.marketDataService = marketDataService;
-    service
-        .subscribeConnectionSuccess()
-        .forEach(
-            x ->
-                service
-                    .subscribeChannel("Subscriptions")
-                    .forEach(
-                        node -> {
-                          IndependentReserveWebSocketSubscribtionEvent subscribtionEvent =
-                              mapper.treeToValue(
-                                  node, IndependentReserveWebSocketSubscribtionEvent.class);
-                          handleSubscriptionEvent(subscribtionEvent);
-                        }));
   }
 
   private OrderBook handleOrderbookEvent(
-      CurrencyPair currencyPair, IndependentReserveWebSocketOrderEvent event) {
+      CurrencyPair currencyPair,
+      Map<String, LimitOrder> bids,
+      Map<String, LimitOrder> asks,
+      AtomicLong nonce,
+      IndependentReserveWebSocketOrderEvent event) {
 
-    final CurrencyPair pairFromEvent =
-        IndependentReserveStreamingAdapters.adaptChannelToCurrencyPair(event.channel);
-
-    AtomicLong nonce =
-        noncesPerChannel.computeIfAbsent(event.channel, s -> new AtomicLong(event.nonce));
-    long expectedNonce = nonce.getAndIncrement();
+    long expectedNonce = nonce.get();
     long nonceFromEvent = event.nonce;
-    if (nonceFromEvent != expectedNonce) {
+    if (expectedNonce != -1 && nonceFromEvent != expectedNonce) {
       logger.warn(
           "Did not get expected nonce from channel - expected {} but got {}, clearing {} book and reconnecting",
           expectedNonce,
           nonceFromEvent,
           currencyPair);
-      noncesPerChannel.remove(event.channel);
-      bids.get(pairFromEvent).clear();
-      asks.get(pairFromEvent).clear();
-      this.service.resubscribeChannels();
+      nonce.set(-1);
+      bids.clear();
+      asks.clear();
+      this.loadInitialState(currencyPair, bids, asks);
     } else {
-
+      nonce.set(event.nonce + 1);
       final Order.OrderType orderType;
       if (event.data.orderType.equals("LimitBid")) {
         orderType = Order.OrderType.BID;
@@ -87,22 +67,18 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
       }
       final Map<String, LimitOrder> orderMap;
       if (orderType == Order.OrderType.BID) {
-        orderMap = bids.get(pairFromEvent);
+        orderMap = bids;
       } else {
-        orderMap = asks.get(pairFromEvent);
+        orderMap = asks;
       }
       LimitOrder order;
       switch (event.event) {
         case IndependentReserveWebSocketOrderEvent.NEW_ORDER:
-          order =
-              new LimitOrder(
-                  orderType,
-                  event.data.volume,
-                  currencyPair,
-                  event.data.orderGuid,
-                  null,
-                  event.data.price);
-
+          order = new LimitOrder.Builder(orderType, currencyPair)
+                  .originalAmount(event.data.volume)
+                  .id(event.data.orderGuid)
+                  .limitPrice(event.data.price)
+                  .build();
           orderMap.put(event.data.orderGuid, order);
           break;
         case IndependentReserveWebSocketOrderEvent.ORDER_CANCELED:
@@ -116,14 +92,11 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
           }
           order = orderMap.get(event.data.orderGuid);
           if (order != null) {
-            order =
-                new LimitOrder(
-                    order.getType(),
-                    event.data.volume,
-                    currencyPair,
-                    event.data.orderGuid,
-                    null,
-                    order.getLimitPrice());
+            order = new LimitOrder.Builder(order.getType(), currencyPair)
+                    .originalAmount(event.data.volume)
+                    .id(event.data.orderGuid)
+                    .limitPrice(order.getLimitPrice())
+                    .build();
             orderMap.put(event.data.orderGuid, order);
           }
           break;
@@ -131,50 +104,43 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
     }
     return new OrderBook(
         null,
-        Lists.newArrayList(asks.get(pairFromEvent).values()),
-        Lists.newArrayList(bids.get(pairFromEvent).values()));
+        Lists.newArrayList(asks.values()),
+        Lists.newArrayList(bids.values()));
   }
 
-  private void handleSubscriptionEvent(IndependentReserveWebSocketSubscribtionEvent event) {
-    event.data.stream()
-        .map(IndependentReserveStreamingAdapters::adaptChannelToCurrencyPair)
-        .forEach(
-            currencyPair -> {
-              try {
-                this.bids.putIfAbsent(currencyPair, Maps.newConcurrentMap());
-                this.asks.putIfAbsent(currencyPair, Maps.newConcurrentMap());
-                Map<String, LimitOrder> bids = this.bids.get(currencyPair);
-                Map<String, LimitOrder> asks = this.asks.get(currencyPair);
-                if (bids.isEmpty() || asks.isEmpty()) {
-                  bids.clear();
-                  asks.clear();
-                  OrderBook orderBook = this.marketDataService.getOrderBook(currencyPair);
-                  orderBook
-                      .getBids()
-                      .forEach(
-                          bid -> {
-                            if (bid.getOriginalAmount().compareTo(BigDecimal.ZERO) > 0) {
-                              bids.put(bid.getId(), bid);
-                            }
-                          });
-                  orderBook
-                      .getAsks()
-                      .forEach(
-                          bid -> {
-                            if (bid.getOriginalAmount().compareTo(BigDecimal.ZERO) > 0) {
-                              asks.put(bid.getId(), bid);
-                            }
-                          });
-                  logger.info(
-                      "Loaded {} orderbook after subscribing to stream now have {} bids, {} asks",
-                      currencyPair,
-                      bids.size(),
-                      asks.size());
-                }
-              } catch (IOException e) {
-                logger.warn("Caught exception while loading {} orderbook", currencyPair, e);
-              }
-            });
+  private void loadInitialState(
+          CurrencyPair currencyPair,
+          Map<String, LimitOrder> bids,
+          Map<String, LimitOrder> asks
+  ) {
+    try {
+      bids.clear();
+      asks.clear();
+      OrderBook orderBook = this.marketDataService.getOrderBook(currencyPair);
+      orderBook
+              .getBids()
+              .forEach(
+                      bid -> {
+                        if (bid.getOriginalAmount().compareTo(BigDecimal.ZERO) > 0) {
+                          bids.put(bid.getId(), bid);
+                        }
+                      });
+      orderBook
+              .getAsks()
+              .forEach(
+                      bid -> {
+                        if (bid.getOriginalAmount().compareTo(BigDecimal.ZERO) > 0) {
+                          asks.put(bid.getId(), bid);
+                        }
+                      });
+      logger.info(
+              "Loaded {} orderbook after subscribing to stream now have {} bids, {} asks",
+              currencyPair,
+              bids.size(),
+              asks.size());
+    } catch (IOException e){
+      logger.warn("Failed to load initial state for {} orderbook", currencyPair);
+    }
   }
 
   @Override
@@ -184,15 +150,19 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
             + currencyPair.base.toString().toLowerCase()
             + "-"
             + currencyPair.counter.toString().toLowerCase();
+    final Map<String, LimitOrder> bids = Maps.newHashMap();
+    final Map<String, LimitOrder> asks = Maps.newHashMap();
+    final AtomicLong  nonces = new AtomicLong(-1);
+
+    this.loadInitialState(currencyPair, bids, asks);
     return service
         .subscribeChannel(channelName)
         .map(
             node -> {
               IndependentReserveWebSocketOrderEvent orderEvent =
                   mapper.treeToValue(node, IndependentReserveWebSocketOrderEvent.class);
-              return this.handleOrderbookEvent(currencyPair, orderEvent);
-            })
-        .filter(book -> !book.getBids().isEmpty() && !book.getAsks().isEmpty());
+              return handleOrderbookEvent(currencyPair, bids, asks, nonces, orderEvent);
+            });
   }
 
   @Override
