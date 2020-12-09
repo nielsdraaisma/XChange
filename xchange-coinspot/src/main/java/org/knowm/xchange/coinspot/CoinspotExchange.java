@@ -6,12 +6,8 @@ import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.coinspot.service.CoinspotAccountService;
 import org.knowm.xchange.coinspot.service.CoinspotMarketDataService;
 import org.knowm.xchange.coinspot.service.CoinspotTradeService;
-import org.knowm.xchange.utils.nonce.CurrentTimeNonceFactory;
-import si.mazi.rescu.SynchronizedValueFactory;
 
 public class CoinspotExchange extends BaseExchange implements Exchange {
-
-  private static SynchronizedValueFactory<Long> nonceFactory = new CurrentTimeNonceFactory();
 
   @Override
   protected void initServices() {
@@ -20,15 +16,11 @@ public class CoinspotExchange extends BaseExchange implements Exchange {
     this.accountService = new CoinspotAccountService(this);
   }
 
-  @Override
-  public SynchronizedValueFactory<Long> getNonceFactory() {
-    return nonceFactory;
-  }
 
   @Override
   public ExchangeSpecification getDefaultExchangeSpecification() {
     ExchangeSpecification exchangeSpecification =
-        new ExchangeSpecification(this.getClass().getCanonicalName());
+        new ExchangeSpecification(this.getClass());
     exchangeSpecification.setSslUri("https://www.coinspot.com.au");
     exchangeSpecification.setExchangeName("coinspot");
     exchangeSpecification.setExchangeDescription("Coinspot");
