@@ -11,6 +11,7 @@ public class TradeResponse {
   public final String rfqId;
   public final String side;
   public final String tradeId;
+  public final String executingUnit;
 
   public TradeResponse(
       @JsonProperty("created") String created,
@@ -20,7 +21,8 @@ public class TradeResponse {
       @JsonProperty("quantity") String quantity,
       @JsonProperty("rfq_id") String rfqId,
       @JsonProperty("side") String side,
-      @JsonProperty("trade_id") String tradeId) {
+      @JsonProperty("trade_id") String tradeId,
+      @JsonProperty("executing_unit") String executingUnit) {
     this.created = created;
     this.instrument = instrument;
     this.order = order;
@@ -29,5 +31,6 @@ public class TradeResponse {
     this.rfqId = rfqId;
     this.side = side;
     this.tradeId = tradeId;
+    this.executingUnit = executingUnit;
   }
 }
