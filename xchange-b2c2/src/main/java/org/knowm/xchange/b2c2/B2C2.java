@@ -1,6 +1,5 @@
 package org.knowm.xchange.b2c2;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -36,13 +35,13 @@ public interface B2C2 {
   List<OrderResponse> getOrders(
       @HeaderParam("Authorization") String authorization,
       @QueryParam("created_gte") ZonedDateTime createdGte,
-      @JsonProperty("created__lt") ZonedDateTime createdLt,
-      @JsonProperty("client_order_id") String clientOrderId,
-      @JsonProperty("order_type") String orderType,
-      @JsonProperty("executing_unit") String executingUnit,
-      @JsonProperty("instrument") String instrument,
-      @JsonProperty("offset") Long offset,
-      @JsonProperty("limit") Integer limit)
+      @QueryParam("created__lt") ZonedDateTime createdLt,
+      @QueryParam("client_order_id") String clientOrderId,
+      @QueryParam("order_type") String orderType,
+      @QueryParam("executing_unit") String executingUnit,
+      @QueryParam("instrument") String instrument,
+      @QueryParam("offset") Long offset,
+      @QueryParam("limit") Integer limit)
       throws B2C2Exception, IOException;
 
   @POST

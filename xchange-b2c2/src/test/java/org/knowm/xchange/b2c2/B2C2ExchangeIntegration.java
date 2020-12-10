@@ -140,4 +140,25 @@ public class B2C2ExchangeIntegration {
     assertThat(orderBook.getBids().get(0).getLimitPrice())
         .isLessThan(orderBook.getAsks().get(0).getLimitPrice());
   }
+
+  @Test
+  public void testGetTradeHistory() throws IOException {
+    B2C2TradingService.B2C2TradeHistoryParams tradeHistoryParams =
+        (B2C2TradingService.B2C2TradeHistoryParams)
+            exchange.getTradeService().createTradeHistoryParams();
+    tradeHistoryParams.setOffset(0L);
+    tradeHistoryParams.setLimit(10);
+    UserTrades userTrades1 = exchange.getTradeService().getTradeHistory(tradeHistoryParams);
+    assertThat(userTrades1.getUserTrades().size()).isEqualTo(10);
+
+    tradeHistoryParams.setOffset(10L);
+    tradeHistoryParams.setLimit(10);
+    UserTrades userTrades2 = exchange.getTradeService().getTradeHistory(tradeHistoryParams);
+    assertThat(userTrades2.getUserTrades().size()).isEqualTo(10);
+
+    tradeHistoryParams.setOffset(0L);
+    tradeHistoryParams.setLimit(20);
+    UserTrades userTrades3 = exchange.getTradeService().getTradeHistory(tradeHistoryParams);
+    assertThat(userTrades3.getUserTrades().size()).isEqualTo(20);
+  }
 }

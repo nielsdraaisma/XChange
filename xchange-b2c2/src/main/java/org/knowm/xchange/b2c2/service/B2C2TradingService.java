@@ -162,7 +162,7 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
 
     @Override
     public void setOffset(Long offset) {
-      this.offset = offset * 2;
+      this.offset = offset;
     }
 
     @Override
@@ -172,7 +172,7 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
 
     @Override
     public void setLimit(Integer limit) {
-      this.limit = limit * 2;
+      this.limit = limit;
     }
 
     @Override
