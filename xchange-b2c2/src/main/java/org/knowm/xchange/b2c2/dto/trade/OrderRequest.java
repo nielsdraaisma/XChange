@@ -2,6 +2,7 @@ package org.knowm.xchange.b2c2.dto.trade;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/** Model that reflects the placement of a new order. */
 public final class OrderRequest {
   @JsonProperty("client_order_id")
   public final String clientOrderId;

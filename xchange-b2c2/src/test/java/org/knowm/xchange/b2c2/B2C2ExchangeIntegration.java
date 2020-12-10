@@ -3,22 +3,26 @@ package org.knowm.xchange.b2c2;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.b2c2.service.B2C2TradingService;
+import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.dto.marketdata.OrderBook;
+import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrades;
+import org.knowm.xchange.utils.AuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,36 +35,33 @@ public class B2C2ExchangeIntegration {
   @Before
   public void setUp() throws IOException {
 
-    Exchange tmpExchange =
-        ExchangeFactory.INSTANCE.createExchangeWithoutSpecification(B2C2Exchange.class);
-    ExchangeSpecification exSpec = tmpExchange.getDefaultExchangeSpecification();
+    ExchangeSpecification defaultExchangeSpecification =
+        new ExchangeSpecification(B2C2Exchange.class);
+    defaultExchangeSpecification.setSslUri("https://api.uat.b2c2.net");
 
-    InputStream is =
-        B2C2ExchangeIntegration.class.getResourceAsStream("/org/knowm/xchange/b2c2/secret.keys");
-    Properties props = new Properties();
+    AuthUtils.setApiAndSecretKey(defaultExchangeSpecification);
 
-    props.load(is);
-
-    exSpec.setSslUri(props.getProperty("api-ssl-uri"));
-    exSpec.setApiKey(props.getProperty("api-key"));
-    if (props.containsKey("proxy-host")) {
-      exSpec.setProxyHost(props.getProperty("proxy-host"));
-      exSpec.setProxyPort(Integer.valueOf(props.getProperty("proxy-port")));
-    }
-
-    tmpExchange.applySpecification(exSpec);
-    exchange = ExchangeFactory.INSTANCE.createExchange(exSpec);
+    exchange = ExchangeFactory.INSTANCE.createExchange(defaultExchangeSpecification);
   }
 
   @Test
-  public void testCreateAndRetrieveOrder() throws IOException {
-    if (!exchange.getExchangeSpecification().getSslUri().contains("sandbox")) {
+  public void testGetAccountInfo() throws IOException {
+    AccountInfo accountInfo = exchange.getAccountService().getAccountInfo();
+    assertThat(accountInfo.getWallets().get("USD")).isNotNull();
+    assertThat(accountInfo.getWallets().get("USD").getBalance(Currency.USD).getAvailable())
+        .isGreaterThan(BigDecimal.ONE);
+  }
+
+  @Test
+  public void testCreateAndRetrieveLimitOrder() throws IOException {
+    if (!exchange.getExchangeSpecification().getSslUri().contains("uat")) {
       return;
     }
     LimitOrder limitOrder =
         new LimitOrder.Builder(Order.OrderType.BID, CurrencyPair.BTC_USD)
-            .limitPrice(new BigDecimal("20000"))
-            .originalAmount(BigDecimal.ONE)
+            .limitPrice(new BigDecimal("30000"))
+            .originalAmount(new BigDecimal("0.1"))
+            .userReference("test123")
             .build();
     String orderId = exchange.getTradeService().placeLimitOrder(limitOrder);
 
@@ -70,9 +71,33 @@ public class B2C2ExchangeIntegration {
     assertThat(retrievedOrder.getId()).isEqualTo(orderId);
     assertThat(retrievedOrder).isInstanceOf(LimitOrder.class);
     LimitOrder retrievedLimitOrder = (LimitOrder) retrievedOrder;
-    assertThat(retrievedLimitOrder.getOriginalAmount()).isEqualByComparingTo(BigDecimal.ONE);
-    assertThat(retrievedLimitOrder.getLimitPrice()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
-    assertThat(retrievedLimitOrder.getLimitPrice()).isLessThan(new BigDecimal("20000"));
+    assertThat(retrievedLimitOrder.getOriginalAmount()).isEqualByComparingTo(new BigDecimal("0.1"));
+    assertThat(retrievedLimitOrder.getAveragePrice()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
+    assertThat(retrievedLimitOrder.getLimitPrice()).isEqualByComparingTo(new BigDecimal("30000"));
+    assertThat(retrievedLimitOrder.getUserReference()).isEqualTo("test123");
+  }
+
+  @Test
+  public void testCreateAndRetrieveMarketOrder() throws IOException {
+    if (!exchange.getExchangeSpecification().getSslUri().contains("uat")) {
+      return;
+    }
+    MarketOrder marketOrder =
+        new MarketOrder.Builder(Order.OrderType.BID, CurrencyPair.BTC_USD)
+            .originalAmount(new BigDecimal("0.1"))
+            .userReference("test123")
+            .build();
+    String orderId = exchange.getTradeService().placeMarketOrder(marketOrder);
+
+    Collection<Order> retrieved = exchange.getTradeService().getOrder(orderId);
+    assertThat(retrieved).hasSize(1);
+    Order retrievedOrder = retrieved.iterator().next();
+    assertThat(retrievedOrder.getId()).isEqualTo(orderId);
+    assertThat(retrievedOrder).isInstanceOf(LimitOrder.class);
+    LimitOrder retrievedLimitOrder = (LimitOrder) retrievedOrder;
+    assertThat(retrievedLimitOrder.getOriginalAmount()).isEqualByComparingTo(new BigDecimal("0.1"));
+    assertThat(retrievedLimitOrder.getAveragePrice()).isGreaterThanOrEqualTo(BigDecimal.ZERO);
+    assertThat(retrievedLimitOrder.getUserReference()).isEqualTo("test123");
   }
 
   @Test
@@ -99,5 +124,20 @@ public class B2C2ExchangeIntegration {
     historyParams.setOffset(5L);
     userTrades = exchange.getTradeService().getTradeHistory(historyParams);
     logger.info("Got userTrades {}", userTrades);
+  }
+
+  @Test
+  public void testGetTicker() throws IOException {
+    Ticker ticker = exchange.getMarketDataService().getTicker(CurrencyPair.BTC_USD);
+    assertThat(ticker.getBid()).isNotNull();
+    assertThat(ticker.getAsk()).isNotNull();
+    assertThat(ticker.getAsk()).isGreaterThan(ticker.getBid());
+  }
+
+  @Test
+  public void testGetOrderbook() throws IOException {
+    OrderBook orderBook = exchange.getMarketDataService().getOrderBook(CurrencyPair.BTC_AUD);
+    assertThat(orderBook.getBids().get(0).getLimitPrice())
+        .isLessThan(orderBook.getAsks().get(0).getLimitPrice());
   }
 }

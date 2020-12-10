@@ -32,8 +32,10 @@ public class B2C2MarketDataService extends B2C2MarketDataServiceRaw implements M
 
   @Override
   public Ticker getTicker(CurrencyPair currencyPair, Object... args) throws IOException {
-    return B2C2Adapters.adaptQuote(
-        currencyPair, super.getQuote(currencyPair, Order.OrderType.BID, BigDecimal.ONE));
+    QuoteResponse bidQuote = getQuote(currencyPair, Order.OrderType.BID, BigDecimal.ONE);
+    QuoteResponse askQuote = getQuote(currencyPair, Order.OrderType.ASK, BigDecimal.ONE);
+
+    return B2C2Adapters.adaptQuotesToTicker(currencyPair, bidQuote, askQuote);
   }
 
   @Override

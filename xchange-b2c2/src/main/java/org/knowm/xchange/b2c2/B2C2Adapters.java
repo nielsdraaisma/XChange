@@ -1,15 +1,12 @@
 package org.knowm.xchange.b2c2;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import org.knowm.xchange.b2c2.dto.trade.LedgerItem;
 import org.knowm.xchange.b2c2.dto.trade.OrderResponse;
 import org.knowm.xchange.b2c2.dto.trade.QuoteResponse;
-import org.knowm.xchange.b2c2.dto.trade.TradeResponse;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -95,12 +92,15 @@ public class B2C2Adapters {
         .orElse(null);
   }
 
-  public static Ticker adaptQuote(CurrencyPair currencyPair, QuoteResponse quoteResponse) {
+  public static Ticker adaptQuotesToTicker(
+      CurrencyPair currencyPair, QuoteResponse bidResponse, QuoteResponse askResponse) {
     return new Ticker.Builder()
         .currencyPair(currencyPair)
-        .timestamp(nullableStringToDate(quoteResponse.created))
-        .last(new BigDecimal(quoteResponse.price))
-        .askSize(new BigDecimal(quoteResponse.quantity))
+        .timestamp(nullableStringToDate(bidResponse.created))
+        .bidSize(new BigDecimal(bidResponse.quantity))
+        .bid(new BigDecimal(bidResponse.price))
+        .askSize(new BigDecimal(askResponse.quantity))
+        .ask(new BigDecimal(askResponse.price))
         .build();
   }
 
@@ -114,60 +114,6 @@ public class B2C2Adapters {
         .build();
   }
 
-  public static List<UserTrade> adaptLedgerItemToUserTrades(final List<LedgerItem> items) {
-    final List<UserTrade> userTrades = new ArrayList<>();
-    // Get all unique references, a trade has two ledger entries which share the same reference
-    final Set<String> tradeReferences =
-        items.stream()
-            .filter(i -> i.type.equals("trade"))
-            .map(i -> i.reference)
-            .collect(Collectors.toSet());
-    // Attempt to create UserTrade for each reference
-    for (String reference : tradeReferences) {
-      final List<LedgerItem> matchingLedgerItems =
-          items.stream().filter(i -> i.reference.equals(reference)).collect(Collectors.toList());
-      final LedgerItem positive =
-          matchingLedgerItems.stream().filter(i -> isPositive(i.amount)).findFirst().orElse(null);
-      final LedgerItem negative =
-          matchingLedgerItems.stream().filter(i -> !isPositive(i.amount)).findFirst().orElse(null);
-
-      // We require both sides of the trade to be present
-      if (positive == null || negative == null) {
-        continue;
-      }
-      final CurrencyPair currencyPair;
-      final Order.OrderType orderType;
-      final BigDecimal originalAmount;
-      final BigDecimal price;
-      if (isCrypto(new Currency(negative.currency))) {
-        orderType = Order.OrderType.ASK;
-        originalAmount = new BigDecimal(negative.amount).abs();
-        currencyPair =
-            new CurrencyPair(new Currency(negative.currency), new Currency(positive.currency));
-        price = new BigDecimal(positive.amount).divide(originalAmount, RoundingMode.HALF_UP);
-      } else {
-        orderType = Order.OrderType.BID;
-        originalAmount = new BigDecimal(positive.amount);
-        currencyPair =
-            new CurrencyPair(new Currency(positive.currency), new Currency(negative.currency));
-        price = new BigDecimal(negative.amount).abs().divide(originalAmount, RoundingMode.HALF_UP);
-      }
-
-      userTrades.add(
-          new UserTrade.Builder()
-              .timestamp(nullableStringToDate(positive.created))
-              .feeAmount(BigDecimal.ZERO)
-              .currencyPair(currencyPair)
-              .originalAmount(originalAmount)
-              .price(price)
-              .orderId(reference)
-              .id(reference)
-              .type(orderType)
-              .build());
-    }
-    return userTrades;
-  }
-
   public static Order adaptOrderResponseToOrder(OrderResponse order) {
     LimitOrder.Builder builder =
         new LimitOrder.Builder(
@@ -175,6 +121,8 @@ public class B2C2Adapters {
             .originalAmount(order.quantity)
             .id(order.clientOrderId)
             .limitPrice(order.price)
+            .averagePrice(order.executedPrice)
+            .userReference(order.executingUnit)
             .timestamp(nullableStringToDate(order.created));
     if (order.executedPrice != null) {
       builder =
@@ -186,17 +134,21 @@ public class B2C2Adapters {
     return builder.build();
   }
 
-  public static Order adoptTradeResponseToOrder(TradeResponse trade) {
-    return new LimitOrder.Builder(
-            adaptSide(trade.side), adaptInstrumentToCurrencyPair(trade.instrument))
-        .timestamp(nullableStringToDate(trade.created))
-        .limitPrice(new BigDecimal(trade.price))
-        .averagePrice(new BigDecimal(trade.price))
-        .originalAmount(new BigDecimal(trade.quantity))
-        .cumulativeAmount(new BigDecimal(trade.quantity))
-        .orderStatus(Order.OrderStatus.FILLED)
-        .fee(BigDecimal.ZERO)
-        .id(trade.tradeId)
+  public static UserTrade adaptOrderResponseToUserTrade(OrderResponse order) {
+    BigDecimal price = order.executedPrice;
+    if (price == null) {
+      price = order.price;
+    }
+    return new UserTrade.Builder()
+        .currencyPair(adaptInstrumentToCurrencyPair(order.instrument))
+        .feeAmount(BigDecimal.ZERO)
+        .orderId(order.clientOrderId)
+        .id(order.orderId)
+        .originalAmount(order.quantity)
+        .price(price)
+        .timestamp(nullableStringToDate(order.created))
+        .type(adaptSide(order.side))
+        .orderUserReference(order.executingUnit)
         .build();
   }
 }

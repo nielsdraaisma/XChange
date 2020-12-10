@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.knowm.xchange.b2c2.B2C2Exchange;
-import org.knowm.xchange.b2c2.dto.trade.LedgerItem;
-import org.knowm.xchange.b2c2.dto.trade.QuoteRequest;
-import org.knowm.xchange.b2c2.dto.trade.QuoteResponse;
+import org.knowm.xchange.b2c2.dto.trade.*;
 import org.knowm.xchange.currency.CurrencyPair;
 
 public class B2C2BaseServiceRaw extends B2C2BaseService {

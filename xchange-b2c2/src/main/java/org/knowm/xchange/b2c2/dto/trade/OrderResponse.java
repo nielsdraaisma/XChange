@@ -14,6 +14,8 @@ public class OrderResponse {
   public final BigDecimal executedPrice;
   public final List<Trade> trades;
   public final String created;
+  public final String orderType;
+  public final String executingUnit;
 
   public OrderResponse(
       @JsonProperty("order_id") String orderId,
@@ -24,7 +26,9 @@ public class OrderResponse {
       @JsonProperty("price") BigDecimal price,
       @JsonProperty("executed_price") BigDecimal executedPrice,
       @JsonProperty("trades") List<Trade> trades,
-      @JsonProperty("created") String created) {
+      @JsonProperty("created") String created,
+      @JsonProperty("order_type") String orderType,
+      @JsonProperty("executing_unit") String executingUnit) {
     this.orderId = orderId;
     this.clientOrderId = clientOrderId;
     this.quantity = quantity;
@@ -34,6 +38,8 @@ public class OrderResponse {
     this.executedPrice = executedPrice;
     this.trades = trades;
     this.created = created;
+    this.orderType = orderType;
+    this.executingUnit = executingUnit;
   }
 
   public static class Trade {

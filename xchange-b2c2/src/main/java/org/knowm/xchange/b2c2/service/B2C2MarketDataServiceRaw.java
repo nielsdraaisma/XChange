@@ -21,9 +21,9 @@ public class B2C2MarketDataServiceRaw extends B2C2BaseServiceRaw implements Mark
       throws IOException {
     String side;
     if (orderType == Order.OrderType.ASK) {
-      side = "sell";
-    } else if (orderType == Order.OrderType.BID) {
       side = "buy";
+    } else if (orderType == Order.OrderType.BID) {
+      side = "sell";
     } else {
       throw new IllegalArgumentException("Invalid orderType : " + orderType);
     }

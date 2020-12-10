@@ -1,6 +1,8 @@
 package org.knowm.xchange.b2c2;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.*;
@@ -25,26 +27,28 @@ public interface B2C2 {
 
   @GET
   @Path("order/{id}")
-  OrderResponse getOrder(
+  List<OrderResponse> getOrder(
       @HeaderParam("Authorization") String authorization, @PathParam("id") String id)
       throws B2C2Exception, IOException;
 
   @GET
-  @Path("trade/{id}")
-  TradeResponse getTrade(
-      @HeaderParam("Authorization") String authorization, @PathParam("id") String id)
+  @Path("order/")
+  List<OrderResponse> getOrders(
+      @HeaderParam("Authorization") String authorization,
+      @QueryParam("created_gte") ZonedDateTime createdGte,
+      @JsonProperty("created__lt") ZonedDateTime createdLt,
+      @JsonProperty("client_order_id") String clientOrderId,
+      @JsonProperty("order_type") String orderType,
+      @JsonProperty("executing_unit") String executingUnit,
+      @JsonProperty("instrument") String instrument,
+      @JsonProperty("offset") Long offset,
+      @JsonProperty("limit") Integer limit)
       throws B2C2Exception, IOException;
 
   @POST
   @Path("request_for_quote/")
   @Consumes(MediaType.APPLICATION_JSON)
   QuoteResponse quote(@HeaderParam("Authorization") String authorization, QuoteRequest request)
-      throws B2C2Exception, IOException;
-
-  @POST
-  @Path("trade/")
-  @Consumes(MediaType.APPLICATION_JSON)
-  TradeResponse trade(@HeaderParam("Authorization") String authorization, TradeRequest request)
       throws B2C2Exception, IOException;
 
   @GET

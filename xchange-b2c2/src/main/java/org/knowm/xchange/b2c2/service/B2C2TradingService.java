@@ -10,7 +10,6 @@ import org.knowm.xchange.b2c2.B2C2Adapters;
 import org.knowm.xchange.b2c2.B2C2Exchange;
 import org.knowm.xchange.b2c2.dto.trade.OrderRequest;
 import org.knowm.xchange.b2c2.dto.trade.OrderResponse;
-import org.knowm.xchange.b2c2.dto.trade.TradeResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.Trades;
@@ -30,11 +29,10 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
   }
 
   private String placeOrderRequest(OrderRequest orderRequest) throws IOException {
-    // Use the order api to place the order using a random UUID as client reference.
     OrderResponse orderResponse = order(orderRequest);
 
     if (orderResponse.trades.size() == 1) {
-      return orderResponse.trades.get(0).tradeId;
+      return orderRequest.clientOrderId;
     } else {
       throw new IllegalStateException(
           "Did not get expected number of trades from B2C2 order response, expected 1 got "
@@ -83,25 +81,20 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
     if (!(params instanceof B2C2TradeHistoryParams)) {
       throw new IllegalArgumentException("Invalid params given");
     }
-    final B2C2TradeHistoryParams b2C2TradeHistoryParams = (B2C2TradeHistoryParams) params;
-    List<UserTrade> userTrades =
-        B2C2Adapters.adaptLedgerItemToUserTrades(
-            getLedger(
-                b2C2TradeHistoryParams.offset,
-                b2C2TradeHistoryParams.limit,
-                "trade",
-                b2C2TradeHistoryParams.since));
 
-    userTrades =
-        userTrades.stream()
-            .filter(
-                ut ->
-                    b2C2TradeHistoryParams.getCurrencyPair() == null
-                        || ut.getCurrencyPair().equals(b2C2TradeHistoryParams.getCurrencyPair()))
-            .filter(
-                ut ->
-                    b2C2TradeHistoryParams.getTransactionId() == null
-                        || b2C2TradeHistoryParams.getTransactionId().equals(ut.getOrderId()))
+    final B2C2TradeHistoryParams b2C2TradeHistoryParams = (B2C2TradeHistoryParams) params;
+
+    List<UserTrade> userTrades =
+        getOrders(
+                b2C2TradeHistoryParams.getStartTime(),
+                b2C2TradeHistoryParams.getEndTime(),
+                null,
+                null,
+                b2C2TradeHistoryParams.currencyPair,
+                b2C2TradeHistoryParams.offset,
+                b2C2TradeHistoryParams.limit)
+            .stream()
+            .map(B2C2Adapters::adaptOrderResponseToUserTrade)
             .collect(Collectors.toList());
 
     return new UserTrades(
@@ -117,19 +110,16 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
     if (orderIds.length > 1) {
       throw new IllegalArgumentException("Multiple orderIds not supported");
     }
-    final String tradeId = orderIds[0];
-    final TradeResponse tradeResponse = getTrade(tradeId);
-    if (tradeResponse == null) {
-      return Collections.emptyList();
-    } else {
-      return Collections.singletonList(B2C2Adapters.adoptTradeResponseToOrder(tradeResponse));
-    }
+    final String orderId = orderIds[0];
+    return getOrder(orderId).stream()
+        .map(B2C2Adapters::adaptOrderResponseToOrder)
+        .collect(Collectors.toList());
   }
 
   @Override
   public Collection<Order> getOrder(OrderQueryParams... orderQueryParams) throws IOException {
     List<Order> res = new ArrayList<>();
-    for (OrderQueryParams orderQueryParam : Arrays.asList(orderQueryParams)) {
+    for (OrderQueryParams orderQueryParam : orderQueryParams) {
       res.addAll(this.getOrder(new String[] {orderQueryParam.getOrderId()}));
     }
     return res;
@@ -147,13 +137,11 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
 
   public static class B2C2TradeHistoryParams
       implements TradeHistoryParams,
-          TradeHistoryParamTransactionId,
           TradeHistoryParamCurrencyPair,
           TradeHistoryParamOffset,
           TradeHistoryParamLimit,
           TradeHistoryParamsTimeSpan {
     private CurrencyPair currencyPair;
-    private String transactionId;
     private Long offset;
     private Integer limit;
     private Date since;
@@ -165,16 +153,6 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
 
     public void setCurrencyPair(CurrencyPair currencyPair) {
       this.currencyPair = currencyPair;
-    }
-
-    @Override
-    public String getTransactionId() {
-      return transactionId;
-    }
-
-    @Override
-    public void setTransactionId(String transactionId) {
-      this.transactionId = transactionId;
     }
 
     @Override
