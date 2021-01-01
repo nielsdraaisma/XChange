@@ -95,7 +95,7 @@ public class BTCMarketsTradeService extends BTCMarketsTradeServiceRaw implements
 
   @Override
   public boolean cancelOrder(String orderId) throws IOException, BTCMarketsException {
-    return cancelBTCMarketsOrder(Long.parseLong(orderId)).getSuccess();
+    return cancelBTCMarketsOrder(Long.parseLong(orderId)).success;
   }
 
   @Override

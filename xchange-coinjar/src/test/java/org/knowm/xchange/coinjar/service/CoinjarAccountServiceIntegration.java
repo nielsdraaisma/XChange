@@ -1,20 +1,20 @@
-package org.knowm.xchange.btcmarkets.service;
+package org.knowm.xchange.coinjar.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import org.junit.Test;
 import org.knowm.xchange.Exchange;
-import org.knowm.xchange.btcmarkets.ExchangeUtils;
+import org.knowm.xchange.coinjar.ExchangeUtils;
 import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 
-public class BTCMarketsAccountServiceIntegration {
+public class CoinjarAccountServiceIntegration {
 
   private Exchange exchange;
 
-  public BTCMarketsAccountServiceIntegration() {
+  public CoinjarAccountServiceIntegration() {
     exchange = ExchangeUtils.createExchangeFromProperties();
   }
 
@@ -25,11 +25,7 @@ public class BTCMarketsAccountServiceIntegration {
 
   @Test
   public void testGetTradeHistory() throws IOException {
-    BTCMarketsTradeService.HistoryParams tradeHistoryParams =
-        (BTCMarketsTradeService.HistoryParams)
-            exchange.getTradeService().createTradeHistoryParams();
-    tradeHistoryParams.setStartId("0");
-    tradeHistoryParams.setCurrencyPair(CurrencyPair.BTC_AUD);
+    TradeHistoryParams tradeHistoryParams = exchange.getTradeService().createTradeHistoryParams();
     exchange.getTradeService().getTradeHistory(tradeHistoryParams);
   }
 

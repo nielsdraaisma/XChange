@@ -26,15 +26,14 @@ public class IndependentReserveManualExample {
 
     exchange.connect().blockingAwait();
 
-    Disposable btcAudOrderbook = orderbooks(exchange, new CurrencyPair(Currency.USDC, Currency.AUD));
+    Disposable btcAudOrderbook =
+        orderbooks(exchange, new CurrencyPair(Currency.USDC, Currency.AUD));
     Disposable ethAudOrderbook = orderbooks(exchange, new CurrencyPair(Currency.ETH, Currency.AUD));
     Disposable bchAudOrderbook = orderbooks(exchange, new CurrencyPair(Currency.BCH, Currency.AUD));
 
     while (!btcAudOrderbook.isDisposed()
         && !ethAudOrderbook.isDisposed()
-        && !bchAudOrderbook.isDisposed()
-    )
-    {
+        && !bchAudOrderbook.isDisposed()) {
       sleep(5000);
     }
 

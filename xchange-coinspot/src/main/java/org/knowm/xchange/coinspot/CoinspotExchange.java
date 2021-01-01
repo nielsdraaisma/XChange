@@ -16,11 +16,9 @@ public class CoinspotExchange extends BaseExchange implements Exchange {
     this.accountService = new CoinspotAccountService(this);
   }
 
-
   @Override
   public ExchangeSpecification getDefaultExchangeSpecification() {
-    ExchangeSpecification exchangeSpecification =
-        new ExchangeSpecification(this.getClass());
+    ExchangeSpecification exchangeSpecification = new ExchangeSpecification(this.getClass());
     exchangeSpecification.setSslUri("https://www.coinspot.com.au");
     exchangeSpecification.setExchangeName("coinspot");
     exchangeSpecification.setExchangeDescription("Coinspot");
