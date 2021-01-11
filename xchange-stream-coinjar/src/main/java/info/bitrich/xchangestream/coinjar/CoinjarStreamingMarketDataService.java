@@ -74,6 +74,14 @@ class CoinjarStreamingMarketDataService implements StreamingMarketDataService {
         Maps.newTreeMap((o1, o2) -> Math.negateExact(o1.compareTo(o2)));
     final SortedMap<BigDecimal, LimitOrder> asks = Maps.newTreeMap(BigDecimal::compareTo);
     String channelName = CoinjarStreamingAdapters.adaptCurrencyPairToBookTopic(currencyPair);
+    service.subscribeConnectionSuccess().forEach(
+            success -> {
+              logger.warn("Clearing {} orderbook after connection success", currencyPair);
+              bids.clear();
+              asks.clear();
+            }
+    );
+
     return service
         .subscribeChannel(channelName)
         .doOnError(
