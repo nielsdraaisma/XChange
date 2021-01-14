@@ -2,6 +2,8 @@ package info.bitrich.xchangestream.btcmarkets.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Collection;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -11,10 +13,10 @@ public class BTCMarketsWebSocketSubscribeMessage {
   public final String messageType;
 
   @JsonProperty("marketIds")
-  public final List<String> marketIds;
+  public final Collection<String> marketIds;
 
   @JsonProperty("channels")
-  public final List<String> channels;
+  public final Collection<String> channels;
 
   @JsonProperty("timestamp")
   public final Long timestamp;
@@ -33,8 +35,8 @@ public class BTCMarketsWebSocketSubscribeMessage {
    */
   public BTCMarketsWebSocketSubscribeMessage(
       String messageType,
-      List<String> marketIds,
-      List<String> channels,
+      Collection<String> marketIds,
+      Collection<String> channels,
       Long timestamp,
       String key,
       String signature) {

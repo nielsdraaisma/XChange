@@ -1,10 +1,12 @@
 package info.bitrich.xchangestream.btcmarkets;
 
 import static info.bitrich.xchangestream.btcmarkets.BTCMarketsStreamingService.CHANNEL_ORDERBOOK;
+import static info.bitrich.xchangestream.btcmarkets.BTCMarketsStreamingService.CHANNEL_TRADE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketOrderbookMessage;
+import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketTradeMessage;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.Observable;
@@ -34,6 +36,7 @@ class BTCMarketsStreamingMarketDataService implements StreamingMarketDataService
     final String marketId = BTCMarketsStreamingAdapters.adaptCurrencyPairToMarketId(currencyPair);
     return service
         .subscribeChannel(CHANNEL_ORDERBOOK, marketId)
+        .filter(node -> "orderbook".equals(node.get("messageType").asText()))
         .map(node -> mapper.treeToValue(node, BTCMarketsWebSocketOrderbookMessage.class))
         .filter(orderEvent -> marketId.equals(orderEvent.marketId))
         .map(this::handleOrderbookMessage);
@@ -46,6 +49,13 @@ class BTCMarketsStreamingMarketDataService implements StreamingMarketDataService
 
   @Override
   public Observable<Trade> getTrades(CurrencyPair currencyPair, Object... args) {
-    throw new NotAvailableFromExchangeException();
+    final String marketId = BTCMarketsStreamingAdapters.adaptCurrencyPairToMarketId(currencyPair);
+    return service
+            .subscribeChannel(CHANNEL_TRADE, marketId)
+            .filter(node -> "trade".equals(node.get("messageType").asText()))
+            .map(node -> mapper.treeToValue(node, BTCMarketsWebSocketTradeMessage.class))
+            .filter(tradeEvent -> marketId.equals(tradeEvent.marketId))
+            .map(BTCMarketsStreamingAdapters::adaptTradeEvent);
+
   }
 }

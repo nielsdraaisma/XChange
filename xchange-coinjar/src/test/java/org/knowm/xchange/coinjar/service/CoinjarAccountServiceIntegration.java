@@ -8,6 +8,8 @@ import org.knowm.xchange.Exchange;
 import org.knowm.xchange.coinjar.ExchangeUtils;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.dto.trade.UserTrades;
+import org.knowm.xchange.service.trade.params.TradeHistoryParamNextPageCursor;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 
 public class CoinjarAccountServiceIntegration {
@@ -26,7 +28,13 @@ public class CoinjarAccountServiceIntegration {
   @Test
   public void testGetTradeHistory() throws IOException {
     TradeHistoryParams tradeHistoryParams = exchange.getTradeService().createTradeHistoryParams();
-    exchange.getTradeService().getTradeHistory(tradeHistoryParams);
+    UserTrades userTrades = exchange.getTradeService().getTradeHistory(tradeHistoryParams);
+    if (tradeHistoryParams instanceof TradeHistoryParamNextPageCursor) {
+      ((TradeHistoryParamNextPageCursor) tradeHistoryParams)
+          .setNextPageCursor(userTrades.getNextPageCursor());
+      ;
+    }
+    userTrades = exchange.getTradeService().getTradeHistory(tradeHistoryParams);
   }
 
   @Test

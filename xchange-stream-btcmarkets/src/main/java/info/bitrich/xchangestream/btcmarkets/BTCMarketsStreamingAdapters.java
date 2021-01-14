@@ -8,11 +8,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketTradeMessage;
 import org.knowm.xchange.btcmarkets.BTCMarketsAdapters;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsOrder;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.OrderBook;
+import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
@@ -106,5 +109,16 @@ class BTCMarketsStreamingAdapters {
           .timestamp(timestamp)
           .build();
     }
+  }
+
+  public static Trade adaptTradeEvent(BTCMarketsWebSocketTradeMessage message) {
+    return new Trade.Builder()
+            .instrument(BTCMarketsAdapters.adaptCurrencyPair(message.marketId))
+            .timestamp(message.timestamp)
+            .id(Long.toString(message.tradeId))
+            .price(message.price)
+            .originalAmount(message.volume)
+            .type(BTCMarketsAdapters.adaptOrderType(message.side))
+            .build();
   }
 }

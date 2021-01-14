@@ -11,13 +11,13 @@ import org.knowm.xchange.coinjar.CoinjarErrorAdapter;
 import org.knowm.xchange.coinjar.CoinjarException;
 import org.knowm.xchange.coinjar.CoinjarExchange;
 import org.knowm.xchange.coinjar.dto.CoinjarOrder;
+import org.knowm.xchange.coinjar.dto.trading.CoinjarFills;
 import org.knowm.xchange.coinjar.dto.trading.CoinjarOrderRequest;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.knowm.xchange.dto.trade.UserTrades;
-import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.trade.TradeService;
 import org.knowm.xchange.service.trade.params.*;
 import org.knowm.xchange.service.trade.params.orders.DefaultQueryOrderParam;
@@ -95,16 +95,21 @@ public class CoinjarTradeService extends CoinjarTradeServiceRaw implements Trade
 
   @Override
   public UserTrades getTradeHistory(TradeHistoryParams params) throws IOException {
-    Integer page = 0;
-    if (params instanceof CoinjarTradeHistoryParams) {
-      page = ((CoinjarTradeHistoryParams) params).pageNumber;
+    String cursor = null;
+    if (params instanceof TradeHistoryParamNextPageCursor) {
+      cursor = ((TradeHistoryParamNextPageCursor) params).getNextPageCursor();
     }
     try {
+
+      CoinjarFills coinjarFills = getFills(cursor, null, null);
       List<UserTrade> trades =
-          getFills(page, null, null).stream()
+          coinjarFills.stream()
               .map(CoinjarAdapters::adaptFillToUserTrade)
               .collect(Collectors.toList());
-      return new UserTrades(trades, UserTrades.TradeSortType.SortByID);
+      Long lastTradeId =
+          coinjarFills.stream().max(Comparator.comparing(t -> t.tid)).map(t -> t.tid).orElse(0L);
+      return new UserTrades(
+          trades, lastTradeId, UserTrades.TradeSortType.SortByID, coinjarFills.getNextPageCursor());
     } catch (CoinjarException e) {
       throw CoinjarErrorAdapter.adaptCoinjarException(e);
     }
@@ -147,27 +152,18 @@ public class CoinjarTradeService extends CoinjarTradeServiceRaw implements Trade
   }
 
   private static class CoinjarTradeHistoryParams
-      implements TradeHistoryParams, TradeHistoryParamPaging {
-    private Integer pageNumber;
+      implements TradeHistoryParams, TradeHistoryParamNextPageCursor {
+
+    private String nextPageCursor;
 
     @Override
-    public Integer getPageLength() {
-      return null;
+    public String getNextPageCursor() {
+      return nextPageCursor;
     }
 
     @Override
-    public void setPageLength(Integer pageLength) {
-      throw new NotAvailableFromExchangeException();
-    }
-
-    @Override
-    public Integer getPageNumber() {
-      return pageNumber;
-    }
-
-    @Override
-    public void setPageNumber(Integer pageNumber) {
-      this.pageNumber = pageNumber;
+    public void setNextPageCursor(String cursor) {
+      this.nextPageCursor = cursor;
     }
   }
 

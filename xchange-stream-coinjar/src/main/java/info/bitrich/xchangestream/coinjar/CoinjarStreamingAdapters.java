@@ -1,9 +1,7 @@
 package info.bitrich.xchangestream.coinjar;
 
-import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBalanceEvent;
-import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBookEvent;
-import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketOrderEvent;
-import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketUserTradeEvent;
+import info.bitrich.xchangestream.coinjar.dto.*;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.ZonedDateTime;
@@ -14,9 +12,11 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.account.Balance;
+import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.instrument.Instrument;
 
 class CoinjarStreamingAdapters {
 
@@ -34,6 +34,15 @@ class CoinjarStreamingAdapters {
     }
     return "book:" + pair.base.toString() + sep + pair.counter.toString();
   }
+
+  public static String adaptCurrencyPairToTradesTopic(CurrencyPair pair) {
+    String sep = "";
+    if (pair.base.getCurrencyCode().length() > 3 || pair.counter.getCurrencyCode().length() > 3) {
+      sep = "-";
+    }
+    return "trades:" + pair.base.toString() + sep + pair.counter.toString();
+  }
+
 
   public static LimitOrder toLimitOrder(
       CoinjarWebSocketBookEvent.Payload.Order order,
@@ -99,5 +108,16 @@ class CoinjarStreamingAdapters {
         .total(new BigDecimal(event.payload.account.balance))
         .frozen(new BigDecimal(event.payload.account.hold))
         .build();
+  }
+
+  public static Trade adoptTradeEvent(Instrument instrument, CoinjarWebsocketTradeEvent tradeEvent) {
+    return new Trade.Builder()
+            .id(Long.toString(tradeEvent.tid))
+            .originalAmount(tradeEvent.size)
+            .timestamp(tradeEvent.timestamp)
+            .price(tradeEvent.price)
+            .instrument(instrument)
+            .type(CoinjarAdapters.buySellToOrderType(tradeEvent.takerSide))
+            .build();
   }
 }
