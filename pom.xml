@@ -9,7 +9,7 @@
 
   <groupId>org.knowm.xchange</groupId>
   <artifactId>xchange-parent</artifactId>
-  <version>5.0.5-SNAPSHOT</version>
+  <version>5.0.6-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>XChange</name>
@@ -35,7 +35,7 @@
     <version.commons.lang3>3.11</version.commons.lang3>
     <version.fasterxml>2.11.3</version.fasterxml>
     <version.github.mmazi>2.0.4</version.github.mmazi>
-    <version.resilience4j>1.6.1</version.resilience4j>
+    <version.resilience4j>1.7.0</version.resilience4j>
     <version.junit>4.13.1</version.junit>
     <version.lombok>1.18.16</version.lombok>
     <version.knowm.xchart>3.8.0</version.knowm.xchart>
@@ -217,6 +217,7 @@
     <module>xchange-stream-service-netty</module>
     <module>xchange-stream-service-pubnub</module>
     <module>xchange-stream-huobi</module>
+    <module>xchange-stream-gemini-v2</module>
   </modules>
 
   <repositories>
@@ -302,7 +303,7 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>3.7.0</version>
+        <version>3.7.7</version>
         <scope>test</scope>
       </dependency>
 
@@ -550,7 +551,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>format</goal>
+<!--              <goal>format</goal>-->
             </goals>
           </execution>
         </executions>
