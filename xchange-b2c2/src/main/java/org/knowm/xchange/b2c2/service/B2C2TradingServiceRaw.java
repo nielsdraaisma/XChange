@@ -25,7 +25,7 @@ public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
     }
   }
 
-  public List<TradeResponse> getTrade(String id) throws IOException {
+  public TradeResponse getTrade(String id) throws IOException {
     try {
       return this.b2c2.getTrade(this.authorizationHeader, id);
     } catch (B2C2Exception e) {
