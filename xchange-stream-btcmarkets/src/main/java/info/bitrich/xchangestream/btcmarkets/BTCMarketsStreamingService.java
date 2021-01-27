@@ -6,7 +6,6 @@ import com.google.common.collect.Sets;
 import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketSubscribeMessage;
 import info.bitrich.xchangestream.service.netty.JsonNettyStreamingService;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Set;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
@@ -43,7 +42,7 @@ class BTCMarketsStreamingService extends JsonNettyStreamingService {
     } else {
       subscribedChannels.add(CHANNEL_ORDERBOOK);
     }
-    if(subscribedTrades.isEmpty()){
+    if (subscribedTrades.isEmpty()) {
       subscribedChannels.remove(CHANNEL_TRADE);
     } else {
       subscribedChannels.add(CHANNEL_TRADE);
@@ -61,7 +60,7 @@ class BTCMarketsStreamingService extends JsonNettyStreamingService {
     return new BTCMarketsWebSocketSubscribeMessage(
         MESSAGE_TYPE_SUBSCRIBE,
         Sets.union(subscribedOrderbooks, subscribedTrades),
-        //new ArrayList<>(subscribedOrderbooks),
+        // new ArrayList<>(subscribedOrderbooks),
         Lists.newArrayList(subscribedChannels),
         timestamp,
         key,
@@ -81,9 +80,11 @@ class BTCMarketsStreamingService extends JsonNettyStreamingService {
     subscribeConnectionSuccess()
         .forEach(
             success -> {
-              subscribeChannel("heartbeat").forEach(node -> {
-                LOG.debug("Received heartbeat {}", node);
-              });
+              subscribeChannel("heartbeat")
+                  .forEach(
+                      node -> {
+                        LOG.debug("Received heartbeat {}", node);
+                      });
             });
   }
 
@@ -110,7 +111,7 @@ class BTCMarketsStreamingService extends JsonNettyStreamingService {
       subscribedTrades.add(args[0].toString());
       LOG.debug("Now subscribed to trades {}", subscribedTrades);
       return objectMapper.writeValueAsString(buildSubscribeMessage());
-    } else if ( CHANNEL_HEARTBEAT.equals(channelName)){
+    } else if (CHANNEL_HEARTBEAT.equals(channelName)) {
       return null;
     } else {
       throw new IllegalArgumentException(

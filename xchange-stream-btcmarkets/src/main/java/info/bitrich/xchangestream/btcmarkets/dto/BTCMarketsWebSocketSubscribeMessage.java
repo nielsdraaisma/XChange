@@ -2,9 +2,7 @@ package info.bitrich.xchangestream.btcmarkets.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Collection;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BTCMarketsWebSocketSubscribeMessage {

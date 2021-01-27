@@ -1,7 +1,6 @@
 package info.bitrich.xchangestream.coinjar;
 
 import info.bitrich.xchangestream.coinjar.dto.*;
-
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.ZonedDateTime;
@@ -42,7 +41,6 @@ class CoinjarStreamingAdapters {
     }
     return "trades:" + pair.base.toString() + sep + pair.counter.toString();
   }
-
 
   public static LimitOrder toLimitOrder(
       CoinjarWebSocketBookEvent.Payload.Order order,
@@ -110,14 +108,15 @@ class CoinjarStreamingAdapters {
         .build();
   }
 
-  public static Trade adoptTradeEvent(Instrument instrument, CoinjarWebsocketTradeEvent tradeEvent) {
+  public static Trade adoptTradeEvent(
+      Instrument instrument, CoinjarWebsocketTradeEvent tradeEvent) {
     return new Trade.Builder()
-            .id(Long.toString(tradeEvent.tid))
-            .originalAmount(tradeEvent.size)
-            .timestamp(tradeEvent.timestamp)
-            .price(tradeEvent.price)
-            .instrument(instrument)
-            .type(CoinjarAdapters.buySellToOrderType(tradeEvent.takerSide))
-            .build();
+        .id(Long.toString(tradeEvent.tid))
+        .originalAmount(tradeEvent.size)
+        .timestamp(tradeEvent.timestamp)
+        .price(tradeEvent.price)
+        .instrument(instrument)
+        .type(CoinjarAdapters.buySellToOrderType(tradeEvent.takerSide))
+        .build();
   }
 }

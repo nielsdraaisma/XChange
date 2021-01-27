@@ -51,11 +51,10 @@ class BTCMarketsStreamingMarketDataService implements StreamingMarketDataService
   public Observable<Trade> getTrades(CurrencyPair currencyPair, Object... args) {
     final String marketId = BTCMarketsStreamingAdapters.adaptCurrencyPairToMarketId(currencyPair);
     return service
-            .subscribeChannel(CHANNEL_TRADE, marketId)
-            .filter(node -> "trade".equals(node.get("messageType").asText()))
-            .map(node -> mapper.treeToValue(node, BTCMarketsWebSocketTradeMessage.class))
-            .filter(tradeEvent -> marketId.equals(tradeEvent.marketId))
-            .map(BTCMarketsStreamingAdapters::adaptTradeEvent);
-
+        .subscribeChannel(CHANNEL_TRADE, marketId)
+        .filter(node -> "trade".equals(node.get("messageType").asText()))
+        .map(node -> mapper.treeToValue(node, BTCMarketsWebSocketTradeMessage.class))
+        .filter(tradeEvent -> marketId.equals(tradeEvent.marketId))
+        .map(BTCMarketsStreamingAdapters::adaptTradeEvent);
   }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.knowm.xchange.b2c2.B2C2Exchange;
 import org.knowm.xchange.b2c2.dto.trade.OrderRequest;
 import org.knowm.xchange.b2c2.dto.trade.OrderResponse;
+import org.knowm.xchange.b2c2.dto.trade.TradeResponse;
 import org.knowm.xchange.currency.CurrencyPair;
 
 public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
@@ -24,9 +25,9 @@ public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
     }
   }
 
-  public List<OrderResponse> getOrder(String id) throws IOException {
+  public List<TradeResponse> getTrade(String id) throws IOException {
     try {
-      return this.b2c2.getOrder(this.authorizationHeader, id);
+      return this.b2c2.getTrade(this.authorizationHeader, id);
     } catch (B2C2Exception e) {
       throw handleException(e);
     }

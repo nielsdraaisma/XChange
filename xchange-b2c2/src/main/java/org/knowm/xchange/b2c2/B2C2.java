@@ -31,6 +31,12 @@ public interface B2C2 {
       throws B2C2Exception, IOException;
 
   @GET
+  @Path("trade/{id}")
+  List<TradeResponse> getTrade(
+      @HeaderParam("Authorization") String authorization, @PathParam("id") String id)
+      throws B2C2Exception, IOException;
+
+  @GET
   @Path("order/")
   List<OrderResponse> getOrders(
       @HeaderParam("Authorization") String authorization,

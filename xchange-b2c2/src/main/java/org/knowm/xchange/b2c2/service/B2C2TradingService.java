@@ -101,18 +101,18 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
         userTrades, Trades.TradeSortType.SortByTimestamp); // TODO : Validate sort type
   }
 
-  @Override
   /**
    * this expects a B2C2 trade no as returned by the placeOrder methods, not the b2c2 order id as
    * used on the /order endpoints.
    */
+  @Override
   public Collection<Order> getOrder(String... orderIds) throws IOException {
     if (orderIds.length > 1) {
       throw new IllegalArgumentException("Multiple orderIds not supported");
     }
     final String orderId = orderIds[0];
-    return getOrder(orderId).stream()
-        .map(B2C2Adapters::adaptOrderResponseToOrder)
+    return getTrade(orderId).stream()
+        .map(B2C2Adapters::adaptTradeToLimitOrder)
         .collect(Collectors.toList());
   }
 

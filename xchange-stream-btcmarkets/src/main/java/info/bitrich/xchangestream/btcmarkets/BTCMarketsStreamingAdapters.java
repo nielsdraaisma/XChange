@@ -3,13 +3,12 @@ package info.bitrich.xchangestream.btcmarkets;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketOrderMessage;
 import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketOrderbookMessage;
+import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketTradeMessage;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import info.bitrich.xchangestream.btcmarkets.dto.BTCMarketsWebSocketTradeMessage;
 import org.knowm.xchange.btcmarkets.BTCMarketsAdapters;
 import org.knowm.xchange.btcmarkets.dto.trade.BTCMarketsOrder;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -113,12 +112,12 @@ class BTCMarketsStreamingAdapters {
 
   public static Trade adaptTradeEvent(BTCMarketsWebSocketTradeMessage message) {
     return new Trade.Builder()
-            .instrument(BTCMarketsAdapters.adaptCurrencyPair(message.marketId))
-            .timestamp(message.timestamp)
-            .id(Long.toString(message.tradeId))
-            .price(message.price)
-            .originalAmount(message.volume)
-            .type(BTCMarketsAdapters.adaptOrderType(message.side))
-            .build();
+        .instrument(BTCMarketsAdapters.adaptCurrencyPair(message.marketId))
+        .timestamp(message.timestamp)
+        .id(Long.toString(message.tradeId))
+        .price(message.price)
+        .originalAmount(message.volume)
+        .type(BTCMarketsAdapters.adaptOrderType(message.side))
+        .build();
   }
 }

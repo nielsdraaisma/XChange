@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 
 public class CoinjarStreamingMarketDataServiceIntegration {
 
-  private final Logger logger = LoggerFactory.getLogger(CoinjarStreamingMarketDataServiceIntegration.class);
+  private final Logger logger =
+      LoggerFactory.getLogger(CoinjarStreamingMarketDataServiceIntegration.class);
 
   @Test
   public void runTestBtcAud() {
@@ -59,24 +60,25 @@ public class CoinjarStreamingMarketDataServiceIntegration {
   @Test
   public void runTestBtcAudTrades() {
     ExchangeSpecification defaultExchangeSpecification =
-            new ExchangeSpecification(CoinjarStreamingExchange.class);
+        new ExchangeSpecification(CoinjarStreamingExchange.class);
 
     StreamingExchange exchange =
-            StreamingExchangeFactory.INSTANCE.createExchange(defaultExchangeSpecification);
+        StreamingExchangeFactory.INSTANCE.createExchange(defaultExchangeSpecification);
     exchange.connect().blockingAwait();
     StreamingMarketDataService streamingMarketDataService =
-            exchange.getStreamingMarketDataService();
+        exchange.getStreamingMarketDataService();
 
     Disposable usdtOrderBookDisposable =
-            streamingMarketDataService
-                    .getTrades(new CurrencyPair(Currency.BTC, Currency.AUD))
-                    .map(trade -> {
-                      logger.info("Received trade {}", trade);
-                      return trade;
-                    })
-                    .test()
-                    .awaitCount(10)
-                    .assertNoErrors();
+        streamingMarketDataService
+            .getTrades(new CurrencyPair(Currency.BTC, Currency.AUD))
+            .map(
+                trade -> {
+                  logger.info("Received trade {}", trade);
+                  return trade;
+                })
+            .test()
+            .awaitCount(10)
+            .assertNoErrors();
     usdtOrderBookDisposable.dispose();
   }
 }

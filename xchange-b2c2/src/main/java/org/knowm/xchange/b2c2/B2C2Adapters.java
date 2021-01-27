@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.knowm.xchange.b2c2.dto.trade.LedgerItem;
 import org.knowm.xchange.b2c2.dto.trade.OrderResponse;
 import org.knowm.xchange.b2c2.dto.trade.QuoteResponse;
+import org.knowm.xchange.b2c2.dto.trade.TradeResponse;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -149,6 +150,16 @@ public class B2C2Adapters {
         .timestamp(nullableStringToDate(order.created))
         .type(adaptSide(order.side))
         .orderUserReference(order.executingUnit)
+        .build();
+  }
+
+  public static LimitOrder adaptTradeToLimitOrder(TradeResponse tradeResponse) {
+    return new LimitOrder.Builder(
+            adaptSide(tradeResponse.side), adaptInstrumentToCurrencyPair(tradeResponse.instrument))
+        .timestamp(nullableStringToDate(tradeResponse.created))
+        .id(tradeResponse.tradeId)
+        .averagePrice(new BigDecimal(tradeResponse.price))
+        .originalAmount(new BigDecimal(tradeResponse.quantity))
         .build();
   }
 }
