@@ -160,6 +160,7 @@ public class B2C2Adapters {
         .id(tradeResponse.tradeId)
         .averagePrice(new BigDecimal(tradeResponse.price))
         .originalAmount(new BigDecimal(tradeResponse.quantity))
+        .cumulativeAmount(new BigDecimal(tradeResponse.quantity))
         .build();
   }
 }
