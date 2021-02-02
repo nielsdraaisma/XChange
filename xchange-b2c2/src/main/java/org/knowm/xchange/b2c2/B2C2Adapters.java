@@ -167,6 +167,8 @@ public class B2C2Adapters {
                 adaptSide(tradeResponse.side), adaptInstrumentToCurrencyPair(tradeResponse.instrument))
                 .timestamp(nullableStringToDate(tradeResponse.created))
                 .id(tradeResponse.tradeId)
+                .orderStatus(Order.OrderStatus.FILLED)
+                .fee(BigDecimal.ZERO)
                 .limitPrice(new BigDecimal(tradeResponse.price))
                 .averagePrice(new BigDecimal(tradeResponse.price))
                 .originalAmount(new BigDecimal(tradeResponse.quantity))
@@ -180,6 +182,7 @@ public class B2C2Adapters {
                 .instrument(adaptInstrumentToCurrencyPair(tradeResponse.instrument))
                 .timestamp(nullableStringToDate(tradeResponse.created))
                 .id(tradeResponse.tradeId)
+                .feeAmount(BigDecimal.ZERO)
                 .price(new BigDecimal(tradeResponse.price))
                 .originalAmount(new BigDecimal(tradeResponse.quantity))
                 .build();
