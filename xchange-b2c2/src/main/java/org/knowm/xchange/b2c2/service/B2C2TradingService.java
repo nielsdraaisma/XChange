@@ -34,7 +34,7 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
         OrderResponse orderResponse = order(orderRequest);
 
         if (orderResponse.trades.size() == 1) {
-            return orderRequest.clientOrderId;
+            return orderResponse.trades.get(0).tradeId;
         } else {
             throw new IllegalStateException(
                     "Did not get expected number of trades from B2C2 order response, expected 1 got "
@@ -96,7 +96,7 @@ public class B2C2TradingService extends B2C2TradingServiceRaw implements TradeSe
                         b2C2TradeHistoryParams.offset,
                         b2C2TradeHistoryParams.limit)
                         .stream()
-                        .map(B2C2Adapters::adaptOrderResponseToUserTrade)
+                        .map(B2C2Adapters::adaptTradeResponseToUserTrade)
                         .collect(Collectors.toList());
 
         return new UserTrades(

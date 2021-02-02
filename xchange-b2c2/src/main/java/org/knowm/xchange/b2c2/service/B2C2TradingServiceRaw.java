@@ -33,7 +33,7 @@ public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
     }
   }
 
-  public List<OrderResponse> getOrders(
+  public List<TradeResponse> getOrders(
       Date createdGte,
       Date createdLt,
       String clientOrderId,
@@ -55,7 +55,7 @@ public class B2C2TradingServiceRaw extends B2C2BaseServiceRaw {
       createdLtZonedDateTime = ZonedDateTime.ofInstant(createdLt.toInstant(), ZoneOffset.UTC);
     }
     try {
-      return b2c2.getOrders(
+      return b2c2.getTrades(
           this.authorizationHeader,
           createdGteZonedDateTime,
           createdLtZonedDateTime,
