@@ -29,12 +29,6 @@ public class CurrentTimeIncrementalNonceFactory implements SynchronizedValueFact
       case MILLISECONDS:
         timeFn = System::currentTimeMillis;
         break;
-      case MICROSECONDS:
-        timeFn = () -> System.nanoTime() / 1000;
-        break;
-      case NANOSECONDS:
-        timeFn = System::nanoTime;
-        break;
       default:
         throw new IllegalArgumentException(String.format("TimeUnit %s not supported", timeUnit));
     }

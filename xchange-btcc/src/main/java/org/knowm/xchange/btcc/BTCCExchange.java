@@ -13,7 +13,7 @@ public class BTCCExchange extends BaseExchange implements Exchange {
   public static final String DATA_API_URI_KEY = "spotusd.data.uri";
 
   private final SynchronizedValueFactory<Long> nonceFactory =
-      new CurrentTimeIncrementalNonceFactory(TimeUnit.NANOSECONDS);
+      new CurrentTimeIncrementalNonceFactory(TimeUnit.MILLISECONDS);
 
   @Override
   protected void initServices() {

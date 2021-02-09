@@ -14,7 +14,7 @@ import si.mazi.rescu.SynchronizedValueFactory;
 public class LakeBTCExchange extends BaseExchange implements Exchange {
 
   private final SynchronizedValueFactory<Long> nonceFactory =
-      new CurrentTimeIncrementalNonceFactory(TimeUnit.NANOSECONDS);
+      new CurrentTimeIncrementalNonceFactory(TimeUnit.MILLISECONDS);
 
   @Override
   protected void initServices() {
