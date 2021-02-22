@@ -182,6 +182,7 @@ public class B2C2Adapters {
                 .instrument(adaptInstrumentToCurrencyPair(tradeResponse.instrument))
                 .timestamp(nullableStringToDate(tradeResponse.created))
                 .id(tradeResponse.tradeId)
+                .orderId(tradeResponse.order)
                 .feeAmount(BigDecimal.ZERO)
                 .price(new BigDecimal(tradeResponse.price))
                 .originalAmount(new BigDecimal(tradeResponse.quantity))
