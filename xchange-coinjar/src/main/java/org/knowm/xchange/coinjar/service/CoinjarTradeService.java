@@ -6,10 +6,8 @@ import static org.knowm.xchange.coinjar.CoinjarAdapters.orderTypeToBuySell;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.knowm.xchange.coinjar.CoinjarAdapters;
-import org.knowm.xchange.coinjar.CoinjarErrorAdapter;
-import org.knowm.xchange.coinjar.CoinjarException;
-import org.knowm.xchange.coinjar.CoinjarExchange;
+
+import org.knowm.xchange.coinjar.*;
 import org.knowm.xchange.coinjar.dto.CoinjarOrder;
 import org.knowm.xchange.coinjar.dto.trading.CoinjarFills;
 import org.knowm.xchange.coinjar.dto.trading.CoinjarOrderRequest;
@@ -33,6 +31,10 @@ public class CoinjarTradeService extends CoinjarTradeServiceRaw implements Trade
 
   @Override
   public String placeLimitOrder(LimitOrder limitOrder) throws IOException {
+    Order.IOrderFlags orderFlag = CoinjarOrderFlags.GTC;
+    if ( limitOrder.getOrderFlags().size() > 0){
+      orderFlag = limitOrder.getOrderFlags().iterator().next();
+    }
     try {
       CoinjarOrderRequest request =
           new CoinjarOrderRequest(
@@ -41,7 +43,7 @@ public class CoinjarTradeService extends CoinjarTradeServiceRaw implements Trade
               orderTypeToBuySell(limitOrder.getType()),
               limitOrder.getLimitPrice().stripTrailingZeros().toPlainString(),
               limitOrder.getOriginalAmount().stripTrailingZeros().toPlainString(),
-              "GTC",
+              orderFlag.toString(),
               limitOrder.getUserReference());
       CoinjarOrder coinjarOrder = placeOrder(request);
       return coinjarOrder.oid.toString();
