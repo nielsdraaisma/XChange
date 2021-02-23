@@ -137,31 +137,6 @@ public class B2C2Adapters {
         return builder.build();
     }
 
-    public static UserTrade adaptOrderResponseToUserTrade(OrderResponse order) {
-
-        BigDecimal price = order.executedPrice;
-        if (price == null) {
-            price = order.price;
-        }
-        String tradeId;
-        if (order.trades.size() > 0) {
-            tradeId = order.trades.get(0).tradeId;
-        } else {
-            tradeId = order.orderId;
-        }
-        return new UserTrade.Builder()
-                .currencyPair(adaptInstrumentToCurrencyPair(order.instrument))
-                .feeAmount(BigDecimal.ZERO)
-                .orderId(tradeId)
-                .id(tradeId)
-                .originalAmount(order.quantity)
-                .price(price)
-                .timestamp(nullableStringToDate(order.created))
-                .type(adaptSide(order.side))
-                .orderUserReference(order.executingUnit)
-                .build();
-    }
-
     public static LimitOrder adaptTradeToLimitOrder(TradeResponse tradeResponse) {
         return new LimitOrder.Builder(
                 adaptSide(tradeResponse.side), adaptInstrumentToCurrencyPair(tradeResponse.instrument))
@@ -173,6 +148,7 @@ public class B2C2Adapters {
                 .averagePrice(new BigDecimal(tradeResponse.price))
                 .originalAmount(new BigDecimal(tradeResponse.quantity))
                 .cumulativeAmount(new BigDecimal(tradeResponse.quantity))
+                .userReference(tradeResponse.executingUnit)
                 .build();
     }
 
@@ -186,6 +162,7 @@ public class B2C2Adapters {
                 .feeAmount(BigDecimal.ZERO)
                 .price(new BigDecimal(tradeResponse.price))
                 .originalAmount(new BigDecimal(tradeResponse.quantity))
+                .orderUserReference(tradeResponse.executingUnit)
                 .build();
 
     }
