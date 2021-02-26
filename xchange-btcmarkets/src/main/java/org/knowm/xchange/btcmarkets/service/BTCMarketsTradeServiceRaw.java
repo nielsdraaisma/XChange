@@ -25,6 +25,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
       BTCMarketsOrder.Side side,
       BTCMarketsOrder.Type type,
       String timeInForce,
+      boolean postOnly,
       String clientOrderId)
       throws IOException {
     return btcmv3.placeOrder(
@@ -40,7 +41,7 @@ public class BTCMarketsTradeServiceRaw extends BTCMarketsBaseService {
             null,
             null,
             timeInForce,
-            null,
+            postOnly,
             null,
             clientOrderId));
   }
