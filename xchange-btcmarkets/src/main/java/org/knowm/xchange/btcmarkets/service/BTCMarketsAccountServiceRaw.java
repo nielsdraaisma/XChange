@@ -45,7 +45,7 @@ public class BTCMarketsAccountServiceRaw extends BTCMarketsBaseService {
       throw new ExchangeException(
           "failed to withdraw funds: " + response.errorMessage + " " + response.errorCode);
 
-    return response.status;
+    return response.fundTransferId;
   }
 
   public BTCMarketsFundtransferHistoryResponse fundtransferHistory() throws IOException {
