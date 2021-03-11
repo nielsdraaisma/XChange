@@ -41,11 +41,17 @@ public class KrakenStreamingAdapters {
                 .forEach(currentNode -> {
                     for (String key : BID_KEYS) {
                         if (currentNode.has(key)) {
+                            if (BID_SNAPSHOT.equals(key)){
+                                orderBook.getBids().clear();
+                            }
                             adaptLimitOrders(instrument, Order.OrderType.BID, currentNode.get(key)).forEach(orderBook::update);
                         }
                     }
                     for (String key : ASK_KEYS) {
                         if (currentNode.has(key)) {
+                            if (BID_SNAPSHOT.equals(key)){
+                                orderBook.getAsks().clear();
+                            }
                             adaptLimitOrders(instrument, Order.OrderType.ASK, currentNode.get(key)).forEach(orderBook::update);
                         }
                     }
