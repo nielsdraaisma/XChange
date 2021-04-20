@@ -1,8 +1,10 @@
 package info.bitrich.xchangestream.independentreserve;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.math.BigDecimalMath;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.independentreserve.dto.IndependentReserveWebSocketOrderEvent;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
@@ -19,6 +21,7 @@ import org.knowm.xchange.dto.marketdata.Trade;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.marketdata.MarketDataService;
+import org.knowm.xchange.utils.BigDecimalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +84,15 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
                   .limitPrice(event.data.price)
                   .build();
           orderMap.put(event.data.orderGuid, order);
+          // Remove any opposite orders to avoid crossed books
+          if (orderType == Order.OrderType.BID) {
+             asks.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) < 0).forEach(e ->
+                     asks.remove(e.getKey(), e.getValue()));
+          } else {
+            bids.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) > 0).forEach(e ->
+                    asks.remove(e.getKey(), e.getValue()));
+          }
+
           break;
         case IndependentReserveWebSocketOrderEvent.ORDER_CANCELED:
           orderMap.remove(event.data.orderGuid);
@@ -151,10 +163,9 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
     final Map<String, LimitOrder> asks = Maps.newHashMap();
     final AtomicLong nonces = new AtomicLong(-1);
 
+    Observable<JsonNode> subscription = service.subscribeChannel(channelName);
     this.loadInitialState(currencyPair, bids, asks);
-    return service
-        .subscribeChannel(channelName)
-        .map(
+    return subscription.map(
             node -> {
               IndependentReserveWebSocketOrderEvent orderEvent =
                   mapper.treeToValue(node, IndependentReserveWebSocketOrderEvent.class);
