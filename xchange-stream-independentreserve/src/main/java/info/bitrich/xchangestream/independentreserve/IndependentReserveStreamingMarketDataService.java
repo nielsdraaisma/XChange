@@ -11,8 +11,11 @@ import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.Observable;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.marketdata.OrderBook;
@@ -82,13 +85,17 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
                 .build();
         orderMap.put(event.data.orderGuid, order);
         // Remove any opposite orders to avoid crossed books
+        Collection<String> crossedOrders;
         if (orderType == Order.OrderType.BID) {
-           asks.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) < 0).forEach(e ->
-                   asks.remove(e.getKey(), e.getValue()));
+           crossedOrders = asks.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) < 0).map(Map.Entry::getKey).collect(Collectors.toList());
+
         } else {
-          bids.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) > 0).forEach(e ->
-                  bids.remove(e.getKey(), e.getValue()));
+          crossedOrders = bids.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) > 0).map(Map.Entry::getKey).collect(Collectors.toList());
         }
+        crossedOrders.forEach(id -> {
+            bids.remove(id);
+            asks.remove(id);
+        });
 
         break;
       case IndependentReserveWebSocketOrderEvent.ORDER_CANCELED:
