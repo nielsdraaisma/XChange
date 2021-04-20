@@ -52,70 +52,67 @@ public class IndependentReserveStreamingMarketDataService implements StreamingMa
     long nonceFromEvent = event.nonce;
     if (expectedNonce != -1 && nonceFromEvent != expectedNonce) {
       logger.warn(
-          "Did not get expected nonce from channel - expected {} but got {}, clearing {} book and reconnecting",
-          expectedNonce,
-          nonceFromEvent,
-          currencyPair);
+          "Did not get expected nonce from channel - expected {} but got {}, clearing {} book and loading initial state", expectedNonce, nonceFromEvent, currencyPair);
       nonce.set(-1);
       bids.clear();
       asks.clear();
       this.loadInitialState(currencyPair, bids, asks);
+    }
+    nonce.set(event.nonce + 1);
+    final Order.OrderType orderType;
+    if (event.data.orderType.equals("LimitBid")) {
+      orderType = Order.OrderType.BID;
     } else {
-      nonce.set(event.nonce + 1);
-      final Order.OrderType orderType;
-      if (event.data.orderType.equals("LimitBid")) {
-        orderType = Order.OrderType.BID;
-      } else {
-        orderType = Order.OrderType.ASK;
-      }
-      final Map<String, LimitOrder> orderMap;
-      if (orderType == Order.OrderType.BID) {
-        orderMap = bids;
-      } else {
-        orderMap = asks;
-      }
-      LimitOrder order;
-      switch (event.event) {
-        case IndependentReserveWebSocketOrderEvent.NEW_ORDER:
-          order =
-              new LimitOrder.Builder(orderType, currencyPair)
-                  .originalAmount(event.data.volume)
-                  .id(event.data.orderGuid)
-                  .limitPrice(event.data.price)
-                  .build();
-          orderMap.put(event.data.orderGuid, order);
-          // Remove any opposite orders to avoid crossed books
-          if (orderType == Order.OrderType.BID) {
-             asks.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) < 0).forEach(e ->
-                     asks.remove(e.getKey(), e.getValue()));
-          } else {
-            bids.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) > 0).forEach(e ->
-                    asks.remove(e.getKey(), e.getValue()));
-          }
+      orderType = Order.OrderType.ASK;
+    }
+    final Map<String, LimitOrder> orderMap;
+    if (orderType == Order.OrderType.BID) {
+      orderMap = bids;
+    } else {
+      orderMap = asks;
+    }
+    LimitOrder order;
+    switch (event.event) {
+      case IndependentReserveWebSocketOrderEvent.NEW_ORDER:
+        order =
+            new LimitOrder.Builder(orderType, currencyPair)
+                .originalAmount(event.data.volume)
+                .id(event.data.orderGuid)
+                .limitPrice(event.data.price)
+                .build();
+        orderMap.put(event.data.orderGuid, order);
+        // Remove any opposite orders to avoid crossed books
+        if (orderType == Order.OrderType.BID) {
+           asks.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) < 0).forEach(e ->
+                   asks.remove(e.getKey(), e.getValue()));
+        } else {
+          bids.entrySet().stream().filter(o -> o.getValue().getLimitPrice().compareTo(event.data.price) > 0).forEach(e ->
+                  bids.remove(e.getKey(), e.getValue()));
+        }
 
-          break;
-        case IndependentReserveWebSocketOrderEvent.ORDER_CANCELED:
+        break;
+      case IndependentReserveWebSocketOrderEvent.ORDER_CANCELED:
+        orderMap.remove(event.data.orderGuid);
+        break;
+      case IndependentReserveWebSocketOrderEvent.ORDER_CHANGED:
+        // Fully filled orders are treated as removal
+        if (event.data.volume.compareTo(BigDecimal.ZERO) == 0) {
           orderMap.remove(event.data.orderGuid);
           break;
-        case IndependentReserveWebSocketOrderEvent.ORDER_CHANGED:
-          // Fully filled orders are treated as removal
-          if (event.data.volume.compareTo(BigDecimal.ZERO) == 0) {
-            orderMap.remove(event.data.orderGuid);
-            break;
-          }
-          order = orderMap.get(event.data.orderGuid);
-          if (order != null) {
-            order =
-                new LimitOrder.Builder(order.getType(), currencyPair)
-                    .originalAmount(event.data.volume)
-                    .id(event.data.orderGuid)
-                    .limitPrice(order.getLimitPrice())
-                    .build();
-            orderMap.put(event.data.orderGuid, order);
-          }
-          break;
-      }
+        }
+        order = orderMap.get(event.data.orderGuid);
+        if (order != null) {
+          order =
+              new LimitOrder.Builder(order.getType(), currencyPair)
+                  .originalAmount(event.data.volume)
+                  .id(event.data.orderGuid)
+                  .limitPrice(order.getLimitPrice())
+                  .build();
+          orderMap.put(event.data.orderGuid, order);
+        }
+        break;
     }
+
     return new OrderBook(
         null, Lists.newArrayList(asks.values()), Lists.newArrayList(bids.values()));
   }
