@@ -28,16 +28,13 @@ public class KrakenOrderbookExample {
             .getOrderBook(CurrencyPair.BTC_USD)
             .subscribe(
                 s -> {
-                  LOG.info(
-                      "Received book with {} bids and {} asks",
-                      s.getBids().size(),
-                      s.getAsks().size());
+                  LOG.info("Received book with {} bids and {} asks", s.getBids().size(), s.getAsks().size());
                 },
                 throwable -> {
                   LOG.error("Fail to get ticker {}", throwable.getMessage(), throwable);
                 });
 
-    TimeUnit.SECONDS.sleep(600);
+    TimeUnit.SECONDS.sleep(60);
 
     tickerDis.dispose();
 

@@ -102,125 +102,111 @@ public class KrakenStreamingAdapters {
         return Iterators.transform(node.elements(), jsonNode -> adaptLimitOrder(instrument, orderType, jsonNode));
     }
 
-    /**
-     * Adapt a JsonNode containing two decimals into a LimitOrder
-     */
-    public static LimitOrder adaptLimitOrder(Instrument instrument, Order.OrderType orderType, JsonNode node) {
-        if (node == null || !node.isArray()) {
-            return null;
-        }
-        Iterator<JsonNode> iterator = node.elements();
-        BigDecimal price = nextNodeAsDecimal(iterator);
-        BigDecimal volume = nextNodeAsDecimal(iterator);
-        Date timestamp = nextNodeAsDate(iterator);
-        return new LimitOrder(orderType, volume, instrument, null, timestamp, price);
+  /** Adapt a JsonNode containing two decimals into a LimitOrder */
+  public static LimitOrder adaptLimitOrder(
+      Instrument instrument, Order.OrderType orderType, JsonNode node) {
+    if (node == null || !node.isArray()) {
+      return null;
     }
+    Iterator<JsonNode> iterator = node.elements();
+    BigDecimal price = nextNodeAsDecimal(iterator);
+    BigDecimal volume = nextNodeAsDecimal(iterator);
+    Date timestamp = nextNodeAsDate(iterator);
+    return new LimitOrder(orderType, volume, instrument, null, timestamp, price);
+  }
 
-    /**
-     * Adapt an ArrayNode containing a ticker message into a Ticker
-     */
-    public static Ticker adaptTickerMessage(Instrument instrument, ArrayNode arrayNode) {
-        return Streams.stream(arrayNode.elements()).filter(JsonNode::isObject).map(
-                tickerNode -> {
-                    Iterator<JsonNode> askIterator = tickerNode.get("a").iterator();
-                    Iterator<JsonNode> bidIterator = tickerNode.get("b").iterator();
-                    Iterator<JsonNode> closeIterator = tickerNode.get("c").iterator();
-                    Iterator<JsonNode> volumeIterator = tickerNode.get("v").iterator();
-                    Iterator<JsonNode> vwapIterator = tickerNode.get("p").iterator();
-                    Iterator<JsonNode> lowPriceIterator = tickerNode.get("l").iterator();
-                    Iterator<JsonNode> highPriceIterator = tickerNode.get("h").iterator();
-                    Iterator<JsonNode> openPriceIterator = tickerNode.get("o").iterator();
+  /** Adapt an ArrayNode containing a ticker message into a Ticker */
+  public static Ticker adaptTickerMessage(Instrument instrument, ArrayNode arrayNode) {
+    return Streams.stream(arrayNode.elements())
+        .filter(JsonNode::isObject)
+        .map(
+            tickerNode -> {
+              Iterator<JsonNode> askIterator = tickerNode.get("a").iterator();
+              Iterator<JsonNode> bidIterator = tickerNode.get("b").iterator();
+              Iterator<JsonNode> closeIterator = tickerNode.get("c").iterator();
+              Iterator<JsonNode> volumeIterator = tickerNode.get("v").iterator();
+              Iterator<JsonNode> vwapIterator = tickerNode.get("p").iterator();
+              Iterator<JsonNode> lowPriceIterator = tickerNode.get("l").iterator();
+              Iterator<JsonNode> highPriceIterator = tickerNode.get("h").iterator();
+              Iterator<JsonNode> openPriceIterator = tickerNode.get("o").iterator();
 
-                    // Move iterators forward here required, this ignores the first field if the desired
-                    // value is in the second element.
-                    vwapIterator.next();
-                    volumeIterator.next();
+              // Move iterators forward here required, this ignores the first field if the desired
+              // value is in the second element.
+              vwapIterator.next();
+              volumeIterator.next();
 
-                    return new Ticker.Builder()
-                            .open(nextNodeAsDecimal(openPriceIterator))
-                            .ask(nextNodeAsDecimal(askIterator))
-                            .bid(nextNodeAsDecimal(bidIterator))
-                            .last(nextNodeAsDecimal(closeIterator))
-                            .high(nextNodeAsDecimal(highPriceIterator))
-                            .low(nextNodeAsDecimal(lowPriceIterator))
-                            .vwap(nextNodeAsDecimal(vwapIterator))
-                            .volume(nextNodeAsDecimal(volumeIterator))
-                            .instrument(instrument)
-                            .build();
-                })
-                .findFirst()
-                .orElse(null);
+              return new Ticker.Builder()
+                  .open(nextNodeAsDecimal(openPriceIterator))
+                  .ask(nextNodeAsDecimal(askIterator))
+                  .bid(nextNodeAsDecimal(bidIterator))
+                  .last(nextNodeAsDecimal(closeIterator))
+                  .high(nextNodeAsDecimal(highPriceIterator))
+                  .low(nextNodeAsDecimal(lowPriceIterator))
+                  .vwap(nextNodeAsDecimal(vwapIterator))
+                  .volume(nextNodeAsDecimal(volumeIterator))
+                  .instrument(instrument)
+                  .build();
+            })
+        .findFirst()
+        .orElse(null);
+  }
+
+  /** Adapt an JsonNode into a list of Trade */
+  public static List<Trade> adaptTrades(Instrument instrument, JsonNode arrayNode) {
+    return Streams.stream(arrayNode.elements())
+        .filter(JsonNode::isArray)
+        .flatMap(
+            innerNode ->
+                Streams.stream(innerNode.elements())
+                    .map(inner -> KrakenStreamingAdapters.adaptTrade(instrument, inner)))
+        .collect(Collectors.toList());
+  }
+
+  /** Adapt an JsonNode into a single Trade */
+  public static Trade adaptTrade(Instrument instrument, JsonNode arrayNode) {
+    if (arrayNode == null || !arrayNode.isArray()) {
+      return null;
     }
+    Iterator<JsonNode> iterator = arrayNode.iterator();
+    return new Trade.Builder()
+        .price(nextNodeAsDecimal(iterator))
+        .originalAmount(nextNodeAsDecimal(iterator))
+        .timestamp(nextNodeAsDate(iterator))
+        .type(nextNodeAsOrderType(iterator))
+        .instrument(instrument)
+        .build();
+  }
 
-    /**
-     * Adapt an JsonNode into a list of Trade
-     */
-    public static List<Trade> adaptTrades(Instrument instrument, JsonNode arrayNode) {
-        return Streams.stream(arrayNode.elements())
-                .filter(JsonNode::isArray)
-                .flatMap(innerNode -> Streams.stream(innerNode.elements()).map(inner -> KrakenStreamingAdapters.adaptTrade(instrument, inner)))
-                .collect(Collectors.toList());
+  /**
+   * Checks if a iterator has next node and returns the value as a BigDecimal. Returns null if the
+   * iterator has no next value or the given iterator is null.
+   */
+  private static BigDecimal nextNodeAsDecimal(Iterator<JsonNode> iterator) {
+    if (iterator == null || !iterator.hasNext()) {
+      return null;
     }
+    return new BigDecimal(iterator.next().textValue());
+  }
 
-    /**
-     * Adapt an JsonNode into a single Trade
-     */
-    public static Trade adaptTrade(Instrument instrument, JsonNode arrayNode) {
-        if (arrayNode == null || !arrayNode.isArray()) {
-            return null;
-        }
-        Iterator<JsonNode> iterator = arrayNode.iterator();
-        return new Trade.Builder()
-                .price(nextNodeAsDecimal(iterator))
-                .originalAmount(nextNodeAsDecimal(iterator))
-                .timestamp(nextNodeAsDate(iterator))
-                .type(nextNodeAsOrderType(iterator))
-                .instrument(instrument)
-                .build();
+  /**
+   * Checks if a iterator has next node and returns the value as a Date using the long value as
+   * timestamp. Returns null if the iterator has no next value or the given iterator is null.
+   */
+  private static Date nextNodeAsDate(Iterator<JsonNode> iterator) {
+    if (iterator == null || !iterator.hasNext()) {
+      return null;
     }
+      return DateUtils.fromMillisUtc(new BigDecimal(iterator.next().textValue()).multiply(new BigDecimal(1000)).longValue());
+  }
 
-    /**
-     * Checks if a iterator has next node and returns the value as a BigDecimal. Returns null if the
-     * iterator has no next value or the given iterator is null.
-     */
-    private static BigDecimal nextNodeAsDecimal(Iterator<JsonNode> iterator) {
-        if (iterator == null || !iterator.hasNext()) {
-            return null;
-        }
-        return new BigDecimal(iterator.next().textValue());
+  /**
+   * Checks if a iterator has next node and returns the value as a Date using the long value as
+   * timestamp. Returns null if the iterator has no next value or the given iterator is null.
+   */
+  private static Order.OrderType nextNodeAsOrderType(Iterator<JsonNode> iterator) {
+    if (iterator == null || !iterator.hasNext()) {
+      return null;
     }
-
-    /**
-     * Checks if a iterator has next node and returns the value as a Text. Returns null if the
-     * iterator has no next value or the given iterator is null.
-     */
-    private static String nextNodeAsText(Iterator<JsonNode> iterator) {
-        if (iterator == null || !iterator.hasNext()) {
-            return null;
-        }
-        return iterator.next().textValue();
-    }
-
-    /**
-     * Checks if a iterator has next node and returns the value as a Date using the long value as
-     * timestamp. Returns null if the iterator has no next value or the given iterator is null.
-     */
-    private static Date nextNodeAsDate(Iterator<JsonNode> iterator) {
-        if (iterator == null || !iterator.hasNext()) {
-            return null;
-        }
-        return DateUtils.fromMillisUtc(
-                new BigDecimal(iterator.next().textValue()).multiply(new BigDecimal(1000)).longValue());
-    }
-
-    /**
-     * Checks if a iterator has next node and returns the value as a Date using the long value as
-     * timestamp. Returns null if the iterator has no next value or the given iterator is null.
-     */
-    private static Order.OrderType nextNodeAsOrderType(Iterator<JsonNode> iterator) {
-        if (iterator == null || !iterator.hasNext()) {
-            return null;
-        }
-        return KrakenAdapters.adaptOrderType(KrakenType.fromString(iterator.next().textValue()));
-    }
+    return KrakenAdapters.adaptOrderType(KrakenType.fromString(iterator.next().textValue()));
+  }
 }
