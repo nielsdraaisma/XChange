@@ -17,7 +17,7 @@ public class CoinjarStreamingMarketDataServiceIntegration {
       LoggerFactory.getLogger(CoinjarStreamingMarketDataServiceIntegration.class);
 
   @Test
-  public void runTestBtcAud() {
+  public void runTestBtcAud() throws InterruptedException {
     ExchangeSpecification defaultExchangeSpecification =
         new ExchangeSpecification(CoinjarStreamingExchange.class);
 
@@ -33,7 +33,7 @@ public class CoinjarStreamingMarketDataServiceIntegration {
             .test()
             .awaitCount(10)
             .assertNoErrors();
-
+    Thread.sleep(5 * 60 * 1000);
     btcOrderBookDisposable.dispose();
   }
 

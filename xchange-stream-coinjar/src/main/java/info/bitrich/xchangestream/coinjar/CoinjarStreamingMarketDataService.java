@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebSocketBookEvent;
 import info.bitrich.xchangestream.coinjar.dto.CoinjarWebsocketTradeEvent;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
+import info.bitrich.xchangestream.service.netty.ConnectionStateModel;
 import info.bitrich.xchangestream.service.netty.StreamingObjectMapperHelper;
 import io.reactivex.Observable;
 import java.math.BigDecimal;
@@ -76,10 +77,11 @@ class CoinjarStreamingMarketDataService implements StreamingMarketDataService {
     final SortedMap<BigDecimal, LimitOrder> asks = Maps.newTreeMap(BigDecimal::compareTo);
     String channelName = CoinjarStreamingAdapters.adaptCurrencyPairToBookTopic(currencyPair);
     service
-        .subscribeConnectionSuccess()
+        .subscribeConnectionState()
+        .filter(s -> s.equals(ConnectionStateModel.State.OPEN))
         .forEach(
             success -> {
-              logger.warn("Clearing {} orderbook after connection success", currencyPair);
+              logger.warn("Clearing {} orderbook after connection opened", currencyPair);
               bids.clear();
               asks.clear();
             });
