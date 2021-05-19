@@ -47,15 +47,14 @@ class CoinjarStreamingMarketDataService implements StreamingMarketDataService {
         });
   }
 
-  private static OrderBook handleOrderbookEvent(
-      CoinjarWebSocketBookEvent event,
-      Map<BigDecimal, LimitOrder> bids,
-      Map<BigDecimal, LimitOrder> asks) {
-    final CurrencyPair pairFromEvent =
-        CoinjarStreamingAdapters.adaptTopicToCurrencyPair(event.topic);
+  private static OrderBook handleOrderbookEvent(CoinjarWebSocketBookEvent event, Map<BigDecimal, LimitOrder> bids, Map<BigDecimal, LimitOrder> asks) {
+    final CurrencyPair pairFromEvent = CoinjarStreamingAdapters.adaptTopicToCurrencyPair(event.topic);
     switch (event.event) {
-      case CoinjarWebSocketBookEvent.UPDATE:
       case CoinjarWebSocketBookEvent.INIT:
+          logger.info("Received INIT message, clearing {} orderbook", pairFromEvent);
+          bids.clear();
+          asks.clear();
+      case CoinjarWebSocketBookEvent.UPDATE:
         updateOrderbook(
             bids,
             CoinjarStreamingAdapters.toLimitOrders(
@@ -78,10 +77,10 @@ class CoinjarStreamingMarketDataService implements StreamingMarketDataService {
     String channelName = CoinjarStreamingAdapters.adaptCurrencyPairToBookTopic(currencyPair);
     service
         .subscribeConnectionState()
-        .filter(s -> s.equals(ConnectionStateModel.State.OPEN))
+        .filter(s -> s.equals(ConnectionStateModel.State.CLOSED))
         .forEach(
             success -> {
-              logger.warn("Clearing {} orderbook after connection opened", currencyPair);
+              logger.warn("Clearing {} orderbook after connection closed", currencyPair);
               bids.clear();
               asks.clear();
             });
