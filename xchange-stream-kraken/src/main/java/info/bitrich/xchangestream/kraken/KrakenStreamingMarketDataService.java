@@ -40,18 +40,19 @@ public class KrakenStreamingMarketDataService implements StreamingMarketDataServ
       TreeSet<LimitOrder> bids = Sets.newTreeSet();
       TreeSet<LimitOrder> asks = Sets.newTreeSet();
       int depth = parseOrderBookSize(args);
-      AtomicBoolean awaitingSnapshot = new AtomicBoolean(true);
       return subscribe(channelName, MIN_DATA_ARRAY_SIZE, depth).flatMap(arrayNode -> {
                             try {
-                                return Observable.just(KrakenStreamingAdapters.adaptOrderbookMessage(depth, awaitingSnapshot, bids, asks, currencyPair, arrayNode));
+                                return Observable.just(KrakenStreamingAdapters.adaptOrderbookMessage(depth, bids, asks, currencyPair, arrayNode));
                             } catch (IllegalStateException e) {
                                 LOG.warn("Reconnecting after adapter error {}", e.getMessage());
-                                awaitingSnapshot.set(true);
-                                this.service.sendMessage(this.service.getUnsubscribeMessage(channelName));
-                                this.service.sendMessage(this.service.getSubscribeMessage(channelName));
+                                bids.clear();
+                                asks.clear();
+                                // Resubscribe to the channel, triggering a new snapshot
+                                this.service.sendMessage(this.service.getSubscribeMessage(channelName, args));
                                 return Observable.empty();
                             }
-                        });
+                        })
+              .filter(ob -> ob.getBids().size() > 0 && ob.getAsks().size() > 0);
     }
 
   @Override

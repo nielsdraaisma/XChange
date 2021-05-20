@@ -3,6 +3,7 @@ package info.bitrich.xchangestream.kraken;
 import org.knowm.xchange.dto.trade.LimitOrder;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.TreeSet;
 import java.util.zip.CRC32;
 
@@ -25,7 +26,7 @@ public class KrakenStreamingChecksum {
 
     public static long createCrcLong(String crcString) {
         CRC32 crc = new CRC32();
-        crc.update(crcString.getBytes());
+        crc.update(crcString.getBytes(StandardCharsets.UTF_8));
         return crc.getValue();
     }
 

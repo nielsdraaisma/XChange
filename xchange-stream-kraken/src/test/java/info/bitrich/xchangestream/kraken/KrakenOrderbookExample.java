@@ -25,7 +25,7 @@ public class KrakenOrderbookExample {
     Disposable tickerDis =
         krakenExchange
             .getStreamingMarketDataService()
-            .getOrderBook(CurrencyPair.BTC_USD)
+            .getOrderBook(CurrencyPair.BTC_USD, 25)
             .subscribe(
                 s -> {
                   LOG.info("Received book with {} bids and {} asks", s.getBids().size(), s.getAsks().size());
@@ -34,7 +34,7 @@ public class KrakenOrderbookExample {
                   LOG.error("Fail to get ticker {}", throwable.getMessage(), throwable);
                 });
 
-    TimeUnit.SECONDS.sleep(60);
+    TimeUnit.SECONDS.sleep(Integer.MAX_VALUE);
 
     tickerDis.dispose();
 
