@@ -62,7 +62,9 @@ public class KrakenStreamingAdapters {
         arrayNode.elements().forEachRemaining(currentNode -> {
             if (awaitingSnapshot) {
                 if (currentNode.has(BID_SNAPSHOT) && currentNode.has(ASK_SNAPSHOT)) {
-                    LOG.debug("Received snapshot, clearing book");
+                    LOG.info("Received {} snapshot, clearing book", instrument);
+                    bids.clear();
+                    asks.clear();
                     updateInBook(depth, instrument, Order.OrderType.BID, currentNode, BID_SNAPSHOT, bids);
                     updateInBook(depth, instrument, Order.OrderType.ASK, currentNode, ASK_SNAPSHOT, asks);
                 }
