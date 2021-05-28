@@ -94,6 +94,7 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
             LOG.info("System status: {}", systemStatus);
             break;
           case subscriptionStatus:
+            LOG.debug("Received subscriptionStatus message {}", message);
             KrakenSubscriptionStatusMessage statusMessage =
                 mapper.treeToValue(message, KrakenSubscriptionStatusMessage.class);
             Integer reqid = statusMessage.getReqid();
@@ -162,8 +163,8 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
       }
     }
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("ChannelName {}", StringUtils.isBlank(channelName) ? "not defined" : channelName);
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("ChannelName {}", StringUtils.isBlank(channelName) ? "not defined" : channelName);
     }
     return channelName;
   }
@@ -203,11 +204,15 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
   }
 
   @Override
-  public String getUnsubscribeMessage(String channelName) throws IOException {
+  public String getUnsubscribeMessage(String channelName, Object... args) throws IOException {
     int reqID = Math.abs(UUID.randomUUID().hashCode());
     String[] channelData =
         channelName.split(KrakenStreamingMarketDataService.KRAKEN_CHANNEL_DELIMITER);
     KrakenSubscriptionName subscriptionName = KrakenSubscriptionName.valueOf(channelData[0]);
+    Integer depth = null;
+    if (args.length > 0 && args[0] != null) {
+      depth = (Integer) args[0];
+    }
 
     if (isPrivate) {
       KrakenSubscriptionMessage subscriptionMessage =
@@ -226,7 +231,7 @@ public class KrakenStreamingService extends JsonNettyStreamingService {
               reqID,
               KrakenEventType.unsubscribe,
               Collections.singletonList(pair),
-              new KrakenSubscriptionConfig(subscriptionName));
+              new KrakenSubscriptionConfig(subscriptionName, depth, null));
       return objectMapper.writeValueAsString(subscriptionMessage);
     }
   }

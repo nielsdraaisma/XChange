@@ -26,7 +26,7 @@ public class KrakenOrderbookExample {
                   .getOrderBook(currencyPair, 25)
                   .subscribe(
                           s -> {
-                              LOG.info("Received book with {} bids and {} asks", s.getBids().size(), s.getAsks().size());
+//                              LOG.info("Received book with {} bids and {} asks", s.getBids().size(), s.getAsks().size());
                               if ( ! s.getBids().isEmpty() ){
                                   BigDecimal bestBid = s.getBids().iterator().next().getLimitPrice();
                                   BigDecimal bestAsk = s.getAsks().iterator().next().getLimitPrice();

@@ -1,9 +1,11 @@
 package info.bitrich.xchangestream.kraken;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import info.bitrich.xchangestream.core.StreamingMarketDataService;
 import info.bitrich.xchangestream.kraken.dto.enums.KrakenSubscriptionName;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -14,6 +16,7 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.TreeSet;
 
 /** @author makarid, pchertalev */
@@ -40,20 +43,21 @@ public class KrakenStreamingMarketDataService implements StreamingMarketDataServ
       TreeSet<LimitOrder> asks = Sets.newTreeSet();
       Object lock = new Object();
       int depth = parseOrderBookSize(args);
-      return subscribe(channelName, MIN_DATA_ARRAY_SIZE, depth).flatMap(arrayNode -> {
+      return subscribe(channelName, MIN_DATA_ARRAY_SIZE, depth).map(arrayNode -> {
                             try {
                                 synchronized (lock){
-                                    return Observable.just(KrakenStreamingAdapters.adaptOrderbookMessage(depth, bids, asks, currencyPair, arrayNode));
+                                    return KrakenStreamingAdapters.adaptOrderbookMessage(depth, bids, asks, currencyPair, arrayNode);
                                 }
                             } catch (IllegalStateException e) {
-                                LOG.warn("Reconnecting after adapter error {}", e.getMessage());
+                                LOG.warn("Resubscribing {} channel after adapter error {}", currencyPair, e.getMessage());
                                 synchronized (lock){
                                     bids.clear();
                                     asks.clear();
                                 }
                                 // Resubscribe to the channel, triggering a new snapshot
-                                this.service.sendMessage(this.service.getSubscribeMessage(channelName, args));
-                                return Observable.empty();
+                                this.service.sendMessage(service.getUnsubscribeMessage(channelName, args));
+                                this.service.sendMessage(service.getSubscribeMessage(channelName, args));
+                                return new OrderBook(null, Lists.newArrayList(), Lists.newArrayList(), false);
                             }
                         })
               .filter(ob -> ob.getBids().size() > 0 && ob.getAsks().size() > 0);

@@ -63,8 +63,6 @@ public class KrakenStreamingAdapters {
             if (awaitingSnapshot) {
                 if (currentNode.has(BID_SNAPSHOT) && currentNode.has(ASK_SNAPSHOT)) {
                     LOG.info("Received {} snapshot, clearing book", instrument);
-                    bids.clear();
-                    asks.clear();
                     updateInBook(depth, instrument, Order.OrderType.BID, currentNode, BID_SNAPSHOT, bids);
                     updateInBook(depth, instrument, Order.OrderType.ASK, currentNode, ASK_SNAPSHOT, asks);
                 }
@@ -80,7 +78,12 @@ public class KrakenStreamingAdapters {
                 expectedChecksum.set(currentNode.get(CHECKSUM).asLong());
             }
         });
-
+        if ( awaitingSnapshot && bids.isEmpty() && asks.isEmpty()){
+            LOG.info("Ignoring {} message {}, awaiting snapshot", instrument, arrayNode);
+        }
+//        if ( (Math.random() > 0.99)) {
+//            throw new IllegalStateException("Testing");
+//        }
         OrderBook result = new OrderBook(lastTime.get(), Lists.newArrayList(asks), Lists.newArrayList(bids), true);
         long localChecksum = createCrcChecksum(asks, bids);
         if (expectedChecksum.get() > 0 && expectedChecksum.get() != localChecksum) {
