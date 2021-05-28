@@ -83,9 +83,6 @@ public class KrakenStreamingAdapters {
 
         OrderBook result = new OrderBook(lastTime.get(), Lists.newArrayList(asks), Lists.newArrayList(bids), true);
         long localChecksum = createCrcChecksum(asks, bids);
-//        if ( (Math.random() > 0.99)) {
-//            throw new IllegalStateException("Testing");
-//        }
         if (expectedChecksum.get() > 0 && expectedChecksum.get() != localChecksum) {
             LOG.warn("{} checksum does not match, expected {} but local checksum is {}", instrument, expectedChecksum.get(), localChecksum);
             throw new IllegalStateException("Checksum did not match");
