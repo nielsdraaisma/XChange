@@ -87,7 +87,7 @@ public class B2C2StreamingService extends JsonNettyStreamingService {
   }
 
   @Override
-  public String getUnsubscribeMessage(String channelName) throws IOException {
+  public String getUnsubscribeMessage(String channelName, Object... args) throws IOException {
     B2C2WebSocketUnsubscribeMessage message = new B2C2WebSocketUnsubscribeMessage(channelName);
     return objectMapper.writeValueAsString(message);
   }
